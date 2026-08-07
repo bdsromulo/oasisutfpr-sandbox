@@ -20,6 +20,7 @@ import {
 } from "../cursos";
 import { criarMapaIdentidade, type MapaIdentidade } from "./identidade";
 import { buscarOfertaParaPlanejamento, cumpre } from "./elegiveis";
+import { liberadoPorDesempenho } from "./prerequisitos";
 import { haveriaConflito, itensDaSelecao, type ItemGrade } from "./grade";
 import {
   calcularPesoPrioridadeTurma,
@@ -807,7 +808,11 @@ export function simularFormatura(
     const alcancavel = (d: DisciplinaMatriz) =>
       d.prerequisitos.every((p) => {
         if (periodoExigido(p) !== null) return true;
-        return cumpre(p, perfil, mapa) || ehObrigatoria.has(p);
+        return (
+          cumpre(p, perfil, mapa) ||
+          liberadoPorDesempenho(p, perfil, mapa) ||
+          ehObrigatoria.has(p)
+        );
       });
 
     const disponiveisPorTrilha = new Map<number, number>();
@@ -951,7 +956,10 @@ export function simularFormatura(
         return d.prerequisitos.every((p) => {
           const per = periodoExigido(p);
           if (per !== null) return periodoNoSemestre >= per;
-          return cumpre(p, perfil, mapa);
+          // `perfil.aprovadas` cresce durante a projeção; `perfil.cursadas`, que
+          // é o que a regra do 4 lê, não muda — a reprovada segue reprovada do
+          // começo ao fim, liberando a dependente em todos os semestres.
+          return cumpre(p, perfil, mapa) || liberadoPorDesempenho(p, perfil, mapa);
         });
       });
 

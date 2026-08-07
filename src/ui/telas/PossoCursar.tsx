@@ -195,7 +195,7 @@ function CardDisciplinaPossoCursar({
           )}
           {e.motivoBloqueio && (
             <span title={e.motivoBloqueio} className="cursor-help">
-              <Badge tom="alerta" icon={<IconWarning className="h-3 w-3" />}>bloqueada</Badge>
+              <Badge tom="alerta" icon={<IconWarning className="h-3 w-3" />}>pré-requisito pendente</Badge>
             </span>
           )}
         </div>
@@ -203,12 +203,17 @@ function CardDisciplinaPossoCursar({
 
       {expandido && (
         <div className="p-4 pt-0 border-t border-zinc-100 dark:border-zinc-800/80 space-y-2 mt-1">
-          {e.motivoBloqueio ? (
-            <div className="flex items-center gap-2 text-xs font-semibold text-red-600 dark:text-red-400">
+          {/* Aviso, e não mais bloqueio (TASK-45): a lista de turmas segue logo
+              abaixo e a adição está liberada. O vermelho saiu junto com o
+              bloqueio — quem lê precisa entender que é pendência a conferir no
+              Portal, não porta fechada. */}
+          {e.motivoBloqueio && (
+            <div className="flex items-start gap-2 rounded-xl border border-amber-300/70 bg-amber-50 p-2.5 text-xs font-semibold text-amber-800 dark:border-amber-500/40 dark:bg-amber-950/30 dark:text-amber-300">
               <IconWarning className="h-4 w-4 shrink-0" />
               <span>{matriz ? renderizarTextoComCodigos(e.motivoBloqueio, matriz) : e.motivoBloqueio}</span>
             </div>
-          ) : e.oferta ? (
+          )}
+          {e.oferta ? (
             <>
               {turmasBSI.length > 0 ? (
                 <ul className="space-y-2">

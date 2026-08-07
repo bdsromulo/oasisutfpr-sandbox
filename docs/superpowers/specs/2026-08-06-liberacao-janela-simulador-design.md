@@ -56,14 +56,23 @@ inverte e o motivo fica registrado no docstring da função.
 
 ### 1.4 Onde a regra entra
 
-Três gates checam pré-requisito, e os três passam a perguntar
+Dois gates checam pré-requisito contra o perfil, e ambos passam a perguntar
 `cumpre(p) || liberadoPorDesempenho(p)`:
 
 | Arquivo | Ponto | Efeito |
 |---|---|---|
 | `motor/elegiveis.ts` | `bloqueio()` | card deixa de ter `motivoBloqueio` |
 | `motor/simuladorFormatura.ts` | `alcancavel()` e o gate do laço de projeção | dependente pode ser adiantada |
-| `motor/fluxograma.ts` | montagem do grafo | nó deixa de ser pintado como travado |
+
+**Correção ao desenho inicial (verificada na implementação):** o `motor/fluxograma.ts`
+tinha sido listado como terceiro gate, e não é. Ele nunca recebe `PerfilAluno` —
+monta a cadeia institucional da matriz, e a tela apenas pinta o que está em
+`perfil.aprovadas`. Não há estado "travado" a relaxar ali, e marcar a reprovada
+como aprovada seria pior que o problema original.
+
+Detalhe do laço de projeção: `perfil.aprovadas` cresce enquanto o motor planeja,
+mas `perfil.cursadas` — que é o que a regra do 4 lê — não muda. A reprovada segue
+reprovada do começo ao fim e libera a dependente em todos os semestres.
 
 ### 1.5 Fim do bloqueio de adição
 

@@ -3,6 +3,7 @@
 import type { DisciplinaMatriz, DisciplinaOfertada, Matriz, OfertaSemestre, PerfilAluno } from "../tipos";
 import { rotuloDoConjunto } from "../cursos";
 import { criarMapaIdentidade, type MapaIdentidade } from "./identidade";
+import { liberadoPorDesempenho } from "./prerequisitos";
 
 export interface Elegivel {
   disciplina: DisciplinaMatriz;
@@ -38,7 +39,7 @@ function bloqueio(d: DisciplinaMatriz, perfil: PerfilAluno | null, matriz: Matri
     const mPer = p.match(/^Período:(\d)$/);
     if (mPer) {
       if ((perfil.periodo ?? 0) < parseInt(mPer[1])) pendentes.push(`estar no ${mPer[1]}º período`);
-    } else if (!cumpre(p, perfil, mapa)) {
+    } else if (!cumpre(p, perfil, mapa) && !liberadoPorDesempenho(p, perfil, mapa)) {
       const dep = matriz.disciplinas.find((x) => x.codigo === p);
       pendentes.push(dep ? `${p} (${dep.nome})` : p);
     }
