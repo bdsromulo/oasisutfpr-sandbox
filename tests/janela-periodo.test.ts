@@ -157,6 +157,50 @@ describe("Sugestão de Grade na 968", () => {
   });
 });
 
+/**
+ * O gate corta o que está longe demais; a pontuação ordena o que sobrou. Sem
+ * esta metade, o TCC volta ao topo assim que o aluno chega ao 7º período —
+ * dentro da janela, mas ainda dois períodos à frente do que ele deveria cursar.
+ */
+describe("distância do período na pontuação", () => {
+  const opcoes = {
+    estrategia: "adiantar_maximo" as const,
+    naoManha: false,
+    naoTarde: false,
+    naoNoite: false,
+  };
+
+  it("não põe disciplina adiantada na frente de uma que já está no período", () => {
+    const selecao = gerarSugestaoGrade(perfil968(7), matriz, oferta, opcoes);
+    const periodos = selecao
+      .map((s) => matriz.disciplinas.find((x) => x.codigo === s.codDisciplina))
+      .filter((d) => !!d && d.periodo > 0)
+      .map((d) => d!.periodo);
+
+    let viuAdiantada = false;
+    for (const p of periodos) {
+      if (p > 7) {
+        viuAdiantada = true;
+        continue;
+      }
+      expect(viuAdiantada, `disciplina do ${p}º período sugerida depois de uma adiantada`).toBe(
+        false,
+      );
+    }
+  });
+
+  it("prioriza a atrasada sobre a adiantada", () => {
+    // ELE91 (9º) contra as do 6º e 7º que o mesmo semestre oferece
+    const selecao = gerarSugestaoGrade(perfil968(7), matriz, oferta, opcoes);
+    const codigos = selecao.map((s) => s.codDisciplina);
+    const posTcc = codigos.indexOf("ELE91");
+    const posOficina = codigos.indexOf("ELE64"); // 7º período
+    if (posTcc >= 0 && posOficina >= 0) {
+      expect(posTcc).toBeGreaterThan(posOficina);
+    }
+  });
+});
+
 describe("Simulador de Formatura na 968", () => {
   it("não põe o TCC no primeiro semestre projetado de quem está no 6º", () => {
     const sim = simularFormatura(perfil968(6), matriz, [oferta], {
