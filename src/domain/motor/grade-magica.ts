@@ -2,6 +2,7 @@ import type { Matriz, OfertaSemestre, PerfilAluno, SelecaoTurma, Turma } from ".
 import { listarElegiveis } from "./elegiveis";
 import { haveriaConflito, itensDaSelecao } from "./grade";
 import { criarMapaIdentidade } from "./identidade";
+import { indiceDoSlot, SLOTS_ORDENADOS } from "../horarios";
 import {
   cargaAprovadaBlocoOptativo,
   categoriaSimples,
@@ -21,6 +22,13 @@ export interface OpcoesSugestaoGrade {
   sedeCentro?: boolean;
   sedeEcoville?: boolean;
   sedeNeoville?: boolean;
+  /**
+   * Janela de aulas (TASK-46): ids de slot da régua `SLOTS_ORDENADOS`, como
+   * "T2" e "N3". Recortam o dia por estrutura de aula, e não por horário solto.
+   * Ausentes = régua inteira, filtro inerte.
+   */
+  aulaInicial?: string;
+  aulaFinal?: string;
   maxDisciplinas?: number;
   disciplinasExcluidas?: ({ codigo: string; nome: string } | string)[];
   professoresExcluidos?: string[];
@@ -62,6 +70,34 @@ export function turmaViolaTurnos(
     if (restricoes.naoManha && h.turno === "M") return true;
     if (restricoes.naoTarde && h.turno === "T") return true;
     if (restricoes.naoNoite && h.turno === "N") return true;
+  }
+  return false;
+}
+
+/**
+ * Verifica se a turma cai fora da janela de aulas pedida (TASK-46).
+ *
+ * Basta um horário fora para a turma inteira sair: meia-matrícula não existe —
+ * quem não pode chegar antes de T2 não vai à aula de T1 de uma turma que tem as
+ * duas. Slot desconhecido na régua não derruba a turma; o dado da oferta manda,
+ * e inventar restrição a partir de horário que não sabemos ler seria pior.
+ */
+export function turmaViolaJanela(
+  turma: Turma,
+  restricoes: { aulaInicial?: string; aulaFinal?: string },
+): boolean {
+  const inicio = restricoes.aulaInicial
+    ? SLOTS_ORDENADOS.indexOf(restricoes.aulaInicial)
+    : 0;
+  const fim = restricoes.aulaFinal
+    ? SLOTS_ORDENADOS.indexOf(restricoes.aulaFinal)
+    : SLOTS_ORDENADOS.length - 1;
+  if (inicio < 0 || fim < 0) return false; // id fora da régua: pedido ignorado
+
+  for (const h of turma.horarios) {
+    const idx = indiceDoSlot(h.turno, h.aula);
+    if (idx < 0) continue;
+    if (idx < inicio || idx > fim) return true;
   }
   return false;
 }
@@ -450,7 +486,13 @@ export function gerarSugestaoGrade(
 
     // Filtrar e pontuar as turmas válidas dessa disciplina
     const turmasValidas = e.oferta!.turmas
-      .filter((t) => !turmaViolaTurnos(t, opcoes) && !turmaViolaSedes(t, opcoes) && !turmaViolaProfessores(t, opcoes))
+      .filter(
+        (t) =>
+          !turmaViolaTurnos(t, opcoes) &&
+          !turmaViolaJanela(t, opcoes) &&
+          !turmaViolaSedes(t, opcoes) &&
+          !turmaViolaProfessores(t, opcoes),
+      )
       .map((t) => ({
         turma: t,
         pontos: calcularPesoPrioridadeTurma(t, curso.matriz === 981),
