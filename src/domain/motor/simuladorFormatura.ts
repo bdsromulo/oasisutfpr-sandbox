@@ -14,6 +14,7 @@ import {
   descricaoDoCurso,
   ehGrupoOpcao,
   ehTrilha,
+  foraDaJanelaDePeriodo,
   categoriaSimples,
   grupoOpcaoDe,
   TETO_CH_SEMESTRE,
@@ -1001,6 +1002,16 @@ export function simularFormatura(
   const pendentes = new Set(candidatas.map((d) => d.codigo));
   const porCodigo = new Map(matriz.disciplinas.map((d) => [d.codigo, d]));
   const periodoAluno = perfil?.periodo ?? 1;
+  /**
+   * O período que o histórico declara, sem o `?? 1` acima.
+   *
+   * A janela de período (TASK-48) precisa distinguir "aluno do 1º período" de
+   * "não sei em que período ele está" — o fallback de 1 serve para fazer a
+   * projeção andar, mas usá-lo como se fosse dado real faria o modo livre, sem
+   * histórico, simular um calouro e barrar tudo do 4º período para cima. É a
+   * mesma convenção de `bloqueio()`, que libera tudo quando não há perfil.
+   */
+  const periodoDeclarado = perfil?.periodo ?? null;
 
   /**
    * Horas que a trilha vai de fato consumir até validar o próprio piso.
@@ -1075,6 +1086,14 @@ export function simularFormatura(
         const s = saz.de(d.codigo);
         if (s === "primeiro" && semestrePar) return false;
         if (s === "segundo" && !semestrePar) return false;
+
+        // Janela de período (TASK-48), medida contra o período PROJETADO e não
+        // contra o de hoje: a disciplina adiantada demais não some da projeção,
+        // só espera. O TCC do 9º entra sozinho quando a projeção alcança o 7º.
+        // Sem período no histórico o gate não roda — ver `periodoDeclarado`.
+        if (periodoDeclarado !== null && foraDaJanelaDePeriodo(d.periodo, periodoNoSemestre)) {
+          return false;
+        }
 
         return d.prerequisitos.every((p) => {
           const per = periodoExigido(p);

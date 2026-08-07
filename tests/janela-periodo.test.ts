@@ -1,0 +1,182 @@
+import { describe, expect, it } from "vitest";
+import matriz968Json from "../data/eng-eletronica/matriz-968.json";
+import oferta20262 from "../data/eng-eletronica/turmas/2026-2.json";
+import { ADIANTAMENTO_MAXIMO_PERIODOS, foraDaJanelaDePeriodo } from "../src/domain/cursos";
+import { listarElegiveis } from "../src/domain/motor/elegiveis";
+import { gerarSugestaoGrade } from "../src/domain/motor/grade-magica";
+import { simularFormatura } from "../src/domain/motor/simuladorFormatura";
+import type { Matriz, OfertaSemestre, PerfilAluno, ResumoConjunto } from "../src/domain/tipos";
+
+/**
+ * Janela de período (TASK-48).
+ *
+ * A UTFPR recusa matrícula em disciplina adiantada demais: vale até 2 períodos
+ * à frente do período do aluno. O motor sabia o período de cada disciplina —
+ * as 1.290 das oito matrizes o têm preenchido — e nunca o comparava com o do
+ * aluno, então um aluno do 6º período de Eng. Eletrônica recebia Trabalho de
+ * Conclusão de Curso 1 (9º período) em segundo lugar na Sugestão de Grade.
+ */
+
+const matriz = matriz968Json as unknown as Matriz;
+const oferta = oferta20262 as unknown as OfertaSemestre;
+
+function conjunto(codigo: string, nome: string, exigido: number, cumprido: number): ResumoConjunto {
+  return {
+    conjunto: codigo,
+    nome,
+    chObrigatoria: exigido,
+    chCursadaAprovada: cumprido,
+    chFaltante: Math.max(0, exigido - cumprido),
+    chValidada: cumprido >= exigido ? exigido : 0,
+  };
+}
+
+/**
+ * Perfil da 968 no 6º período, com as obrigatórias até o 5º aprovadas. É o
+ * recorte do caso real que originou a task: sem as aprovações o guloso nem
+ * chega às disciplinas de fim de curso.
+ */
+function perfil968(periodo: number | null = 6): PerfilAluno {
+  const aprovadas = new Set<string>(
+    matriz.disciplinas
+      .filter((d) => d.conjunto === null && (d.periodo ?? 99) <= 5)
+      .map((d) => d.codigo),
+  );
+  return {
+    nome: "ALUNO FICTÍCIO",
+    matricula: "0000000",
+    curso: "250 - Eng Eletrônica",
+    matriz: 968,
+    periodo,
+    coefAbsoluto: 0.8,
+    coefNormalizado: 0.65,
+    ingresso: "1/2023",
+    cursadas: Array.from(aprovadas).map((codigo) => {
+      const d = matriz.disciplinas.find((x) => x.codigo === codigo)!;
+      return {
+        codigo,
+        nome: d.nome,
+        situacao: "aprovado" as const,
+        origem: "obrigatoria" as const,
+        media: 8,
+        frequencia: 100,
+        cht: d.horas.total,
+        ano: null,
+        semestre: null,
+      };
+    }),
+    aprovadas,
+    matriculadas: [],
+    obrigatoriasFaltantes: [],
+    dependencias: [],
+    resumoConjuntos: [
+      conjunto("1174", "Ciclo De Humanidades", 210, 60),
+      conjunto("1175", "Opções De Programação De Computador", 60, 60),
+      conjunto("1187", "Opções De Circuitos Elétricos", 180, 180),
+      conjunto("1193", "Opções De Física Aplicada", 210, 60),
+      conjunto("1177", "Opções De Adm, Empreend E Economia", 90, 0),
+      conjunto("1180", "Trilhas De Aprofundamento", 300, 0),
+      conjunto("1226", "Sistemas Iot", 270, 0),
+    ],
+    eletivas: null,
+    extensao: { chTotal: 465, chCursada: 0, chFaltante: 465 },
+    resumoGeral: {
+      obrigatorias: { total: 1710, cursada: 1095, aprovada: 1095, faltante: 615, aprovadaTotal: 1095 },
+      optativas: { total: 2385, cursada: 1095, aprovada: 675, faltante: 1710, aprovadaTotal: 795 },
+      eletivas: { total: 0, aprovada: 0, faltante: 0 },
+    },
+    avisos: [],
+  };
+}
+
+describe("a fronteira da janela", () => {
+  it("permite até dois períodos à frente e barra o terceiro", () => {
+    expect(ADIANTAMENTO_MAXIMO_PERIODOS).toBe(2);
+    // aluno no 7º alcança o TCC do 9º; no 6º, não
+    expect(foraDaJanelaDePeriodo(9, 7)).toBe(false);
+    expect(foraDaJanelaDePeriodo(9, 6)).toBe(true);
+    expect(foraDaJanelaDePeriodo(8, 6)).toBe(false);
+  });
+
+  it("nunca trava o aluno atrasado", () => {
+    // dependência do 3º período para quem já está no 6º continua à mão
+    expect(foraDaJanelaDePeriodo(3, 6)).toBe(false);
+    expect(foraDaJanelaDePeriodo(1, 10)).toBe(false);
+  });
+
+  it("falha aberto quando não há período de que medir distância", () => {
+    // histórico sem período: travar tudo seria pior que não travar nada
+    expect(foraDaJanelaDePeriodo(9, null)).toBe(false);
+    expect(foraDaJanelaDePeriodo(9, 0)).toBe(false);
+    // disciplina que só existe na oferta chega com periodo 0
+    expect(foraDaJanelaDePeriodo(0, 6)).toBe(false);
+  });
+});
+
+describe("Sugestão de Grade na 968", () => {
+  const opcoes = {
+    estrategia: "adiantar_maximo" as const,
+    naoManha: false,
+    naoTarde: false,
+    naoNoite: false,
+  };
+
+  it("bloqueia o TCC com motivo legível para quem está no 6º período", () => {
+    const elegiveis = listarElegiveis(perfil968(6), matriz, oferta);
+    const tcc = elegiveis.find((e) => e.disciplina.codigo === "ELE91")!;
+    expect(tcc.motivoBloqueio).toBe("abre a partir do 7º período");
+  });
+
+  it("libera o TCC quando o aluno chega ao 7º período", () => {
+    const elegiveis = listarElegiveis(perfil968(7), matriz, oferta);
+    const tcc = elegiveis.find((e) => e.disciplina.codigo === "ELE91")!;
+    expect(tcc.motivoBloqueio).toBeNull();
+  });
+
+  it("não sugere TCC1 nem TCC2 para o aluno do 6º período", () => {
+    for (const estrategia of ["adiantar_maximo", "balanceado"] as const) {
+      const selecao = gerarSugestaoGrade(perfil968(6), matriz, oferta, { ...opcoes, estrategia });
+      const codigos = selecao.map((s) => s.codDisciplina);
+      expect(codigos, estrategia).not.toContain("ELE91");
+      expect(codigos, estrategia).not.toContain("ELE92");
+    }
+  });
+
+  it("continua sugerindo uma grade cheia sem o TCC", () => {
+    const selecao = gerarSugestaoGrade(perfil968(6), matriz, oferta, opcoes);
+    expect(selecao.length).toBeGreaterThanOrEqual(4);
+  });
+
+  it("não sugere nada acima da janela, seja qual for a categoria", () => {
+    const selecao = gerarSugestaoGrade(perfil968(6), matriz, oferta, opcoes);
+    for (const s of selecao) {
+      const d = matriz.disciplinas.find((x) => x.codigo === s.codDisciplina);
+      if (!d) continue; // disciplina só da oferta: sem período conhecido
+      expect(d.periodo, `${d.codigo} ${d.nome}`).toBeLessThanOrEqual(8);
+    }
+  });
+});
+
+describe("Simulador de Formatura na 968", () => {
+  it("não põe o TCC no primeiro semestre projetado de quem está no 6º", () => {
+    const sim = simularFormatura(perfil968(6), matriz, [oferta], {
+      ritmo: 6,
+      semestreInicial: "2026-2",
+      horizonte: 20,
+    });
+    const primeiro = sim.semestres[0].disciplinas.map((d) => d.codigo);
+    expect(primeiro).not.toContain("ELE91");
+    expect(primeiro).not.toContain("ELE92");
+  });
+
+  it("ainda projeta o TCC mais adiante, e não o perde", () => {
+    const sim = simularFormatura(perfil968(6), matriz, [oferta], {
+      ritmo: 6,
+      semestreInicial: "2026-2",
+      horizonte: 20,
+    });
+    const todas = sim.semestres.flatMap((s) => s.disciplinas.map((d) => d.codigo));
+    expect(todas).toContain("ELE91");
+    expect(todas).toContain("ELE92");
+  });
+});
