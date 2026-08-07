@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import matriz968Json from "../data/eng-eletronica/matriz-968.json";
 import oferta20262 from "../data/eng-eletronica/turmas/2026-2.json";
 import { ADIANTAMENTO_MAXIMO_PERIODOS, foraDaJanelaDePeriodo } from "../src/domain/cursos";
+import { CURSOS } from "../src/domain/dadosCurso";
 import { listarElegiveis } from "../src/domain/motor/elegiveis";
 import { gerarSugestaoGrade } from "../src/domain/motor/grade-magica";
 import { simularFormatura } from "../src/domain/motor/simuladorFormatura";
@@ -199,6 +200,108 @@ describe("distância do período na pontuação", () => {
       expect(posTcc).toBeGreaterThan(posOficina);
     }
   });
+});
+
+/**
+ * A regra é do domínio, não de um curso: `foraDaJanelaDePeriodo` só olha dois
+ * números, e os dois motores que decidem o que o aluno cursa a consultam. Este
+ * bloco prova isso nos oito currículos servidos, em vez de confiar em que a
+ * função ser genérica basta.
+ */
+describe("a janela vale em todo curso servido", () => {
+  const PERIODO = 5;
+  const TETO = PERIODO + ADIANTAMENTO_MAXIMO_PERIODOS;
+
+  /** Perfil mínimo do curso, com as obrigatórias até o 4º período feitas. */
+  function perfilGenerico(m: Matriz, periodo: number = PERIODO): PerfilAluno {
+    const aprovadas = new Set<string>(
+      m.disciplinas.filter((d) => d.conjunto === null && d.periodo > 0 && d.periodo <= 4).map((d) => d.codigo),
+    );
+    return {
+      nome: "ALUNO FICTÍCIO",
+      matricula: "0000000",
+      curso: String(m.curso),
+      matriz: m.matriz,
+      periodo,
+      coefAbsoluto: 0.8,
+      coefNormalizado: 0.65,
+      ingresso: "1/2023",
+      cursadas: Array.from(aprovadas).map((codigo) => {
+        const d = m.disciplinas.find((x) => x.codigo === codigo)!;
+        return {
+          codigo,
+          nome: d.nome,
+          situacao: "aprovado" as const,
+          origem: "obrigatoria" as const,
+          media: 8,
+          frequencia: 100,
+          cht: d.horas.total,
+          ano: null,
+          semestre: null,
+        };
+      }),
+      aprovadas,
+      matriculadas: [],
+      obrigatoriasFaltantes: [],
+      dependencias: [],
+      resumoConjuntos: [],
+      eletivas: null,
+      extensao: null,
+      resumoGeral: null,
+      avisos: [],
+    };
+  }
+
+  for (const curso of CURSOS) {
+    describe(curso.rotuloCurto, () => {
+      const m = curso.matriz;
+      const of = curso.ofertas[curso.semestrePadrao];
+      const perfil = perfilGenerico(m);
+
+      it("a Sugestão de Grade não passa da janela", () => {
+        for (const estrategia of ["adiantar_maximo", "balanceado"] as const) {
+          const selecao = gerarSugestaoGrade(perfil, m, of, {
+            estrategia,
+            naoManha: false,
+            naoTarde: false,
+            naoNoite: false,
+          });
+          for (const s of selecao) {
+            const d = m.disciplinas.find((x) => x.codigo === s.codDisciplina);
+            if (!d || d.periodo <= 0) continue; // só na oferta: sem período conhecido
+            expect(d.periodo, `${estrategia}: ${d.codigo} ${d.nome}`).toBeLessThanOrEqual(TETO);
+          }
+        }
+      });
+
+      it("o Simulador não passa da janela no primeiro semestre projetado", () => {
+        const sim = simularFormatura(perfil, m, [of], {
+          ritmo: 6,
+          semestreInicial: curso.semestrePadrao,
+          horizonte: 20,
+        });
+        for (const d of sim.semestres[0].disciplinas) {
+          const dm = m.disciplinas.find((x) => x.codigo === d.codigo);
+          if (!dm || dm.periodo <= 0) continue;
+          expect(dm.periodo, `${dm.codigo} ${dm.nome}`).toBeLessThanOrEqual(TETO);
+        }
+      });
+
+      it("a janela não impede a formatura que o curso alcançaria sem ela", () => {
+        const opts = { ritmo: 6, semestreInicial: curso.semestrePadrao, horizonte: 20 };
+        // período altíssimo: nada fica a mais de 2 períodos de distância, então
+        // o gate existe e não morde. É a linha de base contra a qual medir.
+        const semJanela = simularFormatura(perfilGenerico(m, 99), m, [of], opts);
+        const comJanela = simularFormatura(perfil, m, [of], opts);
+
+        // Eng. Mecatrônica não fecha nem com o gate inerte — lacuna anterior a
+        // esta task (a suíte do Simulador nunca cobriu esse curso), e não algo
+        // que a janela tenha causado. Aqui só não se afirma nada sobre ela.
+        if (!semJanela.semestreFormatura) return;
+        expect(comJanela.semestreFormatura).toBeTruthy();
+      });
+    });
+  }
 });
 
 describe("Simulador de Formatura na 968", () => {
