@@ -22,14 +22,11 @@ export function Card({
   children: ReactNode;
   classe?: string;
   /**
-   * Eventos de arrasto repassados ao elemento raiz. O simulador usa o cartão do
-   * semestre como zona de soltura (TASK-50); sem isto o Card engoliria os
-   * handlers e o drop nunca aconteceria.
+   * O que sobra é repassado ao elemento raiz. O simulador marca o cartão do
+   * semestre com `data-semestre` para o arrasto localizar o destino sob o dedo
+   * (TASK-50); sem o repasse o Card engoliria o atributo.
    */
-} & Pick<
-  React.HTMLAttributes<HTMLDivElement>,
-  "onDragOver" | "onDragLeave" | "onDrop" | "onDragEnter"
->) {
+} & Omit<React.ComponentPropsWithoutRef<"div">, "className" | "children">) {
   const props = { titulo, children, classe };
   return (
     <div

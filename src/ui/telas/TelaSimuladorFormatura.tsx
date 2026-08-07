@@ -287,8 +287,20 @@ export function TelaSimuladorFormatura(props: {
   const [trocando, setTrocando] = useState<string | null>(null);
   /** semestre com o menu "adicionar matéria" aberto (TASK-50) */
   const [adicionandoEm, setAdicionandoEm] = useState<string | null>(null);
-  /** código sendo arrastado, para esmaecer a origem e destacar o destino */
-  const [arrastando, setArrastando] = useState<string | null>(null);
+  /**
+   * Arrasto de disciplina entre semestres (TASK-50).
+   *
+   * Feito com Pointer Events, e não com o drag-and-drop nativo do HTML5: aquele
+   * simplesmente não existe em toque, e o recurso ficava restrito ao desktop.
+   * Pointer unifica mouse, dedo e caneta no mesmo caminho de código.
+   */
+  const [arrasto, setArrasto] = useState<{
+    codigo: string;
+    nome: string;
+    origem: string;
+    x: number;
+    y: number;
+  } | null>(null);
   const [alvoArrasto, setAlvoArrasto] = useState<string | null>(null);
 
   const resultado = useMemo(
@@ -383,6 +395,48 @@ export function TelaSimuladorFormatura(props: {
   function moverParaSemestre(codigo: string, destino: string) {
     setModelagem(fixarNoSemestre(modelagem, codigo, destino));
   }
+
+  /**
+   * Semestre sob as coordenadas do ponteiro.
+   *
+   * `elementFromPoint` é o que faz o arrasto por toque funcionar: no dedo não há
+   * "elemento sob o cursor" durante o gesto — os eventos continuam indo para
+   * quem iniciou o toque —, então o destino tem de ser descoberto por posição.
+   */
+  function semestreSob(x: number, y: number): string | null {
+    const alvo = document.elementFromPoint(x, y);
+    return alvo?.closest<HTMLElement>("[data-semestre]")?.dataset.semestre ?? null;
+  }
+
+  useEffect(() => {
+    if (!arrasto) return;
+
+    const mover = (ev: PointerEvent) => {
+      setArrasto((a) => (a ? { ...a, x: ev.clientX, y: ev.clientY } : a));
+      setAlvoArrasto(semestreSob(ev.clientX, ev.clientY));
+    };
+    const soltar = (ev: PointerEvent) => {
+      const destino = semestreSob(ev.clientX, ev.clientY);
+      // soltar no próprio semestre de origem não é uma mudança: sem esta
+      // guarda, um toque acidental fixaria a disciplina onde ela já estava e
+      // ela apareceria no painel de ajustes como se o aluno tivesse pedido
+      if (destino && destino !== arrasto.origem) {
+        moverParaSemestre(arrasto.codigo, destino);
+      }
+      setArrasto(null);
+      setAlvoArrasto(null);
+    };
+
+    window.addEventListener("pointermove", mover);
+    window.addEventListener("pointerup", soltar);
+    window.addEventListener("pointercancel", soltar);
+    return () => {
+      window.removeEventListener("pointermove", mover);
+      window.removeEventListener("pointerup", soltar);
+      window.removeEventListener("pointercancel", soltar);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [arrasto?.codigo, arrasto?.origem, modelagem]);
 
   /** X: tira do plano de vez. Obrigatória não recebe o botão. */
   function removerDoPlano(codigo: string, nome: string) {
@@ -802,24 +856,11 @@ export function TelaSimuladorFormatura(props: {
             return (
               <Card
                 key={s.semestre}
-                // Zona de soltura do arrasto (TASK-50). `preventDefault` no
-                // dragOver é o que habilita o drop — sem ele o navegador recusa.
-                onDragOver={(ev: React.DragEvent) => {
-                  if (!arrastando) return;
-                  ev.preventDefault();
-                  ev.dataTransfer.dropEffect = "move";
-                  if (alvoArrasto !== s.semestre) setAlvoArrasto(s.semestre);
-                }}
-                onDragLeave={() => setAlvoArrasto((a) => (a === s.semestre ? null : a))}
-                onDrop={(ev: React.DragEvent) => {
-                  ev.preventDefault();
-                  const codigo = ev.dataTransfer.getData("text/plain");
-                  setAlvoArrasto(null);
-                  setArrastando(null);
-                  if (codigo) moverParaSemestre(codigo, s.semestre);
-                }}
+                // Zona de soltura do arrasto (TASK-50): o gesto localiza o
+                // destino por este atributo, via elementFromPoint.
+                data-semestre={s.semestre}
                 classe={`transition-all ${
-                  alvoArrasto === s.semestre
+                  alvoArrasto === s.semestre && arrasto?.origem !== s.semestre
                     ? "!border-utfpr-500 !border-2 !border-dashed bg-utfpr-500/5"
                     : ultimo && resultado.semestreFormatura
                       ? "!border-utfpr-500/60 !border-2"
@@ -881,21 +922,35 @@ export function TelaSimuladorFormatura(props: {
                   {s.disciplinas.map((d) => (
                     <li
                       key={d.codigo + d.nome}
-                      // Arrastar o bloco de um semestre para outro (TASK-50). O
-                      // placeholder de categoria não tem código real na matriz e
-                      // não pode ser preso a lugar nenhum.
-                      draggable={!d.codigo.startsWith("PLACEHOLDER_")}
-                      onDragStart={(ev) => {
-                        ev.dataTransfer.setData("text/plain", d.codigo);
-                        ev.dataTransfer.effectAllowed = "move";
-                        setArrastando(d.codigo);
-                      }}
-                      onDragEnd={() => setArrastando(null)}
                       className={`flex flex-wrap items-center gap-2 rounded-lg text-sm transition-opacity ${
-                        d.codigo.startsWith("PLACEHOLDER_") ? "" : "cursor-grab active:cursor-grabbing"
-                      } ${arrastando === d.codigo ? "opacity-40" : ""}`}
+                        arrasto?.codigo === d.codigo ? "opacity-40" : ""
+                      }`}
                       title={rotuloSazonalidade(d.sazonalidade)}
                     >
+                      {/* Alça de arrasto (TASK-50). O gesto sai de uma alça
+                          dedicada, e não do bloco inteiro, porque `touch-none`
+                          desliga a rolagem da página no elemento que o recebe —
+                          no bloco inteiro, o dedo não conseguiria mais rolar a
+                          linha do tempo. O placeholder de categoria não tem
+                          código na matriz e não pode ser preso a lugar nenhum. */}
+                      {!d.codigo.startsWith("PLACEHOLDER_") && (
+                        <span
+                          onPointerDown={(ev) => {
+                            ev.preventDefault();
+                            setArrasto({
+                              codigo: d.codigo,
+                              nome: d.nome,
+                              origem: s.semestre,
+                              x: ev.clientX,
+                              y: ev.clientY,
+                            });
+                          }}
+                          title="Arraste para outro semestre"
+                          className="shrink-0 touch-none cursor-grab select-none px-0.5 font-mono text-xs leading-none text-zinc-300 transition-colors hover:text-zinc-600 active:cursor-grabbing dark:text-zinc-600 dark:hover:text-zinc-300"
+                        >
+                          ⠿
+                        </span>
+                      )}
                       {/* Ações do bloco (TASK-50): mover para o semestre vizinho
                           e, quando há substituta, tirar do plano. Obrigatória
                           nunca ganha o X — sem ela não há formatura, e o motor
@@ -1214,6 +1269,19 @@ export function TelaSimuladorFormatura(props: {
         onFechar={() => setExplicacaoAberta(false)}
         id="modalExplicacaoCalculosSimulador"
       />
+
+      {/* Etiqueta que segue o ponteiro durante o arrasto (TASK-50). No toque ela
+          é o único retorno visual do gesto: o dedo cobre a origem, e sem isso o
+          aluno não saberia que está arrastando alguma coisa. `pointer-events-none`
+          é essencial — do contrário ela mesma seria o alvo de elementFromPoint. */}
+      {arrasto && (
+        <div
+          className="pointer-events-none fixed z-50 max-w-[70vw] truncate rounded-xl border-2 border-utfpr-500 bg-white px-2.5 py-1 font-display text-xs font-black text-zinc-900 shadow-lg dark:bg-zinc-900 dark:text-white"
+          style={{ left: arrasto.x + 12, top: arrasto.y + 12 }}
+        >
+          {arrasto.nome}
+        </div>
+      )}
     </div>
   );
 }

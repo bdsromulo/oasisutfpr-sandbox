@@ -157,7 +157,12 @@ Toda tarefa — seja **Feature** ou **Bug** — carrega exatamente um destes sta
   - No motor, `fixacoesPorSemestre` prende a disciplina a um semestre. Ela fica fora de todos os outros e ganha prioridade máxima no dela — acima até das obrigatórias, porque o aluno apontou o lugar.
   - **É pedido, não ordem:** se lá não couber (pré-requisito travado, teto de carga estourado, sem turma sem choque), o motor relata via `semestre-fixado` e devolve a disciplina ao pool. Sem essa devolução ela ficaria reservada para um semestre já passado, e a projeção deixaria de fechar por causa de um arrasto.
   - Duas guardas de borda: prender a semestre **anterior ao início** da projeção é recusado na entrada (aquele semestre nunca seria visitado), e fixação que o horizonte não alcançou é relatada no fim.
-  - O `Card` passou a repassar os eventos de arrasto ao elemento raiz; antes ele os engolia e o drop nunca acontecia.
+  - **Arrasto por Pointer Events, não pelo drag-and-drop do HTML5:** aquele simplesmente não existe em toque, e o recurso nascia restrito ao desktop. Pointer unifica mouse, dedo e caneta no mesmo caminho de código.
+  - O gesto sai de uma **alça dedicada** (`⠿`), e não do bloco inteiro: `touch-none` desliga a rolagem no elemento que o recebe, e no bloco inteiro o dedo não conseguiria mais rolar a linha do tempo.
+  - O destino é descoberto por `elementFromPoint` sobre `data-semestre`: no toque não existe "elemento sob o cursor" durante o gesto — os eventos continuam indo para quem iniciou o toque.
+  - Etiqueta seguindo o ponteiro, com `pointer-events-none`. No toque é o único retorno visual (o dedo cobre a origem); sem o `pointer-events-none` ela seria o próprio alvo do `elementFromPoint`.
+  - Soltar no semestre de origem não conta como mudança: sem essa guarda, um toque acidental fixaria a disciplina onde ela já estava e ela apareceria no painel de ajustes como pedido do aluno.
+  - O `Card` passou a repassar os atributos ao elemento raiz; antes ele engolia o `data-semestre`.
 
 - **TASK-45 — Pré-requisito liberado por reprovação com média ≥ 4,0 (todos os cursos):**
   - Desenho em `docs/superpowers/specs/2026-08-06-liberacao-janela-simulador-design.md` §1. Desenvolvimento no sandbox.
