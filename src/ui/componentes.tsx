@@ -12,9 +12,28 @@ import {
 import { calcularProgressoMateria, type StatusIcone } from "../domain/motor/progressoGrade";
 import type { Matriz, PerfilAluno } from "../domain/tipos";
 
-export function Card(props: { titulo?: ReactNode; children: ReactNode; classe?: string }) {
+export function Card({
+  titulo,
+  children,
+  classe,
+  ...resto
+}: {
+  titulo?: ReactNode;
+  children: ReactNode;
+  classe?: string;
+  /**
+   * Eventos de arrasto repassados ao elemento raiz. O simulador usa o cartão do
+   * semestre como zona de soltura (TASK-50); sem isto o Card engoliria os
+   * handlers e o drop nunca aconteceria.
+   */
+} & Pick<
+  React.HTMLAttributes<HTMLDivElement>,
+  "onDragOver" | "onDragLeave" | "onDrop" | "onDragEnter"
+>) {
+  const props = { titulo, children, classe };
   return (
     <div
+      {...resto}
       className={`rounded-2xl border border-zinc-200/90 bg-white p-5 shadow-xs transition-all hover:border-zinc-300 hover:shadow-sm dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-none dark:hover:border-zinc-700/80 ${props.classe ?? ""}`}
     >
       {props.titulo && (

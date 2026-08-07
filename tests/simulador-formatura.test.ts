@@ -1200,3 +1200,90 @@ describe("simulador modelável", () => {
     });
   }
 });
+
+/**
+ * TASK-50 — prender disciplina a um semestre.
+ *
+ * O aluno arrasta o bloco ou usa as setas de mover. É pedido, não ordem: se lá
+ * não couber (pré-requisito travado, teto estourado, sem turma livre), o motor
+ * relata e realoca — a projeção tem de fechar de todo jeito.
+ */
+describe("fixação de disciplina por semestre", () => {
+  const cursos = [BSI, ENG_COMP, ENG_COMP_962, ENG_ELETRONICA];
+  const ofertasDo = (curso: (typeof cursos)[number]) =>
+    Object.keys(curso.ofertas)
+      .sort()
+      .reverse()
+      .map((s) => curso.ofertas[s]);
+
+  for (const curso of cursos) {
+    describe(curso.rotuloCurto, () => {
+      const ofertasCurso = ofertasDo(curso);
+      const simular = (opcoes: Partial<Parameters<typeof simularFormatura>[3]> = {}) =>
+        simularFormatura(null, curso.matriz, ofertasCurso, {
+          ritmo: 5,
+          semestreInicial: "2026-2",
+          ...opcoes,
+        });
+      const base = simular();
+      const semestreDe = (r: typeof base, codigo: string) =>
+        r.semestres.find((s) => s.disciplinas.some((d) => d.codigo === codigo))?.semestre ?? null;
+
+      it("sem fixação nenhuma, a projeção é a de sempre", () => {
+        expect(simular({ fixacoesPorSemestre: {} }).semestreFormatura).toBe(base.semestreFormatura);
+        expect(simular({ fixacoesPorSemestre: {} }).exclusoesImpossiveis).toEqual([]);
+      });
+
+      it("adiar uma matéria a tira do semestre original", () => {
+        // pega algo do primeiro semestre e prende dois semestres à frente
+        const doPrimeiro = base.semestres[0].disciplinas.find((d) => d.turma !== null);
+        if (!doPrimeiro || base.semestres.length < 3) return;
+        const destino = base.semestres[2].semestre;
+        const r = simular({ fixacoesPorSemestre: { [destino]: [doPrimeiro.codigo] } });
+
+        const onde = semestreDe(r, doPrimeiro.codigo);
+        const relatada = r.exclusoesImpossiveis.some(
+          (x) => x.tipo === "semestre-fixado" && x.alvo === doPrimeiro.codigo,
+        );
+        // ou foi para onde o aluno mandou, ou o motor explicou por que não deu
+        expect(onde === destino || relatada, `${doPrimeiro.codigo} foi para ${onde}`).toBe(true);
+        // o que não pode é sumir calada
+        expect(onde !== null || relatada).toBe(true);
+      });
+
+      it("a projeção continua fechando depois de uma fixação", () => {
+        const doPrimeiro = base.semestres[0].disciplinas.find((d) => d.turma !== null);
+        if (!doPrimeiro || base.semestres.length < 3) return;
+        const r = simular({
+          fixacoesPorSemestre: { [base.semestres[2].semestre]: [doPrimeiro.codigo] },
+        });
+        expect(r.semestreFormatura).not.toBeNull();
+      });
+
+      it("prender no passado é recusado e explicado", () => {
+        const alvo = base.semestres[0].disciplinas[0];
+        if (!alvo) return;
+        const r = simular({ fixacoesPorSemestre: { "2020-1": [alvo.codigo] } });
+        const acusada = r.exclusoesImpossiveis.find(
+          (x) => x.tipo === "semestre-fixado" && x.alvo === alvo.codigo,
+        );
+        expect(acusada, "fixação no passado passou em silêncio").toBeDefined();
+        // e a disciplina volta ao plano normalmente
+        expect(semestreDe(r, alvo.codigo)).not.toBeNull();
+        expect(r.semestreFormatura).not.toBeNull();
+      });
+
+      it("a fixação não duplica a matéria em dois semestres", () => {
+        const alvo = base.semestres[0].disciplinas.find((d) => d.turma !== null);
+        if (!alvo || base.semestres.length < 2) return;
+        const r = simular({
+          fixacoesPorSemestre: { [base.semestres[1].semestre]: [alvo.codigo] },
+        });
+        const ocorrencias = r.semestres.filter((s) =>
+          s.disciplinas.some((d) => d.codigo === alvo.codigo),
+        );
+        expect(ocorrencias.length).toBeLessThanOrEqual(1);
+      });
+    });
+  }
+});

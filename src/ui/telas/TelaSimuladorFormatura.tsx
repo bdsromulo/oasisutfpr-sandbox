@@ -5,6 +5,7 @@ import {
   formatarSemestre,
   formatarSemestreExtenso,
   gradeFixadaDaSelecao,
+  proximoSemestre,
   rotuloSazonalidade,
   simularFormatura,
   type DisciplinaPlanejada,
@@ -14,13 +15,20 @@ import {
 } from "../../domain/motor/simuladorFormatura";
 import {
   ControlesAvancados,
+  fixarNoSemestre,
   listarTrilhasDisponiveis,
   MODELAGEM_VAZIA,
   SeletorTrilhasAlvo,
   totalModelagem,
   type ValorModelagem,
 } from "./ControlesSimulador";
-import { descricaoDoCurso, ehTrilha, TETO_CH_SEMESTRE } from "../../domain/cursos";
+import {
+  categoriaSimples,
+  descricaoDoCurso,
+  ehGrupoOpcao,
+  ehTrilha,
+  TETO_CH_SEMESTRE,
+} from "../../domain/cursos";
 import { progressoGlobalDoCurso } from "../../domain/motor/situacao";
 import { buscarOfertaParaPlanejamento } from "../../domain/motor/elegiveis";
 import { criarMapaIdentidade } from "../../domain/motor/identidade";
@@ -32,6 +40,7 @@ import {
   IconCheck,
   IconDownload,
   IconGraduationCap,
+  IconPlus,
   IconWarning,
   IconInfo,
 } from "../icons";
@@ -172,6 +181,7 @@ const ROTULO_PEDIDO: Record<TipoExclusao, string> = {
   trilha: "evitar trilha",
   "trilha-alvo": "trilha escolhida",
   "disciplina-fixada": "quero cursar",
+  "semestre-fixado": "semestre escolhido",
 };
 
 function CardRequisito(props: { req: Requisito }) {
@@ -275,6 +285,11 @@ export function TelaSimuladorFormatura(props: {
   const [painelAvancadoAberto, setPainelAvancadoAberto] = useState(false);
   /** disciplina cuja lista de substitutas está aberta (camada 2) */
   const [trocando, setTrocando] = useState<string | null>(null);
+  /** semestre com o menu "adicionar matéria" aberto (TASK-50) */
+  const [adicionandoEm, setAdicionandoEm] = useState<string | null>(null);
+  /** código sendo arrastado, para esmaecer a origem e destacar o destino */
+  const [arrastando, setArrastando] = useState<string | null>(null);
+  const [alvoArrasto, setAlvoArrasto] = useState<string | null>(null);
 
   const resultado = useMemo(
     () =>
@@ -291,6 +306,7 @@ export function TelaSimuladorFormatura(props: {
         disciplinasFixadas: modelagem.disciplinasFixadas,
         ritmoPorSemestre: modelagem.ritmoPorSemestre,
         janela: { aulaInicial: modelagem.aulaInicial, aulaFinal: modelagem.aulaFinal },
+        fixacoesPorSemestre: modelagem.fixacoesPorSemestre,
       }),
     [perfil, matriz, ofertas, ritmo, semestreDePartida, gradeFixada, exclusoes, modelagem],
   );
@@ -325,6 +341,55 @@ export function TelaSimuladorFormatura(props: {
       });
     }
     setTrocando(null);
+  }
+
+  /**
+   * O que ainda falta cursar, agrupado por categoria — alimenta o menu de
+   * adicionar. Sai da própria lista de requisitos do motor, então a categoria
+   * já atendida não aparece e o aluno não gasta clique com o que não falta.
+   */
+  const faltantesPorCategoria = useMemo(() => {
+    const noPlano = new Set(resultado.semestres.flatMap((s) => s.disciplinas.map((d) => d.codigo)));
+    const cumpridas = (d: { codigo: string }) => noPlano.has(d.codigo);
+    const grupos: [IdCategoria, { horasFaltantes: number; disciplinas: typeof matriz.disciplinas }][] =
+      [];
+
+    for (const req of resultado.requisitos) {
+      if (req.atendido || req.id === "extensao") continue;
+      const disciplinas = matriz.disciplinas.filter(
+        (d) =>
+          !d.codigo.startsWith("ENADE") &&
+          !cumpridas(d) &&
+          categoriaDaDisciplina(d) === req.id,
+      );
+      if (disciplinas.length === 0) continue;
+      grupos.push([req.id, { horasFaltantes: Math.max(0, req.faltante - req.planejado), disciplinas }]);
+    }
+    return grupos;
+
+    /** Mesma classificação que o motor usa, derivada do conjunto da disciplina. */
+    function categoriaDaDisciplina(d: (typeof matriz.disciplinas)[number]): IdCategoria | null {
+      if (d.conjunto === null) return "obrigatorias";
+      const simples = categoriaSimples(curso, d.conjunto);
+      if (simples?.id === "humanidades") return "humanidades";
+      if (simples?.id === "segundoEstrato") return "segundoEstrato";
+      if (ehGrupoOpcao(curso, d.conjunto)) return "opcoes";
+      if (ehTrilha(curso, d.conjunto)) return "trilhas";
+      return "eletivas";
+    }
+  }, [resultado, matriz, perfil, ofertas, curso]);
+
+  /** Prende a disciplina ao semestre vizinho (setas ‹ ›) ou ao alvo do arrasto. */
+  function moverParaSemestre(codigo: string, destino: string) {
+    setModelagem(fixarNoSemestre(modelagem, codigo, destino));
+  }
+
+  /** X: tira do plano de vez. Obrigatória não recebe o botão. */
+  function removerDoPlano(codigo: string, nome: string) {
+    setModelagem(fixarNoSemestre(modelagem, codigo, null));
+    if (!exclusoes.disciplinas.some((x) => x.codigo === codigo)) {
+      setExclusoes({ ...exclusoes, disciplinas: [...exclusoes.disciplinas, { codigo, nome }] });
+    }
   }
 
   const totalMaterias = resultado.semestres.reduce((a, s) => a + s.materias, 0);
@@ -737,7 +802,29 @@ export function TelaSimuladorFormatura(props: {
             return (
               <Card
                 key={s.semestre}
-                classe={ultimo && resultado.semestreFormatura ? "!border-utfpr-500/60 !border-2" : ""}
+                // Zona de soltura do arrasto (TASK-50). `preventDefault` no
+                // dragOver é o que habilita o drop — sem ele o navegador recusa.
+                onDragOver={(ev: React.DragEvent) => {
+                  if (!arrastando) return;
+                  ev.preventDefault();
+                  ev.dataTransfer.dropEffect = "move";
+                  if (alvoArrasto !== s.semestre) setAlvoArrasto(s.semestre);
+                }}
+                onDragLeave={() => setAlvoArrasto((a) => (a === s.semestre ? null : a))}
+                onDrop={(ev: React.DragEvent) => {
+                  ev.preventDefault();
+                  const codigo = ev.dataTransfer.getData("text/plain");
+                  setAlvoArrasto(null);
+                  setArrastando(null);
+                  if (codigo) moverParaSemestre(codigo, s.semestre);
+                }}
+                classe={`transition-all ${
+                  alvoArrasto === s.semestre
+                    ? "!border-utfpr-500 !border-2 !border-dashed bg-utfpr-500/5"
+                    : ultimo && resultado.semestreFormatura
+                      ? "!border-utfpr-500/60 !border-2"
+                      : ""
+                }`}
               >
                 <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-zinc-100 pb-2.5 dark:border-zinc-800">
                   <div className="flex items-center gap-2.5">
@@ -794,9 +881,64 @@ export function TelaSimuladorFormatura(props: {
                   {s.disciplinas.map((d) => (
                     <li
                       key={d.codigo + d.nome}
-                      className="flex flex-wrap items-center gap-2 text-sm"
+                      // Arrastar o bloco de um semestre para outro (TASK-50). O
+                      // placeholder de categoria não tem código real na matriz e
+                      // não pode ser preso a lugar nenhum.
+                      draggable={!d.codigo.startsWith("PLACEHOLDER_")}
+                      onDragStart={(ev) => {
+                        ev.dataTransfer.setData("text/plain", d.codigo);
+                        ev.dataTransfer.effectAllowed = "move";
+                        setArrastando(d.codigo);
+                      }}
+                      onDragEnd={() => setArrastando(null)}
+                      className={`flex flex-wrap items-center gap-2 rounded-lg text-sm transition-opacity ${
+                        d.codigo.startsWith("PLACEHOLDER_") ? "" : "cursor-grab active:cursor-grabbing"
+                      } ${arrastando === d.codigo ? "opacity-40" : ""}`}
                       title={rotuloSazonalidade(d.sazonalidade)}
                     >
+                      {/* Ações do bloco (TASK-50): mover para o semestre vizinho
+                          e, quando há substituta, tirar do plano. Obrigatória
+                          nunca ganha o X — sem ela não há formatura, e o motor
+                          recusaria o pedido de qualquer forma. */}
+                      {!d.codigo.startsWith("PLACEHOLDER_") && (
+                        <span className="order-last flex items-center gap-0.5">
+                          {i > 0 && (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                moverParaSemestre(d.codigo, resultado.semestres[i - 1].semestre)
+                              }
+                              title={`Mover para ${formatarSemestre(resultado.semestres[i - 1].semestre)}`}
+                              className="cursor-pointer rounded-lg border border-zinc-200 px-1.5 font-mono text-xs font-black text-zinc-500 transition-colors hover:border-utfpr-500 hover:text-zinc-900 dark:border-zinc-700 dark:hover:text-white"
+                            >
+                              ‹
+                            </button>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() =>
+                              moverParaSemestre(
+                                d.codigo,
+                                resultado.semestres[i + 1]?.semestre ?? proximoSemestre(s.semestre),
+                              )
+                            }
+                            title="Mover para o semestre seguinte"
+                            className="cursor-pointer rounded-lg border border-zinc-200 px-1.5 font-mono text-xs font-black text-zinc-500 transition-colors hover:border-utfpr-500 hover:text-zinc-900 dark:border-zinc-700 dark:hover:text-white"
+                          >
+                            ›
+                          </button>
+                          {d.categoria !== "obrigatorias" && (
+                            <button
+                              type="button"
+                              onClick={() => removerDoPlano(d.codigo, d.nome)}
+                              title="Não quero cursar esta matéria"
+                              className="cursor-pointer rounded-lg border border-zinc-200 px-1.5 font-mono text-xs font-black text-zinc-500 transition-colors hover:border-red-400 hover:text-red-600 dark:border-zinc-700 dark:hover:text-red-400"
+                            >
+                              ✕
+                            </button>
+                          )}
+                        </span>
+                      )}
                       {/* Camada 2 (TASK-47): a troca é contextual à disciplina.
                           Obrigatória não tem substituta e `alternativasPara`
                           devolve lista vazia — o botão simplesmente não nasce. */}
@@ -882,6 +1024,55 @@ export function TelaSimuladorFormatura(props: {
                     </li>
                   ))}
                 </ul>
+
+                {/* Adicionar matéria a ESTE semestre (TASK-50). A lista é o que
+                    ainda falta para integralizar, agrupado por categoria — o
+                    aluno escolhe pelo que falta, não decorando código. */}
+                <div className="relative mt-2.5">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setAdicionandoEm(adicionandoEm === s.semestre ? null : s.semestre)
+                    }
+                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border border-dashed border-zinc-300 px-2.5 py-1 font-display text-[11px] font-bold text-zinc-500 transition-colors hover:border-utfpr-500 hover:text-zinc-900 dark:border-zinc-700 dark:hover:text-white"
+                  >
+                    <IconPlus className="h-3 w-3 shrink-0" />
+                    <span>Adicionar matéria neste semestre</span>
+                  </button>
+                  {adicionandoEm === s.semestre && (
+                    <div className="absolute left-0 top-full z-30 mt-1 max-h-80 w-96 max-w-[90vw] overflow-y-auto rounded-2xl border-2 border-utfpr-500/40 bg-white p-2 shadow-lg dark:bg-zinc-900">
+                      {faltantesPorCategoria.length === 0 ? (
+                        <p className="p-2 text-xs font-semibold text-zinc-500">
+                          Nada pendente: o plano já cobre tudo o que o curso exige.
+                        </p>
+                      ) : (
+                        faltantesPorCategoria.map(([cat, lista]) => (
+                          <div key={cat} className="mb-1.5">
+                            <p className="px-1.5 py-1 font-display text-[10px] font-black uppercase tracking-wider text-zinc-400">
+                              {ROTULO_CURTO[cat]} · faltam {lista.horasFaltantes}h
+                            </p>
+                            {lista.disciplinas.slice(0, 40).map((alt) => (
+                              <button
+                                key={alt.codigo}
+                                type="button"
+                                onClick={() => {
+                                  moverParaSemestre(alt.codigo, s.semestre);
+                                  setAdicionandoEm(null);
+                                }}
+                                className="block w-full cursor-pointer rounded-xl px-2 py-1.5 text-left text-xs font-semibold text-zinc-700 hover:bg-utfpr-500/15 dark:text-zinc-200"
+                              >
+                                {alt.nome}
+                                <span className="ml-1.5 font-mono text-[10px] text-zinc-400">
+                                  {alt.codigo} · {alt.horas.total}h
+                                </span>
+                              </button>
+                            ))}
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  )}
+                </div>
 
                 {/* Botão de importação para Planejamento (quando o semestre tem oferta disponível, ex: 2026-2) */}
                 {ofertaDoSemestre && props.onImportarGrade && (

@@ -320,7 +320,8 @@ export type TipoExclusao =
   | "professor"
   | "trilha"
   | "trilha-alvo"
-  | "disciplina-fixada";
+  | "disciplina-fixada"
+  | "semestre-fixado";
 
 /**
  * Filtros de exclusão, os mesmos da Sugestão de Grade: o aluno diz o que NÃO
@@ -528,6 +529,16 @@ export interface OpcoesSimulacao {
   ritmoPorSemestre?: Record<string, number>;
   /** Janela de aulas, na mesma régua da Sugestão de Grade (TASK-46). */
   janela?: { aulaInicial?: string; aulaFinal?: string } | null;
+  /**
+   * Disciplinas presas a um semestre específico (TASK-50): o aluno arrastou o
+   * bloco, ou clicou nas setas de mover. Chave no formato `2027-1`.
+   *
+   * A disciplina presa só é elegível naquele semestre. Quando o pedido é
+   * impossível — pré-requisito ainda travado ali, teto de carga estourado,
+   * sem turma livre —, ele é relatado e ela volta ao pool, para a projeção
+   * seguir fechando.
+   */
+  fixacoesPorSemestre?: Record<string, string[]>;
 }
 
 /**
@@ -570,6 +581,43 @@ export function simularFormatura(
   /** Ritmo deste semestre; sem entrada própria, vale o ritmo global. */
   const ritmoDoSemestre = (semestre: string) =>
     ritmoPorSemestre[chaveSemestre(semestre)] ?? ritmoPorSemestre[semestre] ?? ritmo;
+
+  // ---- disciplinas presas a um semestre (TASK-50) -----------------------
+  // O aluno arrastou o bloco ou usou as setas. A disciplina presa fica fora de
+  // todo semestre que não seja o dela; se lá não couber, o pedido é relatado e
+  // ela volta ao pool — a projeção precisa fechar de todo jeito.
+  const semestreFixadoDe = new Map<string, string>();
+  for (const [semestre, codigos] of Object.entries(opcoes.fixacoesPorSemestre ?? {})) {
+    for (const codigo of codigos) semestreFixadoDe.set(codigo, chaveSemestre(semestre));
+  }
+  /** Fixações que o motor não conseguiu honrar e devolveu ao pool. */
+  const fixacoesLiberadas = new Set<string>();
+  // Prender a um semestre anterior ao de partida trava a disciplina para sempre:
+  // aquele semestre nunca vai ser visitado, e ela ficaria fora de todos os
+  // outros. O formato `2026-2` ordena por comparação de string.
+  for (const [codigo, alvo] of semestreFixadoDe) {
+    if (alvo >= chaveSemestre(semestreInicial)) continue;
+    fixacoesLiberadas.add(codigo);
+    const d = matriz.disciplinas.find((x) => x.codigo === codigo);
+    registrarImpossivel(
+      "semestre-fixado",
+      codigo,
+      d ? `${d.codigo} — ${d.nome}` : codigo,
+      `${formatarSemestre(alvo)} é anterior ao início da projeção — não há como cursar no passado.`,
+      codigo,
+    );
+  }
+  const presaEm = (codigo: string, semestre: string) =>
+    semestreFixadoDe.get(codigo) === chaveSemestre(semestre) &&
+    !fixacoesLiberadas.has(codigo);
+  const presaEmOutro = (codigo: string, semestre: string) => {
+    const alvo = semestreFixadoDe.get(codigo);
+    return (
+      alvo !== undefined &&
+      alvo !== chaveSemestre(semestre) &&
+      !fixacoesLiberadas.has(codigo)
+    );
+  };
 
   const excluidaPeloAluno = (d: DisciplinaMatriz) =>
     disciplinaEstaExcluida({ codigo: d.codigo, nome: d.nome }, disciplinasExcluidas);
@@ -1071,6 +1119,9 @@ export function simularFormatura(
     const elegiveis = (fixadoAqui ? [] : [...pendentes])
       .map((c) => porCodigo.get(c)!)
       .filter((d) => {
+        // presa a OUTRO semestre: fica reservada para ele, e não é planejada
+        // antes da hora só porque coube aqui
+        if (presaEmOutro(d.codigo, semestreAtual)) return false;
         const cat = categoriaDe(d, matriz)!;
         // categoria já fechada: não se cursa além do mínimo
         if (cat === "trilhas") {
@@ -1114,6 +1165,11 @@ export function simularFormatura(
     elegiveis.sort((a, b) => {
       const catA = categoriaDe(a, matriz)!;
       const catB = categoriaDe(b, matriz)!;
+      // 0. o que o aluno prendeu NESTE semestre vem antes de tudo, inclusive
+      //    das obrigatórias: ele apontou o lugar, e a vaga é dele.
+      const presaA = presaEm(a.codigo, semestreAtual) ? 1 : 0;
+      const presaB = presaEm(b.codigo, semestreAtual) ? 1 : 0;
+      if (presaA !== presaB) return presaB - presaA;
       // 1. obrigatórias primeiro: são todas exigidas e destravam o resto
       const obrA = catA === "obrigatorias" ? 1 : 0;
       const obrB = catB === "obrigatorias" ? 1 : 0;
@@ -1528,6 +1584,29 @@ export function simularFormatura(
       semestreReferencia: referencia.oferta?.semestre ?? null,
       fixadoPeloPlanejamento: fixadoAqui,
     });
+
+    // Prendeu aqui e não coube: relata e devolve ao pool (TASK-50). Sem esta
+    // devolução a disciplina ficaria reservada para um semestre que já passou e
+    // nunca mais seria planejada — a projeção deixaria de fechar por causa de um
+    // arrasto do aluno.
+    const planejadasAqui = new Set(escolhidas.map((d) => d.codigo));
+    for (const [codigo, alvo] of semestreFixadoDe) {
+      if (alvo !== chaveSemestre(semestreAtual)) continue;
+      if (planejadasAqui.has(codigo) || fixacoesLiberadas.has(codigo)) continue;
+      if (!pendentes.has(codigo)) continue; // já cumprida ou fora do plano
+      fixacoesLiberadas.add(codigo);
+      const d = porCodigo.get(codigo);
+      registrarImpossivel(
+        "semestre-fixado",
+        codigo,
+        d ? `${d.codigo} — ${d.nome}` : codigo,
+        `não cabe em ${formatarSemestre(semestreAtual)}: ou o pré-requisito ainda não está ` +
+          `cumprido ali, ou o semestre já estourou o teto de carga, ou não sobrou turma sem ` +
+          `choque. Ela foi realocada no primeiro semestre em que couber.`,
+        codigo,
+      );
+    }
+
     semestreAtual = proximoSemestre(semestreAtual);
   }
 
@@ -1536,6 +1615,21 @@ export function simularFormatura(
   // sobrou de fora. A regra é a mesma das exclusões — nenhum pedido do aluno
   // pode ser ignorado calado, porque o silêncio é indistinguível de bug.
   const codigosNoPlano = new Set(semestres.flatMap((s) => s.disciplinas).map((d) => d.codigo));
+
+  // Fixação de semestre que o horizonte nunca alcançou: sem este relato o aluno
+  // veria a matéria sumir do plano sem nenhuma explicação.
+  for (const [codigo, alvo] of semestreFixadoDe) {
+    if (codigosNoPlano.has(codigo) || fixacoesLiberadas.has(codigo)) continue;
+    const d = porCodigo.get(codigo);
+    registrarImpossivel(
+      "semestre-fixado",
+      codigo,
+      d ? `${d.codigo} — ${d.nome}` : codigo,
+      `a projeção não chegou a ${formatarSemestre(alvo)} dentro do horizonte simulado.`,
+      codigo,
+    );
+  }
+
   for (const codigo of fixadasPeloAluno) {
     if (codigosNoPlano.has(codigo)) continue;
     if (exclusoesImpossiveis.some((x) => x.tipo === "disciplina-fixada" && x.alvo === codigo)) {

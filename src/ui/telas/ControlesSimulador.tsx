@@ -26,6 +26,8 @@ export interface ValorModelagem {
   ritmoPorSemestre: Record<string, number>;
   aulaInicial: string;
   aulaFinal: string;
+  /** disciplinas presas a um semestre: chave = semestre, valor = códigos */
+  fixacoesPorSemestre: Record<string, string[]>;
 }
 
 export const MODELAGEM_VAZIA: ValorModelagem = {
@@ -34,13 +36,35 @@ export const MODELAGEM_VAZIA: ValorModelagem = {
   ritmoPorSemestre: {},
   aulaInicial: PRIMEIRO_SLOT,
   aulaFinal: ULTIMO_SLOT,
+  fixacoesPorSemestre: {},
 };
+
+/**
+ * Prende uma disciplina a um semestre, tirando-a de qualquer outro (TASK-50).
+ *
+ * Uma disciplina presa a dois semestres ao mesmo tempo não significa nada, e o
+ * motor leria só a última — por isso a limpeza vem antes da inserção.
+ */
+export function fixarNoSemestre(
+  valor: ValorModelagem,
+  codigo: string,
+  semestre: string | null,
+): ValorModelagem {
+  const limpo: Record<string, string[]> = {};
+  for (const [sem, codigos] of Object.entries(valor.fixacoesPorSemestre)) {
+    const restantes = codigos.filter((c) => c !== codigo);
+    if (restantes.length > 0) limpo[sem] = restantes;
+  }
+  if (semestre !== null) limpo[semestre] = [...(limpo[semestre] ?? []), codigo];
+  return { ...valor, fixacoesPorSemestre: limpo };
+}
 
 /** Quantos ajustes o aluno fez — alimenta o contador do painel avançado. */
 export function totalModelagem(v: ValorModelagem): number {
   return (
     v.disciplinasFixadas.length +
     Object.keys(v.ritmoPorSemestre).length +
+    Object.values(v.fixacoesPorSemestre).reduce((a, c) => a + c.length, 0) +
     (v.aulaInicial !== PRIMEIRO_SLOT || v.aulaFinal !== ULTIMO_SLOT ? 1 : 0)
   );
 }

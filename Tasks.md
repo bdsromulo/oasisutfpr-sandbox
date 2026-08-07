@@ -140,9 +140,24 @@ Toda tarefa — seja **Feature** ou **Bug** — carrega exatamente um destes sta
 
 ### Em Revisão
 
-> As TASK-45, 46 e 47 foram desenvolvidas no repositório **sandbox**
+> As TASK-45, 46, 47, 49 e 50 foram desenvolvidas no repositório **sandbox**
 > (`oasisutfpr-sandbox`), cada uma em sua branch e integradas na `main` de lá.
 > Nenhuma foi publicada no repositório oficial.
+
+- **TASK-49 — Painel de filtros unificado e filtro de turno/horário no Planejamento:**
+  - Os filtros abriam um **segundo cartão** solto abaixo da busca — duas caixas falando da mesma coisa. Agora o próprio bloco da busca expande para baixo.
+  - Entram as duas travas da Sugestão de Grade: **turnos** (manhã/tarde/noite) e **janela de aulas**, com o rótulo `T2 · 13:50–14:40`.
+  - **Os filtros agem em dois níveis:** escondem a matéria que não tem nenhuma turma no horário pedido e, dentro do card, escondem as turmas que não servem. Só o primeiro nível deixaria o aluno filtrar por noite e ainda escolher turma de manhã na hora de marcar.
+  - Turma já marcada nunca some da lista, mesmo fora do filtro: ele perderia de vista o que escolheu e não teria como desmarcar. Janela invertida é ignorada com aviso, em vez de devolver lista vazia sem explicação.
+  - Credita **Gabriela Jahn Henning** como revisora na página Sobre.
+
+- **TASK-50 — Manipular a oferta de cada semestre no Simulador:**
+  - Cada disciplina projetada ganha setas `‹ ›` para mover ao semestre vizinho, `✕` para tirar do plano (**nunca em obrigatória** — sem ela não há formatura) e **arrasto** para qualquer outro semestre.
+  - Botão **adicionar matéria neste semestre**, com o que ainda falta **agrupado por categoria** e as horas faltantes de cada uma: o aluno escolhe pelo que falta, não decorando código.
+  - No motor, `fixacoesPorSemestre` prende a disciplina a um semestre. Ela fica fora de todos os outros e ganha prioridade máxima no dela — acima até das obrigatórias, porque o aluno apontou o lugar.
+  - **É pedido, não ordem:** se lá não couber (pré-requisito travado, teto de carga estourado, sem turma sem choque), o motor relata via `semestre-fixado` e devolve a disciplina ao pool. Sem essa devolução ela ficaria reservada para um semestre já passado, e a projeção deixaria de fechar por causa de um arrasto.
+  - Duas guardas de borda: prender a semestre **anterior ao início** da projeção é recusado na entrada (aquele semestre nunca seria visitado), e fixação que o horizonte não alcançou é relatada no fim.
+  - O `Card` passou a repassar os eventos de arrasto ao elemento raiz; antes ele os engolia e o drop nunca acontecia.
 
 - **TASK-45 — Pré-requisito liberado por reprovação com média ≥ 4,0 (todos os cursos):**
   - Desenho em `docs/superpowers/specs/2026-08-06-liberacao-janela-simulador-design.md` §1. Desenvolvimento no sandbox.

@@ -558,7 +558,13 @@ export function App() {
     setRitmoSimulador(dados.ritmoSimulador);
     setExclusoesSimulador(dados.exclusoesSimulador as ValorExclusoes);
     // savefile anterior a TASK-47 nao tem o campo: cai no padrao inerte
-    setModelagemSimulador((dados.modelagemSimulador as ValorModelagem) ?? MODELAGEM_VAZIA);
+    // Espalhado sobre o padrão, e não substituindo-o: savefile gravado antes de
+    // cada alavanca nova não tem o campo dela, e ler `undefined` como se fosse
+    // lista quebraria a tela inteira do simulador na importação.
+    setModelagemSimulador({
+      ...MODELAGEM_VAZIA,
+      ...((dados.modelagemSimulador as Partial<ValorModelagem> | undefined) ?? {}),
+    });
     setAba(perfilImportado ? "situacao" : "planejamento");
     setAbaSituacao("painel");
     setAbaPlanejamento("cursar");

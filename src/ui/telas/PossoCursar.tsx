@@ -113,7 +113,7 @@ function CardDisciplinaPossoCursar({
   itensSelecao?: ItemGrade[];
   matriz?: Matriz;
   perfil?: PerfilAluno | null;
-  /** filtro de turno e janela vindo do painel de filtros (TASK-48) */
+  /** filtro de turno e janela vindo do painel de filtros (TASK-49) */
   turmaNoHorario?: (t: Turma) => boolean;
 }) {
   const isMobile = useIsMobile();
@@ -437,7 +437,7 @@ export function TelaPossoCursar(props: {
   const [soLiberadas, setSoLiberadas] = useState(true);
   const [grupo, setGrupo] = useState<Grupo>("todas");
   const [trilha, setTrilha] = useState<string>("todas");
-  // Turno e janela de aulas (TASK-48), as mesmas travas da Sugestão de Grade.
+  // Turno e janela de aulas (TASK-49), as mesmas travas da Sugestão de Grade.
   const [naoManha, setNaoManha] = useState(false);
   const [naoTarde, setNaoTarde] = useState(false);
   const [naoNoite, setNaoNoite] = useState(false);
