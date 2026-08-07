@@ -176,6 +176,32 @@ permitiu atender". Mesma estrutura de dados, mesmo componente de tela.
 O princípio já vigente se mantém: são pedidos, não ordens — quando respeitá-los
 impede a formatura, o motor os desrespeita, marca a disciplina e explica por quê.
 
+### 3.4 Decisões tomadas durante a implementação
+
+**"Trocar" fixa a nova e exclui a antiga.** Só fixar não bastava: a substituída
+continuava elegível e o motor podia repescá-la, deixando a troca sem efeito
+visível na tela. A troca reusa os dois canais que já existem — `disciplinasFixadas`
+recebe a que entra, `exclusoes.disciplinas` recebe a que sai — e o aluno vê as
+duas nos painéis correspondentes.
+
+**Fixar optativa escolhe a trilha dela por tabela.** Sem isso a disciplina pedida
+cairia justamente no filtro de trilha-alvo. O conjunto dela entra em
+`conjuntosFixados`, o mesmo mecanismo que a grade importada do Planejamento já
+usava. Vale como preferência: escolha explícita de trilhas tem precedência.
+
+**Diagnóstico dos pedidos no fim, contra o plano pronto.** Só depois de montada
+a projeção se sabe o que ficou de fora, e cada ausência recebe motivo próprio:
+já cumprida no histórico, sem oferta conhecida, trilha fora das alvo, ou
+categoria que fecha sem ela. Pedido ignorado em silêncio é indistinguível de bug.
+
+**Janela cede para obrigatória sem alternativa**, no mesmo padrão da exclusão de
+docente: sem a disciplina não há formatura, e devolver projeção que não fecha
+seria pior que devolver turma fora do horário pedido.
+
+**Persistência.** `modelagemSimulador` entra no savefile como campo opcional.
+Savefile gerado antes desta task não o tem, e recusar esses arquivos custaria ao
+aluno a grade inteira por causa de um ajuste que ele nunca fez.
+
 ## 4. Testes
 
 - `tests/prerequisito-nota.test.ts` (novo): a regra em si, incluindo os casos de
