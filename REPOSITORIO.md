@@ -185,6 +185,25 @@ python tools/validate_matriz_806.py
 URL_CSV_REVIEWS="<url do CSV publicado da aba Homologado>" npx tsx scripts/ingerir-reviews.ts
 ```
 
+### Acervo de referência (`OASIS_MATERIAL`)
+
+Os PDFs-fonte e os históricos reais ficam **fora do repositório** (dado pessoal). A variável
+de ambiente `OASIS_MATERIAL` aponta para a raiz desse acervo: a pasta que contém os
+`Material Referência <curso> <matriz>/`.
+
+- **Testes** (`tests/material.ts`): os blocos que leem históricos reais só rodam quando a
+  variável está definida; sem ela são pulados, como na CI e em outra máquina. Precedência:
+  variável específica do teste (`OASIS_MATERIAL_CONTROLE_978`, `OASIS_MATERIAL_MECATRONICA_823`,
+  `OASIS_MATERIAL_MECATRONICA_973`; `OASIS_ACERVO` para a varredura) > `OASIS_MATERIAL` > cópia
+  legada `materiais-referencia/`.
+- **Ferramentas** (`tools/material.py`): `parse_matriz.py`, `parse_turmas_pdf.py` e
+  `validate_turmas.py` usam o acervo como padrão quando o PDF não é passado como argumento.
+- **Definir**: `$env:OASIS_MATERIAL = "<pasta>"` no PowerShell (sessão) ou `export
+  OASIS_MATERIAL="<pasta>"` no bash. Rodar `npm test` com ela definida ativa os testes de
+  históricos reais, que podem acusar problemas conhecidos do acervo (ver `Tasks.md`, TASK-61).
+- Os exemplos de comando acima que citam `materiais-referencia/` vêm da cópia legada; no
+  acervo atual a pasta equivalente é `Material Referência <curso> <matriz>/`.
+
 ### Virada de semestre (1x por período letivo)
 
 O calendário da plataforma vive em **`src/domain/semestres.ts`**, e a virada é a

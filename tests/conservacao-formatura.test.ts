@@ -17,7 +17,8 @@
 //   2. FIDELIDADE — opt-in, pulado onde o acervo local não existe. Confere o
 //      CUMPRIDO contra o Quadro Resumo do próprio histórico.
 import { describe, expect, it } from "vitest";
-import { existsSync, globSync, readFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
+import { pdfsDoAcervo } from "./material";
 import { CURSOS, semestresDoCurso, carregarOfertasHistoricasMecatronica } from "../src/domain/dadosCurso";
 import { extrairLinhas } from "../src/domain/historico/extrair-linhas";
 import { parseHistorico } from "../src/domain/historico/parser";
@@ -137,7 +138,9 @@ describe("conservação da exigência de formatura", () => {
 /**
  * Fidelidade ao Quadro Resumo — opt-in.
  *
- * O acervo é pessoal e mora fora do repositório. `OASIS_ACERVO` aponta para ele;
+ * O acervo é pessoal e mora fora do repositório. `OASIS_MATERIAL` aponta para ele
+ * (`OASIS_ACERVO` vale como override e a cópia legada `materiais-referencia/` como
+ * último recurso);
  * sem a pasta, o bloco inteiro é pulado, como nas demais auditorias opt-in.
  *
  * A referência é a **coluna E** (`aprovadaTotal`: tudo cursado e aprovado, ainda
@@ -145,7 +148,6 @@ describe("conservação da exigência de formatura", () => {
  * usa a E de propósito — a C esconde do aluno horas que ele de fato cursou —, e
  * comparar contra a coluna errada produz um "sobre-crédito" que não existe.
  */
-const ACERVO = process.env.OASIS_ACERVO ?? "materiais-referencia";
 
 /**
  * A lista sai do disco em tempo de execução, e o curso sai da matriz lida do
@@ -156,13 +158,11 @@ const ACERVO = process.env.OASIS_ACERVO ?? "materiais-referencia";
  * tomada na varredura de `historico-real.test.ts`. O efeito colateral é bom:
  * histórico novo passa a ser coberto só de ser copiado para o acervo.
  */
-const HISTORICOS = existsSync(ACERVO)
-  ? globSync(`${ACERVO}/**/*.pdf`).filter((caminho) => {
-      const arquivo = caminho.split(/[\\/]/).pop() ?? "";
-      const semAcento = arquivo.normalize("NFD").replace(/[̀-ͯ]/g, "");
-      return /^historico/i.test(semAcento);
-    })
-  : [];
+const HISTORICOS = pdfsDoAcervo().filter((caminho) => {
+  const arquivo = caminho.split(/[\\/]/).pop() ?? "";
+  const semAcento = arquivo.normalize("NFD").replace(/[̀-ͯ]/g, "");
+  return /^historico/i.test(semAcento);
+});
 
 async function carregarPerfil(arquivo: string): Promise<PerfilAluno> {
   const buf = readFileSync(arquivo);

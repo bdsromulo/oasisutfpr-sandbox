@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+import { noAcervo } from "./material";
 import matriz823Json from "../data/eng-mecatronica/matriz-823.json";
 import oferta20262Json from "../data/eng-mecatronica/turmas/2026-2.json";
 import {
@@ -119,7 +120,7 @@ describe("ofertas e interface da matriz 823", () => {
 
 /** Auditoria opt-in: o histórico pessoal permanece fora do repositório. */
 const PASTA_REFERENCIA =
-  process.env.OASIS_MATERIAL_MECATRONICA_823 ?? "materiais-referencia/Eng-Mecatronica-823";
+  process.env.OASIS_MATERIAL_MECATRONICA_823 ?? noAcervo("Material Referência Eng. Mecatrônica Antiga 823") ?? "materiais-referencia/Eng-Mecatronica-823";
 const HISTORICOS = existsSync(PASTA_REFERENCIA)
   ? readdirSync(PASTA_REFERENCIA)
       .filter((nome) => /^Histórico do Aluno.*\.pdf$/i.test(nome))

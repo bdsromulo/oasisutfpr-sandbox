@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+import { noAcervo } from "./material";
 import matriz978Json from "../data/eng-controle/matriz-978.json";
 import oferta20262Json from "../data/eng-controle/turmas/2026-2.json";
 import oferta20261Json from "../data/eng-controle/turmas/2026-1.json";
@@ -312,7 +313,7 @@ describe("ofertas de Controle e Automação", () => {
 
 /** Auditoria opt-in: os históricos pessoais permanecem fora do repositório. */
 const PASTA_REFERENCIA =
-  process.env.OASIS_MATERIAL_CONTROLE_978 ?? "materiais-referencia/Eng-Controle-978";
+  process.env.OASIS_MATERIAL_CONTROLE_978 ?? noAcervo("Material Referência Eng. Controle e Automação Nova 978") ?? "materiais-referencia/Eng-Controle-978";
 const HISTORICOS = existsSync(PASTA_REFERENCIA)
   ? readdirSync(PASTA_REFERENCIA)
       .filter((nome) => /^Histórico do Aluno.*\.pdf$/i.test(nome))

@@ -5,8 +5,10 @@ Uso: python tools/parse_turmas_pdf.py <turmas.pdf> <semestre ex: 2026-1> [saida.
 Após gerar, rode tools/validate_turmas.py — a importação só vale com 0 erros.
 """
 import pdfplumber, re, json, sys, os
+from material import padrao_ou_sair
 
-PDF = sys.argv[1] if len(sys.argv) > 1 else r"I:\Meu Drive\Oásis UTFPR\Turmas Abertas - Portal do Aluno UTFPR.pdf"
+PDF = padrao_ou_sair(sys.argv[1] if len(sys.argv) > 1 else None,
+    "Material Referência BSI 981", "Turmas Abertas - Portal do Aluno UTFPR.pdf")
 SEM = sys.argv[2] if len(sys.argv) > 2 else "2026-1"
 OUT = sys.argv[3] if len(sys.argv) > 3 else os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "..", "data", "turmas", f"{SEM}.json")
