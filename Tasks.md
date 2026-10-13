@@ -378,6 +378,41 @@ Toda tarefa — seja **Feature** ou **Bug** — carrega exatamente um destes sta
 
 ### Pendente
 
+- **TASK-62 — TCC: o Oásis como artefato e caso de uso de pesquisa acadêmica:**
+  - **Registrado em 2026-10-13.** Fase de **planejamento e pesquisa**, não de implementação: antes de escrever código ou texto, decidir como articular o projeto com base e bibliografia acadêmicas.
+  - **O que o projeto já oferece como material:** `Estrategia.md` (Engenharia de Requisitos, Gestão da Informação com PEN, PETI e ciclo de vida, dimensões de Qualidade da Informação, heurísticas de IHC), o pipeline de dados com validadores e a arquitetura sem back-end (`REPOSITORIO.md`), o histórico de decisões e medições em `Tasks.md`, e a camada de avaliações da comunidade. O problema de origem está documentado no projeto: planejar a matrícula na UTFPR exige cruzar matriz, pré-requisitos, equivalências e oferta do semestre, e o Oásis existe para fazer esse cruzamento.
+  - **Perguntas a fechar primeiro:** qual é a pergunta de pesquisa (ex.: o que um planejamento de matrícula assistido muda na decisão do aluno, ou como manter a qualidade da informação curricular sem back-end); qual é a contribuição (artefato, método, avaliação ou todas); e quais exigências o regulamento de TCC do curso de BSI e o orientador impõem a formato, banca e prazos.
+  - **Candidatos de enquadramento (a verificar, nada disso está adotado):** *Design Science Research* trata o software como artefato avaliado (Hevner, March, Park e Ram, 2004, *Design Science in Information Systems Research*, MIS Quarterly; Peffers et al., 2007, *A Design Science Research Methodology for Information Systems Research*, JMIS). Áreas de literatura a levantar: mineração de dados educacionais e *learning analytics* (ex.: Romero e Ventura, 2010, IEEE Trans. SMC-C), sistemas de recomendação e planejamento acadêmico, qualidade da informação e IHC (a base de `Estrategia.md` §2 e §4). **Conferir cada referência na fonte antes de citar**; as acima são pontos de partida, não bibliografia validada.
+  - **Evidência que o projeto pode gerar:** medições que já existem (tempo de processamento, cobertura de matrizes, auditoria de integralização por curso, §6 do `Tasks.md`) e, se houver coleta com usuários, questionário de usabilidade e avaliação da decisão de matrícula. O sandbox é o ambiente natural de um estudo com usuários, porque publica uma versão de teste sem tocar no site final.
+  - **Ética e dados:** pesquisa com participantes humanos pode exigir submissão a Comitê de Ética (CEP, via Plataforma Brasil) e Termo de Consentimento. Decidir isso **antes** de coletar qualquer dado de uso ou de aluno, e respeitar a LGPD. Liga-se à TASK-63: dados de terceiros obtidos pelo crawler só viram corpus de pesquisa com consentimento e aprovação cabíveis.
+  - **Entregáveis sugeridos, em ordem:** (1) pergunta de pesquisa e contribuição em uma página; (2) mapa da literatura; (3) método e plano de avaliação; (4) consulta ao orientador e ao regulamento; (5) só então o cronograma, que dita quais das TASK-52 e TASK-63 entram no escopo.
+  - **Relações:** TASK-52 e TASK-63 podem virar contribuição ou ameaça à validade; o `Estrategia.md` é o primeiro rascunho de fundamentação.
+
+- **TASK-63 — Crawler autenticado do Portal do Aluno, para coleta automatizada e em massa:**
+  - **Registrado em 2026-10-13.** Amplia a TASK-55 (oferta pública de Turmas Abertas, sem login): o objetivo agora é rodar, com credenciais do mantenedor ou de terceiros, uma coleta automatizada e em escala dos dados que o Portal da UTFPR expõe depois do login, no lugar do ciclo manual "baixar PDF do Portal e passar no parser".
+  - **O que destrava:** matrizes e ofertas de cursos fora dos cinco cobertos (insumo da TASK-52), diff frequente entre revisões da oferta (TASK-51), reimportação semestral sem trabalho manual (TASK-55) e, se aprovado, um corpus para a TASK-62.
+  - **Condições que bloqueiam o início do código:**
+    1. **Credenciais de terceiros só com consentimento informado:** por escrito, específico (o que se coleta, para quê e por quanto tempo) e revogável. Sem isso, o crawler roda apenas com a credencial do próprio mantenedor sobre os próprios dados. Usar a conta de outra pessoa sem consentimento é acesso não autorizado e está fora do escopo do projeto.
+    2. **Política do Portal:** ler os termos de uso e, se exigirem, obter autorização formal da UTFPR (setor de TI ou coordenação). A política define o que "em massa" pode ser. Coleta educada: intervalo entre requisições, sem paralelismo agressivo, identificação honesta (mesma disciplina da TASK-55).
+    3. **LGPD (Lei 13.709/2018):** histórico escolar é dado pessoal. Definir base legal, minimização e retenção. Dado bruto **nunca** entra no repositório, que é público (regra 2 do `AGENTS.md`); só derivados agregados ou anonimizados chegam a `data/`.
+    4. **Manejo de credenciais:** nunca no repositório, nunca em log, nunca em argumento de linha de comando (fica no histórico do shell). Entrada por variável de ambiente, cofre do sistema ou prompt; sessão só em memória; senha nunca gravada em disco.
+    5. **Onde roda:** ferramenta offline de `tools/`, na máquina do mantenedor. Nunca no navegador do aluno, e nunca em Action com credencial de terceiros (para a credencial do próprio mantenedor, vale a discussão da TASK-55).
+  - **Se o Portal impuser CAPTCHA ou autenticação em dois fatores:** não contornar. É sinal da política de acesso, e o caminho passa a ser pedir autorização ou uma API oficial à UTFPR.
+  - **Rede de proteção inalterada:** o JSON produzido passa pelos validadores existentes (`validate_turmas_estrutura.py` etc.) com **0 erros** antes de entrar em `data/`. Se a coleta falhar ou o layout do Portal mudar, mantém-se o último JSON bom e o pipeline falha alto no log; nunca se publica dado parcial.
+  - **A descobrir antes de projetar:** o que o Portal expõe por login além do que já é público; formato das respostas (HTML ou JSON interno); limites de taxa; e se existe canal oficial (API, exportação, convênio) que torne o crawler desnecessário.
+  - **Ética de pesquisa:** se dados de terceiros forem usados no TCC, ver a TASK-62 (CEP e consentimento) antes da primeira coleta.
+  - **Dependências:** TASK-55 (base técnica e política de acesso), TASK-62 (decisão sobre uso em pesquisa).
+
+- **TASK-52 — Eletivas e matérias de inclusão: mapear e adicionar dentro do aplicativo** *(promovida do backlog em 2026-10-13; renumerada de TASK-31, colisão de ID: ver nota no topo do arquivo)*:
+  - **Objetivo original, mantido:** uma visão que consolide o conjunto de matérias de outros cursos que o aluno pode contemplar, para que ele se planeje na **fase de inclusão**, o período após a matrícula em que escolhe matérias fora da grade padrão.
+  - **Hoje são dois problemas, e convém tratá-los separados:**
+    1. **Inclusão:** consolidar a oferta dos cursos cobertos (`data/<curso>/turmas/`) e filtrar pelo que o aluno pode contemplar, testando choque de horário contra a grade dele (`motor/grade.ts`). Para cursos que o Oásis ainda não cobre, a fonte de dados é a TASK-63.
+    2. **Eletivas:** o aluno poder **adicionar** uma eletiva ao planejamento e ao Simulador, sabendo quanto ela conta. Hoje `data/eletivas.json` só resolve o nome de uma eletiva a partir do código lido no histórico (a pool cresce por evidência), e a carga horária de eletivas vem sempre do *Resumo Eletiva* do histórico, nunca da soma dessa lista.
+  - **Decisões antes de codar:** o que "pode contemplar" significa em cada matriz. Há cursos que declaram `cargas.eletiva: 0` (`REPOSITORIO.md` §3), e um piso fixo de eletivas já causou sugestão errada, então a regra tem de sair da hierarquia de conjuntos e do que a matriz declara, nunca de número solto. Também decidir se a visão entra em *Planejamento de Matrícula* ou no *Catálogo*, e como aparece para quem está no Modo Livre, sem histórico.
+  - **Cenário pós-matrícula:** junto da TASK-51 (aviso de mudança na oferta) e da TASK-26 (convite de avaliação pós-semestre), fecha o que o Oásis oferece depois que a matrícula acontece. A TASK-05D cobre *quando* o aluno planeja; estas três cobrem o que vem depois.
+  - **Relações:** TASK-54 (a página de conceitos explica "eletiva"), TASK-56 (escolha entre equivalentes), TASK-63 (dados de cursos não cobertos) e `motor/simuladorFormatura.ts`.
+  - **Fluxo:** nasce em branch no sandbox e só chega à produção depois de validada (`REPOSITORIO.md` §7).
+
 - **TASK-56 — Ao escolher entre disciplinas equivalentes, preferir a que carrega mais extensão:**
   - **Medido (2026-08-16), matriz 968.** O conjunto 1215 tem disciplinas intercambiáveis — mesmo conjunto, mesmo período 2, sem pré-requisito — mas com CHEXT diferente: `CAART02` e `CAART03` valem 60h, `CAART04` a `CAART07` valem 90h. Para o guloso do simulador elas são equivalentes; **para o aluno não são**.
   - **Efeito observado:** fechando o conjunto com `CAART03` + `CAART02` (120h de CHEXT) em vez de `CAART02` + `CAART05` (150h), o aluno passa a precisar de **345h** de extensão em projeto próprio em vez de **315h**. São 30h que ele poderia receber embutidas numa disciplina que cursaria de todo jeito.
@@ -570,10 +605,7 @@ Toda tarefa — seja **Feature** ou **Bug** — carrega exatamente um destes sta
 
 ## 3. Tarefas em Backlog / Visão Futura (`[ ]`)
 
-- **TASK-52 — Visão de Matérias Eletivas (Pool de Inclusão)** *(renumerado de TASK-31, colisão de ID — ver nota no topo do arquivo)*:
-  - Desenvolver uma visão que consolide um "pool" gigante de todas as matérias de outros cursos que o aluno pode contemplar.
-  - O intuito é permitir que o aluno se planeje adequadamente para a fase de inclusão, período após a matrícula em que ele escolhe matérias fora da sua grade padrão para participar.
-  - **Cenário pós-matrícula:** junto da TASK-51 (aviso de mudança na oferta) e da TASK-26 (convite de avaliação pós-semestre), fecha o que o Oásis oferece depois que a matrícula acontece. A TASK-05D cobre *quando* o aluno planeja; estas três cobrem o que vem depois.
+- **TASK-52 — Eletivas e matérias de inclusão** foi promovida a **Pendente** em 2026-10-13 (seção 1, Features), com escopo ampliado: ver lá.
 
 ---
 
