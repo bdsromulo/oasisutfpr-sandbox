@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { existsSync, readFileSync } from "node:fs";
+import { noAcervo } from "./material";
 import matriz968Json from "../data/eng-eletronica/matriz-968.json";
 import oferta20262 from "../data/eng-eletronica/turmas/2026-2.json";
 import matriz981 from "../data/matriz-981.json";
@@ -472,11 +473,12 @@ describe("fluxograma da 968", () => {
 /**
  * Auditoria contra o Histórico Escolar real de Eng. Eletrônica.
  *
- * O PDF é dado pessoal e vive fora do repositório (`materiais-referencia/` é
- * ignorada pelo Git); onde ele não existe — CI, outra máquina — o bloco é
+ * O PDF é dado pessoal e vive fora do repositório (`OASIS_MATERIAL`, ou a
+ * cópia legada `materiais-referencia/`, ignorada pelo Git); onde ele não existe — CI, outra máquina — o bloco é
  * pulado. Os números conferidos aqui foram transcritos do próprio documento.
  */
 const HISTORICO_REAL =
+  noAcervo("Material Referência Eng. Eletrônica Nova 968", "Histórico Escolar Cadu Eng Eletronica.pdf") ??
   "materiais-referencia/Eng-Eletronica-968/Histórico Escolar Cadu Eng Eletronica.pdf";
 
 describe.skipIf(!existsSync(HISTORICO_REAL))("histórico real da 968", () => {

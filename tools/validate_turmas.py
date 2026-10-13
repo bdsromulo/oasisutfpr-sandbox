@@ -24,10 +24,12 @@ Regras aprendidas na auditoria de 2026/1 (cada uma verificada no texto cru do PD
 Uso: python tools/validate_turmas.py <turmas.pdf> <turmas.json>
 """
 import json, re, sys, os, pdfplumber
+from material import padrao_ou_sair
 from collections import Counter
 
 DEV = os.path.dirname(os.path.abspath(__file__))
-PDF = sys.argv[1] if len(sys.argv) > 1 else r"I:\Meu Drive\Oásis UTFPR\Turmas Abertas - Portal do Aluno UTFPR.pdf"
+PDF = padrao_ou_sair(sys.argv[1] if len(sys.argv) > 1 else None,
+    "Material Referência BSI 981", "Turmas Abertas - Portal do Aluno UTFPR.pdf")
 JSN = sys.argv[2] if len(sys.argv) > 2 else os.path.join(DEV, "..", "data", "turmas", "2026-1.json")
 
 J = json.load(open(JSN, encoding="utf-8"))

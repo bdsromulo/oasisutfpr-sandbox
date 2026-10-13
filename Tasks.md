@@ -148,6 +148,39 @@ Toda tarefa — seja **Feature** ou **Bug** — carrega exatamente um destes sta
 > `git merge-tree`. Os 13 commits que a `main` tinha a mais (reviews,
 > Gestão da Informação, conservação de formatura) foram preservados.
 
+- **TASK-61 — Acervo de referência configurável por `OASIS_MATERIAL`:**
+  - Testes e ferramentas que leem PDFs pessoais apontavam para caminhos fixos de máquinas
+    antigas (`I:\Meu Drive\...` em `historico-real.test.ts`, `parse_matriz.py`,
+    `parse_turmas_pdf.py` e `validate_turmas.py`; `materiais-referencia\...` em
+    `_check_nums.py`, `_peek_coords.py` e `diagnostico_matrizes.py`). Em qualquer outra
+    máquina os blocos eram pulados em silêncio, sem aviso de que a rede de proteção estava
+    desligada (o mesmo mecanismo do BUG-03).
+  - `OASIS_MATERIAL` passa a apontar para a raiz do acervo (a pasta que contém os
+    `Material Referência <curso> <matriz>/`). Os testes usam `tests/material.ts` e as
+    ferramentas `tools/material.py`. Precedência nos testes: variável específica
+    (`OASIS_MATERIAL_CONTROLE_978`, `OASIS_MATERIAL_MECATRONICA_823/973`, `OASIS_ACERVO`)
+    > `OASIS_MATERIAL` > cópia legada `materiais-referencia/`. Sem nenhuma, tudo continua
+    sendo pulado, como na CI.
+  - Nas ferramentas, o PDF padrão de BSI 981 (`Lista de Matérias Matriz Curricular.pdf` e
+    `Turmas Abertas - Portal do Aluno UTFPR.pdf`) é resolvido dentro do acervo; sem o
+    argumento e sem a variável, o script encerra com uma mensagem clara.
+  - **Medido (2026-10-13):** sem a variável, a suíte fecha em 678 aprovados, 23 pulados e 0
+    falhas (igual a antes). Com ela apontando para o acervo, a suíte vai de 701 para 735 casos
+    e os pulados caem de 23 para 8: 723 aprovados, 8 pulados e **4 reprovados**, todos por
+    dado do acervo, não pelo ajuste de caminho:
+    - O histórico de Controle 978 sem nome reconhecido e o de Eng. Comp. 962 lido com 0
+      disciplinas reprovam em `historico-real.test.ts`, o de 962 também em
+      `conservacao-formatura.test.ts`. São os **BUG-01** e **BUG-02**, já abertos.
+    - **Achado novo:** o histórico da matriz 973 reprova em `conservacao-formatura.test.ts`
+      (`soma das categorias optativas x coluna E do Quadro Resumo`: o motor soma **0h**, o
+      Quadro Resumo traz **45h**). Causa não investigada; a hipótese a verificar é que as
+      optativas da 973 vivam em ids que `CATEGORIAS_OPTATIVAS` não lista.
+  - **Não alterado nesta tarefa:** os três casos nominais de `historico-real.test.ts`
+    (`Histórico Completo.pdf`, `namie.pdf`, `historico2026-1.pdf`) apontam para arquivos
+    que não existem mais na raiz do acervo; há históricos dos mesmos alunos dentro de
+    `Material Referência BSI 981/`, com outros nomes. Seguem pulados até alguém confirmar que
+    são os mesmos documentos.
+
 - **TASK-57 — Modo Planejamento 2027/1: três estados de semestre e oferta projetada:**
   - O site tratava 2026.2 como pré-matrícula em verde meses depois de o semestre
     ter começado, e não havia como planejar 2027.1: o seletor só listava período

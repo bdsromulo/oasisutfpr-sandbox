@@ -9,10 +9,12 @@ reporta o estado de cada PDF para avaliação humana.
 Uso: python tools/diagnostico_matrizes.py
 """
 import pdfplumber, re, sys, os, glob
+from material import raiz
 
-# PDFs a analisar (procura na pasta materiais-referencia)
+# PDFs a analisar: procura na raiz do acervo (OASIS_MATERIAL) ou, sem ela, na cópia
+# parcial legada `materiais-referencia/`
 BASE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
-MATERIAIS = os.path.join(BASE, "materiais-referencia")
+MATERIAIS = raiz() or os.path.join(BASE, "materiais-referencia")
 
 # Regex para detectar códigos de disciplina (4-7 chars alfanuméricos maiúsculos)
 RE_COD = re.compile(r'\b[A-Z]{2,4}\d{2,3}\b')
@@ -165,7 +167,7 @@ def main():
     pdfs = sorted(f for f in pdfs if f.lower().endswith('.pdf'))
     
     if not pdfs:
-        print("Nenhum PDF de matriz encontrado em materiais-referencia/")
+        print(f"Nenhum PDF de matriz encontrado em {MATERIAIS}")
         print("Tentando buscar diretamente...")
         # Listar o que tem
         for root, dirs, files in os.walk(MATERIAIS):

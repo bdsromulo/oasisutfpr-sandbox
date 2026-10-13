@@ -13,8 +13,10 @@ só o Histórico Escolar oficial nomeia. O complemento entra como dado à parte,
 com a própria procedência registrada, em vez de a fonte principal ser adulterada.
 """
 import pdfplumber, re, json, sys, os, unicodedata
+from material import padrao_ou_sair
 
-PDF = sys.argv[1] if len(sys.argv) > 1 else r"I:\Meu Drive\Oásis UTFPR\Lista de Matérias Matriz Curricular.pdf"
+PDF = padrao_ou_sair(sys.argv[1] if len(sys.argv) > 1 else None,
+    "Material Referência BSI 981", "Lista de Matérias Matriz Curricular.pdf")
 OUT = sys.argv[2] if len(sys.argv) > 2 else os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data", "matriz-981.json")
 COMPLEMENTO = sys.argv[3] if len(sys.argv) > 3 else None
 

@@ -1,7 +1,10 @@
 import pdfplumber, sys
 import os
+from material import no_acervo
 
-pdf_path = r'materiais-referencia\Eng-Comp-962\Matriz Curricular Eng Comp 962.pdf'
+pdf_path = sys.argv[1] if len(sys.argv) > 1 else (
+    no_acervo("Material Referência Eng. Comp Nova 962", "Matriz Curricular Eng Comp 962.pdf")
+    or r'materiais-referencia\Eng-Comp-962\Matriz Curricular Eng Comp 962.pdf')
 
 def group_rows(words, tol=3.5):
     rows = []

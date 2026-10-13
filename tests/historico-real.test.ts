@@ -2,7 +2,8 @@
 // (dados pessoais). Quando os arquivos não existem (CI, outra máquina), os testes
 // são pulados — a fixture sintética em historico-sintetico.test.ts roda sempre.
 import { describe, it, expect } from "vitest";
-import { readFileSync, existsSync, globSync } from "node:fs";
+import { readFileSync, existsSync } from "node:fs";
+import { noAcervo, pdfsDoAcervo } from "./material";
 import { extrairLinhas } from "../src/domain/historico/extrair-linhas";
 import { parseHistorico } from "../src/domain/historico/parser";
 import { montarPainel } from "../src/domain/motor/situacao";
@@ -24,11 +25,12 @@ const matriz = matrizJson as unknown as Matriz;
 const oferta = turmasJson as unknown as OfertaSemestre;
 const mapa = criarMapaIdentidade(matriz);
 
-const PASTA = "I:\\Meu Drive\\Oásis UTFPR\\";
+// Sem OASIS_MATERIAL o caminho fica vazio, `existsSync` dá falso e os blocos são pulados.
+const arq = (...partes: string[]) => noAcervo(...partes) ?? "";
 const CASOS = [
-  { arquivo: PASTA + "Histórico Completo.pdf", nomeContem: "ROMULO" },
-  { arquivo: PASTA + "namie.pdf", nomeContem: "NAMIE" },
-  { arquivo: PASTA + "historico2026-1.pdf", nomeContem: "YAGO" },
+  { arquivo: arq("Histórico Completo.pdf"), nomeContem: "ROMULO" },
+  { arquivo: arq("namie.pdf"), nomeContem: "NAMIE" },
+  { arquivo: arq("historico2026-1.pdf"), nomeContem: "YAGO" },
 ];
 
 async function carregar(arquivo: string) {
@@ -162,18 +164,18 @@ describe.skipIf(!existsSync(CASOS[2].arquivo))("fatos específicos: Yago", () =>
 // mantenedor, fora do repositório. O layout da tabela de cursadas difere do de
 // BSI: tem uma coluna de créditos a mais, e as linhas de Exame de Suficiência
 // trazem a nota com ponto ("10.0") em vez de vírgula.
-const PASTA_844 = PASTA + "Material Referência Eng. Comp Antiga 844\\";
+const PASTA_844 = "Material Referência Eng. Comp Antiga 844";
 const CASOS_844 = [
-  PASTA_844 + "Histórico do Aluno - Victor Eng Comp.PDF",
-  PASTA_844 + "Histórico do Aluno - Garrett Eng Comp.pdf",
-  PASTA_844 + "Histórico Malu Eng Comp.pdf",
+  arq(PASTA_844, "Histórico do Aluno - Victor Eng Comp.PDF"),
+  arq(PASTA_844, "Histórico do Aluno - Garrett Eng Comp.pdf"),
+  arq(PASTA_844, "Histórico Malu Eng Comp.pdf"),
 ];
 
 const matriz844 = ENG_COMP.matriz;
 const mapa844 = criarMapaIdentidade(matriz844);
 
 for (const arquivo of CASOS_844) {
-  describe.skipIf(!existsSync(arquivo))(`histórico real 844: ${arquivo.split("\\").pop()}`, () => {
+  describe.skipIf(!existsSync(arquivo))(`histórico real 844: ${arquivo.split(/[\\/]/).pop()}`, () => {
     it("mapeia todas as cursadas e fecha com o próprio histórico", async () => {
       const perfil = await carregar(arquivo);
 
@@ -267,8 +269,9 @@ describe.skipIf(!existsSync(CASOS_844[0]))("fatos específicos 844: avaliações
 });
 
 // ---------------------------------------------------------------------------
-// Varredura de `materiais-referencia/` — a pasta local (gitignorada) onde ficam
-// os históricos reais desta máquina. Ao contrário dos casos acima, nada aqui é
+// Varredura do acervo (`OASIS_MATERIAL`, ou `OASIS_ACERVO`, ou a cópia legada
+// `materiais-referencia/`) — a pasta local, fora do Git, onde ficam os históricos
+// reais desta máquina. Ao contrário dos casos acima, nada aqui é
 // nomeado no código: a lista sai do disco em tempo de execução, o curso sai da
 // matriz lida do próprio PDF, e as asserções são as invariantes gerais. Assim um
 // histórico novo passa a ser coberto só de ser copiado para a pasta, sem que
@@ -290,7 +293,7 @@ function ehHistorico(caminho: string): boolean {
   return /^historico/i.test(semAcento);
 }
 
-const HISTORICOS_LOCAIS = globSync("materiais-referencia/**/*.pdf").filter(ehHistorico).sort();
+const HISTORICOS_LOCAIS = pdfsDoAcervo().filter(ehHistorico).sort();
 
 describe.skipIf(HISTORICOS_LOCAIS.length === 0)("históricos locais de referência", () => {
   it.each(HISTORICOS_LOCAIS)("%s é aceito e fecha com o próprio histórico", async (arquivo) => {
