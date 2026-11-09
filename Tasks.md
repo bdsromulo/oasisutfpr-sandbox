@@ -436,6 +436,62 @@ Toda tarefa — seja **Feature** ou **Bug** — carrega exatamente um destes sta
   - **Ética de pesquisa:** se dados de terceiros forem usados no TCC, ver a TASK-62 (CEP e consentimento) antes da primeira coleta.
   - **Dependências:** TASK-55 (base técnica e política de acesso), TASK-62 (decisão sobre uso em pesquisa).
 
+- **TASK-64 — Marcar Estágio, Atividades Complementares, ENADE e Extensão como "concluídos, ainda não registrados no histórico":**
+  - **Registrado em 2026-11-09.** Esses quatro componentes só aparecem no histórico depois que a coordenação lança o registro, e o lançamento chega semanas ou meses depois de o aluno ter cumprido a atividade: o relatório de estágio aprovado, as horas complementares entregues, o certificado de extensão protocolado, a prova do ENADE feita ou a dispensa emitida. Nesse intervalo o Oásis trata tudo como pendente, e o Simulador empurra a formatura para um semestre em que o aluno não tem mais nada a fazer.
+  - **Componentes na BSI 981, para referência:** `ICSX50` Atividades Complementares, `ICSX51` Estágio 1, `ICSX52` Estágio 2, `ENADEI` e `ENADEC` (ingressante e concluinte) e as 330h de extensão (`cargas.extensao`), que no Simulador são a linha sintética `EXTENSAO`, não disciplina. Os outros cursos têm equivalentes com código próprio (ex.: `CSX50` na 806). A identificação sai da matriz de cada curso, nunca de lista de códigos fixa no código; `src/domain/reviews/forms.ts` já reconhece estes componentes para tirá-los da coleta de avaliações e é o ponto de partida.
+  - **Mesmo padrão da TASK-58:** a marcação é aplicada uma vez, na borda da interface (`motor/presuncao.ts`), num perfil derivado. Todo o motor lê desse perfil (Situação, Simulador, Fluxograma, Posso Cursar) e nenhum módulo precisa saber que a marcação existe. Persistem só as marcações, nunca o perfil derivado, e elas viajam no savefile em campo opcional, sem bump de versão.
+  - **Cada componente tem uma forma de marcação diferente:**
+    - **Estágio:** um marcador por estágio. Estágio 1 e Estágio 2 são independentes, porque o aluno pode ter concluído só o primeiro.
+    - **Atividades Complementares:** marcador único, porque o histórico registra o componente inteiro ou nada.
+    - **Extensão:** horas, não marcador. O aluno informa quantas horas cumpriu e ainda não foram lançadas, e o número soma ao registrado até o teto da exigência do curso. Extensão costuma ser concluída em vários projetos ao longo do curso, então "tudo ou nada" não serve.
+    - **ENADE:** marcador por prova (ingressante e concluinte). Não tem carga horária; tira só a pendência, que importa para a colação de grau.
+  - **Desligado por padrão**, ao contrário da TASK-58: lá a presunção é sobre matérias em curso que o histórico mostra; aqui é declaração do aluno sobre algo que o histórico ainda não confirma.
+  - **Sempre visível como declaração:** o componente marcado aparece com selo próprio ("Concluído, aguardando registro") e nunca se mistura ao que o Portal validou. É a mesma preocupação do BUG-05 de não mostrar dois números para a mesma pergunta sem rótulo.
+  - **Fim natural da marcação:** quando um histórico novo já traz o registro, a marcação ficou redundante. Retirá-la sem ação do aluno e avisar uma vez ("o Portal registrou o seu Estágio 1"). Se o histórico novo trouxer menos horas de extensão do que o aluno declarou, manter a diferença e mostrar as duas contas.
+  - **Relações:** TASK-22 (estágio e extensão como aviso do motor, e não como hora de grade; a marcação é o que desliga esse aviso, e convém implementar as duas juntas ou a 22 antes), TASK-23 (o guia explica como conseguir o registro; a marcação cobre o tempo de espera por ele), TASK-58 (padrão de implementação) e BUG-06 (quem marca tudo pode chegar ao estado "curso integralizado", que hoje mostra um traço no Simulador).
+  - **Fluxo:** nasce em branch no sandbox e só chega à produção depois de validada (`REPOSITORIO.md` §7).
+
+- **TASK-65 — Sistema de avaliações nativo no Oásis, com autenticação:**
+  - **Registrado em 2026-11-09.** Fase de **decisão de arquitetura**, não de implementação: esta task reabre uma decisão já homologada e precisa da escolha do dono antes de qualquer código.
+  - **O que roda hoje:** o botão *Avaliar* monta um link pré-preenchido do Google Forms (`src/domain/reviews/forms.ts`); o Forms exige login em conta `@*.utfpr.edu.br`; as respostas caem numa planilha privada; a moderação marca `aprovado` toda semana; o Action `ingerir-reviews.yml` regenera `data/reviews.json`. Funciona e custa zero, mas o aluno sai do Oásis para avaliar, o prefill não trava campo (`Estrategia.md` §6.11, item 5), a publicação leva até uma semana e não existe teto automático por pessoa (§6.9).
+  - **Desatualização a corrigir junto:** a TASK-25 descreve um formulário nativo com envio a um Apps Script (`tools/apps-script/recebe-review.gs`), mas esse caminho não existe no repositório; o que foi implementado é o Forms. Atualizar a descrição da TASK-25 quando esta task for decidida.
+  - **Objetivo:** avaliar sem sair do Oásis, com identidade verificada por algum mecanismo, e com o formulário dentro do site (o seletor de professor da TASK-28, por exemplo, deixa de depender do prefill).
+  - **O que esta decisão reabre:** a RNF02 ("100% estático, zero backend") e a `Estrategia.md` §5, hoje com status "não é o caminho adotado". A própria §5 indica o gatilho para retomá-la: autenticação mais forte ou controle de volume que a §6 não oferece. Registrar a decisão nova lá, com data, e revisar o texto da RNF02 se ela mudar.
+  - **Caminhos a comparar (nenhum adotado):**
+    1. **Login Google no próprio site, restrito ao domínio da UTFPR** (Google Identity Services), com um endpoint que verifica o token antes de gravar. É o mais próximo do que existe: mesma identidade do Forms, mesma planilha e mesmo pipeline semanal. O site continua estático; o endpoint (Apps Script ou função serverless) é a única peça nova em runtime.
+    2. **BaaS só para a camada de comunidade** (`Estrategia.md` §5.5: Supabase, com login por link mágico e Row-Level Security, ou Cloudflare Workers + D1). Dá envio imediato, uma avaliação por pessoa e disciplina garantida pelo banco, e teto de vazão real. Custa uma dependência em runtime e um serviço para manter.
+    3. **Identidade GitHub** (avaliação via GitHub App ou PR a um repositório curado). Mantém o Git como banco, mas exclui quem não tem conta GitHub e não prova vínculo com a UTFPR. Registrado para descartar com motivo, não como candidato forte.
+  - **Requisitos que valem para qualquer caminho:**
+    - **Ler continua anônimo.** Só quem contribui se autentica.
+    - **O site não pode quebrar se o serviço de autenticação cair.** A leitura segue servida pelo JSON gerado no build; o que degrada é só o botão de avaliar, como já acontece hoje com `URL_BASE_FORMS` vazio.
+    - **Histórico continua 100% client-side.** Nenhum PDF, nota, CR ou RA sai do navegador para autenticar (`Estrategia.md` §5.3). O que vai é o código da disciplina, o semestre e a avaliação.
+    - **Nenhum segredo no repositório**, que é público (§5.6).
+    - **Moderação humana continua sendo a última camada**, e a camada de professor (TASK-08) segue com moderação mais rígida.
+    - **LGPD:** finalidade, consentimento e retratação continuam valendo (§5.7, §6.7). O e-mail institucional é dado pessoal: guardar só o necessário para impedir duplicidade (de preferência um hash) e nunca publicá-lo.
+  - **Migração:** as avaliações já publicadas em `data/reviews.json` precisam continuar valendo. Definir se o Forms fica como canal paralelo durante a transição ou se é desligado de uma vez.
+  - **Limite que nenhum caminho remove:** o login prova que a pessoa é da UTFPR, não que cursou a disciplina avaliada; o PDF do histórico não tem assinatura verificável (§5.1). Avaliação de disciplina não cursada continua sendo assunto da moderação.
+  - **Entregáveis sugeridos, em ordem:** (1) decisão do dono sobre a RNF02; (2) comparação dos caminhos com custo, manutenção e o que cada um garante; (3) desenho em `docs/superpowers/specs/`; (4) só então implementação, no sandbox.
+  - **Relações:** TASK-13 (modelo da avaliação, que não muda), TASK-25 (pipeline atual), TASK-26 (convite pós-semestre, que passa a abrir o formulário nativo), TASK-27 e TASK-28 (painel e seletor de professor), TASK-08 (camada de professor) e TASK-10 (o portal de administração pode virar a tela de moderação).
+
+- **TASK-66 — Reformular a apresentação de Novidades e remover o pop-up automático:**
+  - **Registrado em 2026-11-09.**
+  - **Como funciona hoje:** o conteúdo vive em `src/ui/novidades.ts` (lista `NOVIDADES` e a constante `VERSAO_NOVIDADES`). `App.tsx` monta a chave `oasis.novidades_lidas.<versão>.<beta|release>` no `localStorage` e um `useEffect` abre o `ModalNovidades` sozinho logo após o check-in, enquanto a versão atual não foi lida. Fechar o modal marca a leitura. Há ainda um botão "Novidades" no cabeçalho do celular e na barra lateral do computador, com indicador de não lido.
+  - **Problemas:**
+    - **O pop-up interrompe.** Ele abre por cima da tela justamente quando o aluno acabou de fazer o check-in e quer usar o site, e cada troca de versão o reabre para toda a base.
+    - **Não há histórico.** Cada lançamento substitui a lista inteira; o que saiu na versão anterior desaparece do site. Quem ficou semanas sem entrar só vê a leva mais recente.
+    - **Modal não serve para conteúdo longo.** Quatro itens com parágrafo e marcadores já exigem rolagem dentro de uma janela de 88% da altura, pior ainda no celular.
+  - **Remover:** a abertura automática (o `useEffect` em `App.tsx`) e o próprio `ModalNovidades`. Nenhuma novidade abre sozinha, em nenhuma tela.
+  - **Reformular (desenho a fechar antes de codar):**
+    - Novidades vira uma **tela própria**, acessada pelo mesmo botão de hoje, no padrão visual de `TelaComoUsar.tsx` e `TelaSobre.tsx`.
+    - **Histórico por lançamento:** cada leva ganha data e título, a mais recente no topo, e as anteriores continuam acessíveis. O dado passa de lista única para lista de lançamentos, cada um com seus itens.
+    - **Indicador de não lido continua**, só que discreto: o ponto no botão some quando o aluno abre a tela. Os itens do lançamento ainda não visto podem ganhar um selo "Novo".
+    - **Sem pop-up substituto.** Se algum lançamento precisar mesmo de aviso ativo (ex.: mudança que altera números já vistos pelo aluno), decidir à parte se vale um aviso no canto, no padrão da TASK-59, que não bloqueia a tela. O padrão é não ter.
+  - **O que precisa de nova casa:**
+    - O botão **"Avaliar uma disciplina"**, que hoje só aparece dentro do modal (`onAvaliar`). Levar para a tela nova ou para o convite da TASK-26, sem que a coleta de avaliações perca a porta de entrada.
+    - A **chave de leitura** passa a guardar o último lançamento visto, e não um booleano por versão. Manter o sufixo `beta`/`release` que separa sandbox e produção.
+  - **Cuidados:** manter a guarda do BUG-04 (o botão só aparece depois do check-in ou com histórico carregado); atualizar `tests/novidades.test.ts`, que hoje cobre estrutura e posição dos itens do modal; e conferir se TASK-29, TASK-43 e TASK-44, que descrevem o modal, precisam de nota apontando para esta.
+  - **Fluxo:** nasce em branch no sandbox e só chega à produção depois de validada (`REPOSITORIO.md` §7).
+
 - **TASK-52 — Eletivas e matérias de inclusão: mapear e adicionar dentro do aplicativo** *(promovida do backlog em 2026-10-13; renumerada de TASK-31, colisão de ID: ver nota no topo do arquivo)*:
   - **Objetivo original, mantido:** uma visão que consolide o conjunto de matérias de outros cursos que o aluno pode contemplar, para que ele se planeje na **fase de inclusão**, o período após a matrícula em que escolhe matérias fora da grade padrão.
   - **Hoje são dois problemas, e convém tratá-los separados:**
@@ -513,6 +569,11 @@ Toda tarefa — seja **Feature** ou **Bug** — carrega exatamente um destes sta
     - `b)` Como validar Eletivas;
     - `c)` Como validar Atividades Complementares;
     - `d)` Como validar Atividades de Extensão.
+  - **Ampliado em 2026-11-09.** Começar por BSI, porque é o curso com material mais acessível ao mantenedor, e priorizar Atividades Complementares, Extensão e Estágio (as eletivas ficam para depois).
+  - **Conteúdo de cada guia:** o que a exigência é e quantas horas pede na matriz do aluno (na BSI 981: `ICSX50`, `ICSX51`/`ICSX52` e as 330h de extensão); o que conta e o que não conta; quais documentos juntar; a quem e por onde entregar; quanto tempo leva até aparecer no histórico; e os erros comuns. Cada guia cita o regulamento de onde a regra sai (regulamento de atividades complementares do curso, regulamento de estágio da UTFPR, regulamento de curricularização da extensão), com link e data de consulta. Regra lida do documento, nunca de memória.
+  - **Sugestões de projetos da UTFPR que podem ser usados para validar** cada exigência: projetos e programas de extensão, equipes de competição, empresas juniores, PET, iniciação científica, monitoria e eventos. Para cada um: o que é, que exigência costuma validar (complementar, extensão ou estágio) e onde se inscrever. Esses projetos abrem e fecham, então a lista fica em arquivo de dados curado (ex.: `data/apoio/bsi.json`) com fonte e data de verificação por item, e a tela mostra essa data.
+  - **Encaixe:** mesma estrutura visual da TASK-54 (`TelaComoUsar.tsx`). A TASK-54 explica o que cada conceito é; esta explica como cumprir. Linkar uma à outra, sem repetir o conteúdo.
+  - **Relações:** TASK-54 (conceitos), TASK-64 (marcar como concluído enquanto o registro não sai), TASK-22 (o aviso de pendência do motor pode apontar para o guia) e TASK-09 (eletivas e extensões já validadas por alunos).
 
 - **TASK-08 — Seção de Feedbacks, Acervo e Documentações de Professores:**
   - Dentro da página própria da disciplina/turma, abrir espaço (via repositório auxiliar ou marcações locais) para agregar documentações antigas, ementas detalhadas e feedbacks construtivos da vivência dos estudantes.
