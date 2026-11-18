@@ -11,8 +11,8 @@ export function ModalExplicacaoCalculos(props: { aberto: boolean; onFechar: () =
   if (!props.aberto) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl bg-white p-6 shadow-2xl dark:bg-zinc-900 sm:p-8 animate-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 animate-in fade-in duration-200">
+      <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl dark:bg-zinc-900 sm:p-8 animate-in zoom-in-95 duration-200">
         <button
           onClick={props.onFechar}
           className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full bg-zinc-100 text-zinc-500 transition-colors hover:bg-zinc-200 hover:text-zinc-900 sm:h-8 sm:w-8 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700 dark:hover:text-white"
@@ -21,7 +21,7 @@ export function ModalExplicacaoCalculos(props: { aberto: boolean; onFechar: () =
           <IconX className="h-5 w-5" />
         </button>
 
-        <h3 className="font-display text-2xl font-black text-zinc-900 dark:text-white mb-6 pr-8 tracking-tight">
+        <h3 className="font-display text-2xl font-bold text-zinc-900 dark:text-white mb-6 pr-8 tracking-tight">
           Como o Oásis calcula
         </h3>
 
@@ -56,7 +56,7 @@ export function ConteudoExplicacaoCalculos(props: {
       <div className="space-y-4">
         <Card>
           <div className="flex items-center gap-2 text-utfpr-600 dark:text-utfpr-500 mb-3">
-            <h4 className="font-display text-base font-black tracking-tight text-zinc-900 dark:text-white">
+            <h4 className="font-display text-base font-bold tracking-tight text-zinc-900 dark:text-white">
               A Grade Inteligente
             </h4>
           </div>
@@ -73,13 +73,13 @@ export function ConteudoExplicacaoCalculos(props: {
             <li className="flex gap-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
               <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-utfpr-500" />
               <span>
-                <strong>Janela de período:</strong> A matrícula só aceita matéria de até dois períodos à frente do seu, então o algoritmo não sugere nada além disso — se você está no 6º, o TCC do 9º fica de fora até você chegar ao 7º. Matéria atrasada nunca é escondida, por mais antiga que seja.
+                <strong>Janela de período:</strong> A matrícula só aceita matéria de até dois períodos à frente do seu, então o algoritmo não sugere nada além disso. Se você está no 6º, o TCC do 9º fica de fora até você chegar ao 7º. Matéria atrasada nunca é escondida, por mais antiga que seja.
               </span>
             </li>
             <li className="flex gap-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
               <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-utfpr-500" />
               <span>
-                <strong>Distância do seu período:</strong> O algoritmo compara o período de cada matéria com o período em que você está. Matéria atrasada é dívida e ganha bônus — num choque entre uma do 4º e outra do 6º, a do 4º vence, para destravar a sua progressão. Matéria adiantada paga pedágio, para que o TCC não apareça na frente do que você deveria cursar agora. Vale para todas as categorias. Sem histórico importado não há período seu de que medir distância, e o algoritmo volta a priorizar simplesmente as matérias mais iniciais do curso.
+                <strong>Distância do seu período:</strong> O algoritmo compara o período de cada matéria com o período em que você está. Matéria atrasada é dívida e ganha bônus. Num choque entre uma do 4º e outra do 6º, a do 4º vence, para destravar a sua progressão. Matéria adiantada paga pedágio, para que o TCC não apareça na frente do que você deveria cursar agora. Vale para todas as categorias. Sem histórico importado não há período seu de que medir distância, e o algoritmo volta a priorizar simplesmente as matérias mais iniciais do curso.
               </span>
             </li>
             <li className="flex gap-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
@@ -109,7 +109,7 @@ export function ConteudoExplicacaoCalculos(props: {
 
         <Card>
           <div className="flex items-center gap-2 text-utfpr-600 dark:text-utfpr-500 mb-3">
-            <h4 className="font-display text-base font-black tracking-tight text-zinc-900 dark:text-white">
+            <h4 className="font-display text-base font-bold tracking-tight text-zinc-900 dark:text-white">
               O Simulador de Formatura
             </h4>
           </div>

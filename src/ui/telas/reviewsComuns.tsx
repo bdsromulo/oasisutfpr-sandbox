@@ -79,7 +79,7 @@ export const VERTICAIS: DescricaoVertical[] = [
     descricao:
       "O quanto a matéria é dura em si: bagagem e conhecimento prévio que ela cobra, " +
       "densidade dos conceitos e o quanto é preciso amadurecer o assunto para " +
-      "entender. Não é o volume de tarefas — isso é carga de trabalho.",
+      "entender. Volume de tarefas conta como carga de trabalho, não aqui.",
     escala: "1 fácil · 5 difícil",
     regua: [
       "Passei sem precisar de esforço concentrado",
@@ -95,8 +95,8 @@ export const VERTICAIS: DescricaoVertical[] = [
     rotulo: "Carga de trabalho",
     descricao:
       "Quanto tempo a matéria consome fora da aula: listas, trabalhos, projetos e " +
-      "preparo para prova. Uma disciplina pode ser pesada e fácil — muito volume, " +
-      "pouca dificuldade — ou o contrário.",
+      "preparo para prova. Uma disciplina pode ser pesada e fácil, com muito volume e " +
+      "pouca dificuldade, ou o contrário.",
     escala: "1 leve · 5 pesada",
     regua: [
       "Muito leve: pouquíssimo tempo fora da aula",
@@ -113,7 +113,7 @@ export const VERTICAL_POR_CHAVE = new Map(VERTICAIS.map((v) => [v.chave, v]));
 
 /** Texto da dica: o que a vertical mede, seguido da régua ponto a ponto. */
 export function dicaDaVertical(v: DescricaoVertical): string {
-  return `${v.descricao}\n\n${v.regua.map((r, i) => `${i + 1} — ${r}`).join("\n")}`;
+  return `${v.descricao}\n\n${v.regua.map((r, i) => `${i + 1}. ${r}`).join("\n")}`;
 }
 
 export function Nota(props: { vertical: DescricaoVertical; valor: number | null }) {
@@ -123,10 +123,10 @@ export function Nota(props: { vertical: DescricaoVertical; valor: number | null 
       title={dicaDaVertical(vertical)}
       className="cursor-help rounded-xl border border-zinc-200/70 px-3 py-2 dark:border-zinc-800/70"
     >
-      <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+      <div className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
         {vertical.rotulo}
       </div>
-      <div className="font-display text-lg font-black text-zinc-900 dark:text-zinc-100">
+      <div className="font-display text-lg font-bold text-zinc-900 dark:text-zinc-100">
         {valor === null ? "—" : valor.toFixed(1).replace(".", ",")}
         <span className="ml-1 font-sans text-[10px] font-normal text-zinc-400">/ 5</span>
       </div>
@@ -166,7 +166,7 @@ export function Distribuicao(props: {
           {vertical.rotulo}
           <span className="ml-1 font-normal text-zinc-400">ⓘ</span>
         </h5>
-        <span className="font-display text-sm font-black text-zinc-900 dark:text-zinc-100">
+        <span className="font-display text-sm font-bold text-zinc-900 dark:text-zinc-100">
           {media.toFixed(1).replace(".", ",")}
           <span className="ml-0.5 font-sans text-[10px] font-normal text-zinc-400">/ 5</span>
         </span>
@@ -182,7 +182,7 @@ export function Distribuicao(props: {
               type="button"
               disabled={n === 0}
               onClick={() => onSelecionar(ativa ? null : nota)}
-              title={`${nota} — ${vertical.regua[nota - 1]}`}
+              title={`${nota}. ${vertical.regua[nota - 1]}`}
               className={`flex w-full items-center gap-2 rounded-lg px-1 py-0.5 text-left transition ${
                 n === 0
                   ? "cursor-default opacity-40"
@@ -285,7 +285,7 @@ export function CartaoReview(props: { review: Review; mostrarCodigo?: boolean })
             <span className="truncate text-[10px] font-semibold text-zinc-500 dark:text-zinc-400">
               {v.rotulo}
             </span>
-            <span className="shrink-0 font-display text-xs font-black text-zinc-900 dark:text-zinc-100">
+            <span className="shrink-0 font-display text-xs font-bold text-zinc-900 dark:text-zinc-100">
               {r[v.chave]}
               <span className="font-sans text-[9px] font-normal text-zinc-400">/5</span>
             </span>
@@ -330,7 +330,7 @@ export function Resumo(props: { titulo: string; ag: AgregadoReviews }) {
       ) : (
         // com n baixo a média mente: 1 de 1 vira "5,0" e soa como consenso
         <p className="rounded-xl border border-zinc-200/70 bg-zinc-50 p-2.5 text-[11px] leading-relaxed text-zinc-600 dark:border-zinc-800/70 dark:bg-zinc-950/50 dark:text-zinc-300">
-          Ainda são poucas avaliações para uma média confiável — são precisas ao menos{" "}
+          Ainda são poucas avaliações para uma média confiável. São precisas ao menos{" "}
           {LIMIAR_ESTATISTICA}. Os relatos abaixo continuam valendo como leitura individual.
         </p>
       )}
@@ -396,7 +396,7 @@ export function aplicarFiltro(reviews: Review[], filtro: FiltroNota | null): Rev
 /** Rótulo legível do filtro ativo, para a faixa que permite limpá-lo. */
 export function rotuloDoFiltro(filtro: FiltroNota): string {
   const v = VERTICAL_POR_CHAVE.get(filtro.vertical)!;
-  return `${v.rotulo} ${filtro.nota}/5 — ${v.regua[filtro.nota - 1]}`;
+  return `${v.rotulo} ${filtro.nota}/5, ${v.regua[filtro.nota - 1]}`;
 }
 
 /**
@@ -417,7 +417,7 @@ export function CascaPainel(props: {
   if (!props.aberto) return null;
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-end justify-center bg-black/50 backdrop-blur-xs sm:items-stretch sm:justify-end"
+      className="fixed inset-0 z-[60] flex items-end justify-center bg-black/50 sm:items-stretch sm:justify-end"
       role="dialog"
       aria-modal="true"
       onClick={props.onFechar}
@@ -525,7 +525,7 @@ export function BotaoReviews(props: {
       aria-label={vazio ? `Sem avaliações ${rotuloAlvo}` : `Ver ${n} avaliações ${rotuloAlvo}`}
       className={
         variante === "acao"
-          ? `inline-flex shrink-0 items-center gap-1 rounded-lg border px-2 py-0.5 text-[11px] font-bold shadow-2xs transition-all ${estiloAcao} ${props.classe ?? ""}`
+          ? `inline-flex shrink-0 items-center gap-1 rounded-lg border px-2 py-0.5 text-[11px] font-bold shadow-2xs transition-colors ${estiloAcao} ${props.classe ?? ""}`
           : `inline-flex shrink-0 items-center gap-0.5 rounded-lg px-1.5 py-0.5 text-[11px] font-bold transition ${
               vazio
                 ? "cursor-not-allowed text-zinc-300 dark:text-zinc-700"

@@ -1,16 +1,16 @@
 import { useMemo, useState } from "react";
 import type { Matriz, OfertaSemestre, PerfilAluno, SelecaoTurma } from "../../domain/tipos";
 import { gerarSugestaoGrade, type OpcoesSugestaoGrade } from "../../domain/motor/grade-magica";
-import { Botao } from "../componentes";
+import { Botao, Chevron } from "../componentes";
 import { ModalExplicacaoCalculos } from "../componentes/ModalExplicacaoCalculos";
 import {
   IconBan,
   IconInfo,
   IconPin,
   IconSettings,
-  IconSparkles,
   IconStar,
   IconWarning,
+  IconGrade,
 } from "../icons";
 import { descricaoDoCurso, ehTrilha, exigeExtensao } from "../../domain/cursos";
 import {
@@ -19,6 +19,7 @@ import {
   SLOTS_ORDENADOS,
   ULTIMO_SLOT,
 } from "../../domain/horarios";
+import { nomeLegivel } from "../textos";
 
 export interface ModalSugestaoGradeProps {
   aberto: boolean;
@@ -282,16 +283,16 @@ export function ModalSugestaoGrade({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm animate-in fade-in">
-      <div className="w-full max-w-lg rounded-3xl border border-zinc-200 bg-white p-6 shadow-2xl dark:border-zinc-800 dark:bg-zinc-900 space-y-5 max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 animate-in fade-in">
+      <div className="w-full max-w-lg rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xl dark:border-zinc-800 dark:bg-zinc-900 space-y-5 max-h-[90vh] overflow-y-auto">
         <div className="flex items-start justify-between gap-3">
           <div>
             <h3 className="font-display text-xl font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
-              <IconSparkles className="h-4 w-4 shrink-0 text-utfpr-500" /> Sugestão de Grade
+              <IconGrade className="h-4 w-4 shrink-0 text-utfpr-600 dark:text-utfpr-500" /> Sugestão de Grade
               <button
                 type="button"
                 onClick={() => setExplicacaoAberta(true)}
-                className="ml-2 inline-flex items-center gap-1 rounded-full border border-zinc-200 bg-zinc-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-zinc-500 hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700 transition-colors cursor-help"
+                className="ml-2 inline-flex items-center gap-1 rounded-full border border-zinc-200 bg-zinc-50 px-2 py-0.5 text-xs font-medium text-zinc-500 hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700 transition-colors cursor-help"
               >
                 <IconInfo className="h-3 w-3 shrink-0" /> Como funciona?
               </button>
@@ -358,7 +359,7 @@ export function ModalSugestaoGrade({
             <div className="space-y-4 text-sm">
               {/* Objetivo Principal */}
           <div className="space-y-2.5">
-            <label className="block font-display text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+            <label className="block font-display text-xs font-medium text-zinc-500 dark:text-zinc-400">
               Objetivo Principal
             </label>
             <div className="grid gap-2.5 sm:grid-cols-2">
@@ -410,7 +411,7 @@ export function ModalSugestaoGrade({
 
           {/* Restrições de Turno */}
           <div className="space-y-2">
-            <label className="block font-display text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+            <label className="block font-display text-xs font-medium text-zinc-500 dark:text-zinc-400">
               Restrições de Turno
             </label>
             <div className="grid grid-cols-3 gap-2.5">
@@ -466,7 +467,7 @@ export function ModalSugestaoGrade({
               de aula. Compõe com os turnos acima em vez de substituí-los — é o
               que mantém expressável "manhã e noite, sem tarde, até N3". */}
           <div className="space-y-2">
-            <label className="block font-display text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+            <label className="block font-display text-xs font-medium text-zinc-500 dark:text-zinc-400">
               Janela de Aulas
             </label>
             <div className="grid grid-cols-2 gap-2.5">
@@ -505,7 +506,7 @@ export function ModalSugestaoGrade({
             </div>
             {janelaInvertida && (
               <p className="text-[11px] font-semibold text-red-600 dark:text-red-400">
-                A aula final vem antes da inicial — inverta os dois para a janela
+                A aula final vem antes da inicial. Inverta os dois para a janela
                 fazer sentido.
               </p>
             )}
@@ -519,7 +520,7 @@ export function ModalSugestaoGrade({
 
           {/* Filtro de Sedes */}
           <div className="space-y-2">
-            <label className="block font-display text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+            <label className="block font-display text-xs font-medium text-zinc-500 dark:text-zinc-400">
               Sedes Permitidas
             </label>
             <div className="grid grid-cols-3 gap-2.5">
@@ -579,7 +580,7 @@ export function ModalSugestaoGrade({
             <button
               type="button"
               onClick={() => setDefinicoesAvanadasAbertas(!definicoesAvanadasAbertas)}
-              className="flex w-full items-center justify-between rounded-2xl border border-zinc-200/80 bg-zinc-50/80 p-3.5 text-left font-display text-xs font-bold uppercase tracking-wider text-zinc-700 transition-colors hover:bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-800/50 dark:text-zinc-300 dark:hover:bg-zinc-800 cursor-pointer"
+              className="flex w-full items-center justify-between rounded-2xl border border-zinc-200/80 bg-zinc-50/80 p-3.5 text-left font-display text-xs font-medium text-zinc-700 transition-colors hover:bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-800/50 dark:text-zinc-300 dark:hover:bg-zinc-800 cursor-pointer"
             >
               <div className="flex items-center gap-2">
                 <span>{<IconSettings className="inline h-4 w-4 shrink-0 align-[-0.2em]" />} Definições Avançadas</span>
@@ -591,8 +592,8 @@ export function ModalSugestaoGrade({
                   {<IconInfo className="inline h-4 w-4 shrink-0 align-[-0.2em]" />}
                 </span>
               </div>
-              <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-zinc-200/80 text-sm font-black text-zinc-700 transition-all dark:bg-zinc-700 dark:text-zinc-200">
-                {definicoesAvanadasAbertas ? "▲" : "▼"}
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg text-zinc-500 dark:text-zinc-400">
+                <Chevron aberto={definicoesAvanadasAbertas} />
               </span>
             </button>
 
@@ -603,7 +604,7 @@ export function ModalSugestaoGrade({
                   <div className="flex items-center justify-between">
                     {temExtensao && <label
                       title="Evita que as disciplinas selecionadas sejam sugeridas na montagem automática da grade"
-                      className="block font-display text-xs font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-300 cursor-help"
+                      className="block font-display text-xs font-medium text-zinc-600 dark:text-zinc-300 cursor-help"
                     >
                       Excluir Disciplinas {disciplinasExcluidas.length > 0 ? `(${disciplinasExcluidas.length})` : ""} <IconInfo className="h-4 w-4 shrink-0" />
                     </label>}
@@ -629,7 +630,7 @@ export function ModalSugestaoGrade({
                           className="inline-flex items-center gap-1.5 rounded-xl border border-red-200 bg-red-50/80 px-2.5 py-1 text-xs font-semibold text-red-800 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-200"
                         >
                           <span className="font-mono font-bold">{item.codigo}</span>
-                          <span className="truncate max-w-[180px]" title={item.nome}>{item.nome}</span>
+                          <span className="truncate max-w-[180px]" title={nomeLegivel(item.nome)}>{nomeLegivel(item.nome)}</span>
                           <button
                             type="button"
                             onClick={() => setDisciplinasExcluidas((prev) => prev.filter((d) => d.codigo !== item.codigo))}
@@ -680,7 +681,7 @@ export function ModalSugestaoGrade({
                             >
                               <div>
                                 <span className="font-mono font-bold text-zinc-900 dark:text-zinc-100 mr-2">{d.codigo}</span>
-                                <span className="text-zinc-600 dark:text-zinc-300">{d.nome}</span>
+                                <span className="text-zinc-600 dark:text-zinc-300">{nomeLegivel(d.nome)}</span>
                               </div>
                               <span className="shrink-0 rounded-lg bg-red-500/10 px-2 py-0.5 text-[10px] font-bold text-red-600 dark:text-red-400">
                                 + Excluir
@@ -698,7 +699,7 @@ export function ModalSugestaoGrade({
                   <div className="flex items-center justify-between">
                     {temHumanidades && <label
                       title="Evita que turmas ministradas ou co-ministradas por estes docentes sejam sugeridas na grade"
-                      className="block font-display text-xs font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-300 cursor-help"
+                      className="block font-display text-xs font-medium text-zinc-600 dark:text-zinc-300 cursor-help"
                     >
                       Excluir Professores {professoresExcluidos.length > 0 ? `(${professoresExcluidos.length})` : ""} <IconInfo className="h-4 w-4 shrink-0" />
                     </label>}
@@ -789,7 +790,7 @@ export function ModalSugestaoGrade({
                   <div className="flex items-center justify-between">
                     <label
                       title="Evita que matérias optativas pertencentes a essa trilha específica sejam sugeridas no cálculo da grade"
-                      className="block font-display text-xs font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-300 cursor-help"
+                      className="block font-display text-xs font-medium text-zinc-600 dark:text-zinc-300 cursor-help"
                     >
                       Excluir Trilhas {trilhasExcluidas.length > 0 ? `(${trilhasExcluidas.length})` : ""} <IconInfo className="h-4 w-4 shrink-0" />
                     </label>
@@ -815,12 +816,12 @@ export function ModalSugestaoGrade({
                           className="inline-flex items-center gap-1.5 rounded-xl border border-red-200 bg-red-50/80 px-2.5 py-1 text-xs font-semibold text-red-800 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-200"
                         >
                           <span className="font-mono font-bold">{t.conjunto}</span>
-                          <span className="truncate max-w-[180px]" title={t.nome}>{t.nome}</span>
+                          <span className="truncate max-w-[180px]" title={nomeLegivel(t.nome)}>{nomeLegivel(t.nome)}</span>
                           <button
                             type="button"
                             onClick={() => setTrilhasExcluidas((prev) => prev.filter((item) => item.conjunto !== t.conjunto))}
                             className="ml-0.5 rounded-full p-0.5 hover:bg-red-200 dark:hover:bg-red-900 text-red-600 dark:text-red-300 cursor-pointer"
-                            title={`Remover ${t.nome} da lista de exclusão`}
+                            title={`Remover ${nomeLegivel(t.nome)} da lista de exclusão`}
                           >
                             ×
                           </button>
@@ -866,7 +867,7 @@ export function ModalSugestaoGrade({
                             >
                               <div>
                                 <span className="font-mono font-bold text-zinc-900 dark:text-zinc-100 mr-2">{t.conjunto}</span>
-                                <span className="text-zinc-600 dark:text-zinc-300">{t.nome}</span>
+                                <span className="text-zinc-600 dark:text-zinc-300">{nomeLegivel(t.nome)}</span>
                               </div>
                               <span className="shrink-0 rounded-lg bg-red-500/10 px-2 py-0.5 text-[10px] font-bold text-red-600 dark:text-red-400">
                                 + Excluir
@@ -881,7 +882,7 @@ export function ModalSugestaoGrade({
 
                 {/* Filtros e Prioridades Extras (Checkboxes) */}
                 <div className="space-y-2.5 border-t border-zinc-200/60 pt-4 dark:border-zinc-800">
-                  <label className="block font-display text-xs font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-300">
+                  <label className="block font-display text-xs font-medium text-zinc-600 dark:text-zinc-300">
                     Restrições e Prioridades de Grupo
                   </label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">

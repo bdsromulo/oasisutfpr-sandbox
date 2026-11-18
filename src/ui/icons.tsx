@@ -722,3 +722,25 @@ export function IconMail(props: SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
+
+/** Sino: o que mudou no Oásis. Substitui o brilho, que não dizia o que era. */
+export function IconBell(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base(props)}>
+      <path d="M6 9.5a6 6 0 0 1 12 0c0 4.5 1.6 6.2 2 6.5H4c.4-.3 2-2 2-6.5Z" />
+      <path d="M10 19.5a2.1 2.1 0 0 0 4 0" />
+    </svg>
+  );
+}
+
+/** Quadro de horários com casas preenchidas: a Sugestão de Grade monta um. */
+export function IconGrade(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base(props)}>
+      <rect x="3.5" y="4" width="17" height="16" rx="2" />
+      <path d="M3.5 9.3h17M3.5 14.7h17M9.2 4v16M14.8 4v16" />
+      <rect x="10.2" y="10.3" width="3.6" height="3.4" fill="currentColor" stroke="none" />
+      <rect x="4.5" y="15.7" width="3.7" height="3.3" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}

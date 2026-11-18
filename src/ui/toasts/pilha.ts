@@ -8,6 +8,16 @@
 
 export type TomToast = "info" | "ok" | "aviso" | "alerta";
 
+/**
+ * Um botão dentro do aviso. Existe para o "Desfazer": apagar algo sem pedir
+ * confirmação e oferecer a volta por alguns segundos interrompe menos do que
+ * um modal de "tem certeza?", e protege igual contra o clique sem querer.
+ */
+export interface AcaoToast {
+  rotulo: string;
+  executar: () => void;
+}
+
 export interface Toast {
   /** identidade estável do aviso; a mesma chave nunca empilha duas vezes */
   chave: string;
@@ -16,6 +26,7 @@ export interface Toast {
   descricao?: string;
   /** linhas auxiliares: disciplinas afetadas, turmas em choque */
   detalhes?: string[];
+  acao?: AcaoToast;
   /** ms até sumir sozinho; 0 significa "só sai no X" */
   duracaoMs: number;
   criadoEm: number;
@@ -61,6 +72,7 @@ function novoToast(p: PedidoToast, agora: number): Toast {
     titulo: p.titulo,
     descricao: p.descricao,
     detalhes: p.detalhes,
+    acao: p.acao,
     duracaoMs: p.duracaoMs ?? DURACAO_PADRAO_MS,
     criadoEm: agora,
     pausadoEm: null,

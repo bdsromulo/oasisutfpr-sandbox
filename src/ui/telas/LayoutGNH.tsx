@@ -8,8 +8,9 @@ import {
   IconEye,
   IconLock,
   IconPin,
-  IconSparkles,
   IconWarning,
+  IconGrade,
+  IconCheck,
 } from "../icons";
 import type { DisciplinaOfertada, Matriz, OfertaSemestre, PerfilAluno } from "../../domain/tipos";
 import { cumpre, listarElegiveis } from "../../domain/motor/elegiveis";
@@ -30,6 +31,7 @@ import { Badge, MenuOrdenacao, BalaoProgressoHover, useIsMobile } from "../compo
 import { obterCargaHoraria } from "../../domain/motor/progressoGrade";
 import { BotaoReviews, useContagemPorTurma } from "./reviewsComuns";
 import { PainelDisciplina, type AlvoPainelDisciplina } from "./PainelDisciplina";
+import { nomeLegivel } from "../textos";
 
 export function normalizarTextoBusca(str: string): string {
   return str
@@ -111,13 +113,13 @@ function DisciplinaGNHItem({
       <div className="p-3.5 flex flex-wrap items-center justify-between gap-2 border-b border-zinc-100 dark:border-zinc-800/60 bg-zinc-50/50 dark:bg-zinc-900/40">
         <div className="flex flex-wrap items-baseline gap-2">
           <span
-            title={`${d.codigo} — ${d.nome}`}
+            title={`${d.codigo} · ${nomeLegivel(d.nome)}`}
             className="font-mono text-sm font-bold text-utfpr-700 dark:text-utfpr-500 cursor-help underline decoration-dotted decoration-utfpr-500/50"
           >
             [{d.codigo}]
           </span>
           <span className="font-display text-sm font-bold text-zinc-900 dark:text-zinc-100">
-            {d.nome}
+            {nomeLegivel(d.nome)}
           </span>
           <span className="font-mono text-xs font-semibold text-zinc-500">
             ({obterCargaHoraria(d, matriz)}h)
@@ -142,7 +144,7 @@ function DisciplinaGNHItem({
               <Badge tom="alerta">{<IconWarning className="inline h-4 w-4 shrink-0 align-[-0.2em]" />} Pré-req. pendente</Badge>
             </span>
           ) : est.pendente && est.naMatriz ? (
-            <Badge tom="ok">{<IconSparkles className="inline h-4 w-4 shrink-0 align-[-0.2em]" />} Liberada</Badge>
+            <Badge tom="ok"><IconCheck className="inline h-3.5 w-3.5 shrink-0" /> Liberada</Badge>
           ) : null}
         </div>
       </div>
@@ -207,7 +209,7 @@ function DisciplinaGNHItem({
                         onPreview(p);
                         if (onAbrirMobilePreview) onAbrirMobilePreview(p);
                       }}
-                      className="inline-flex items-center gap-1 rounded-lg border border-zinc-200/80 bg-zinc-50 px-2 py-0.5 text-[11px] font-bold text-zinc-700 hover:bg-utfpr-500 hover:text-zinc-950 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-utfpr-400 dark:hover:text-zinc-950 transition-all cursor-pointer shadow-2xs"
+                      className="inline-flex items-center gap-1 rounded-lg border border-zinc-200/80 bg-zinc-50 px-2 py-0.5 text-[11px] font-bold text-zinc-700 hover:bg-utfpr-500 hover:text-zinc-950 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-utfpr-400 dark:hover:text-zinc-950 transition-colors cursor-pointer shadow-2xs"
                       title="Espiar nesta turma na grade (ideal no celular ou para teste rápido)"
                     >
                       <IconEye className="h-4 w-4 shrink-0" />
@@ -232,7 +234,7 @@ function DisciplinaGNHItem({
                             setProgressoCarregadoTurma(t.codigo);
                           }
                         }}
-                        className="inline-flex items-center gap-1 rounded-lg border border-zinc-200/80 bg-zinc-50 px-2 py-0.5 text-[11px] font-bold text-zinc-700 hover:bg-utfpr-500 hover:text-zinc-950 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-utfpr-400 dark:hover:text-zinc-950 transition-all cursor-pointer shadow-2xs"
+                        className="inline-flex items-center gap-1 rounded-lg border border-zinc-200/80 bg-zinc-50 px-2 py-0.5 text-[11px] font-bold text-zinc-700 hover:bg-utfpr-500 hover:text-zinc-950 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-utfpr-400 dark:hover:text-zinc-950 transition-colors cursor-pointer shadow-2xs"
                         title="Status de progresso desta matéria no currículo"
                       >
                         <IconBarChart className="h-4 w-4 shrink-0" />
@@ -241,7 +243,7 @@ function DisciplinaGNHItem({
                       {statusHoverTurma === t.codigo && (
                         <BalaoProgressoHover
                           codigoDisciplina={d.codigo}
-                          nomeDisciplina={d.nome}
+                          nomeDisciplina={nomeLegivel(d.nome)}
                           cargaHoraria={obterCargaHoraria(d, matriz)}
                           perfil={perfil}
                           matriz={matriz}
@@ -416,7 +418,7 @@ export function TelaLayoutGNH(props: {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-4 rounded-2xl border border-zinc-200/80 bg-white/80 p-3.5 text-sm shadow-2xs backdrop-blur-sm dark:border-zinc-800/80 dark:bg-zinc-900/80">
+      <div className="flex flex-wrap items-center gap-4 rounded-2xl border border-zinc-200/80 bg-white/80 p-3.5 text-sm shadow-2xs dark:border-zinc-800/80 dark:bg-zinc-900/80">
         <input
           type="search"
           value={busca}
@@ -448,14 +450,14 @@ export function TelaLayoutGNH(props: {
           <button
             onClick={() => perfil && onAbrirGradeMagica()}
             disabled={!perfil}
-            className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 font-display text-sm font-bold transition-all ${
+            className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 font-display text-sm font-bold transition-colors ${
               perfil
-                ? "bg-gradient-to-r from-amber-500 to-utfpr-500 text-zinc-950 shadow-md hover:brightness-105 cursor-pointer"
+                ? " bg-utfpr-500 text-zinc-950 shadow-md hover:brightness-105 cursor-pointer"
                 : "border border-zinc-200 bg-zinc-100 text-zinc-400 cursor-not-allowed dark:border-zinc-800 dark:bg-zinc-800/60 dark:text-zinc-500"
             }`}
             title={perfil ? "Preenchimento com Sugestão de Grade" : EXIGE_HISTORICO}
           >
-            {perfil ? <IconSparkles className="h-4 w-4 shrink-0" /> : <IconLock className="h-4 w-4 shrink-0" />}
+            {perfil ? <IconGrade className="h-4 w-4 shrink-0" /> : <IconLock className="h-4 w-4 shrink-0" />}
             <span className="hidden sm:inline">Sugestão de Grade</span>
             <span className="sm:hidden">Sugestão</span>
           </button>

@@ -178,10 +178,10 @@ function Secao(props: {
     <section id={idDaSecao(props.numero)} className="scroll-mt-24 space-y-3.5">
       <div>
         <div className="flex items-baseline gap-2.5">
-          <span className="rounded-lg bg-utfpr-500/20 px-2 py-0.5 font-mono text-xs font-black text-utfpr-700 dark:text-utfpr-400">
+          <span className="rounded-lg bg-utfpr-500/20 px-2 py-0.5 font-mono text-xs font-bold text-utfpr-700 dark:text-utfpr-400">
             {props.numero}
           </span>
-          <h3 className="font-display text-lg font-black tracking-tight text-zinc-900 dark:text-white">
+          <h3 className="font-display text-lg font-bold tracking-tight text-zinc-900 dark:text-white">
             {props.titulo}
           </h3>
         </div>
@@ -204,7 +204,7 @@ function LinkSocial(props: { href: string; rotulo: string; children: ReactNode }
       rel="noopener noreferrer"
       title={props.rotulo}
       aria-label={props.rotulo}
-      className="inline-flex items-center gap-2 rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm font-semibold text-zinc-700 shadow-2xs transition-all hover:border-utfpr-500/60 hover:bg-utfpr-50/60 hover:text-zinc-950 active:scale-[0.98] dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:border-utfpr-500/50 dark:hover:bg-zinc-800 dark:hover:text-white"
+      className="inline-flex items-center gap-2 rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm font-semibold text-zinc-700 shadow-2xs transition-colors hover:border-utfpr-500/60 hover:bg-utfpr-50/60 hover:text-zinc-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:border-utfpr-500/50 dark:hover:bg-zinc-800 dark:hover:text-white"
     >
       {props.children}
     </a>
@@ -215,9 +215,9 @@ export function TelaSobre(props: { onAbrirGestaoInformacao: () => void }) {
   return (
     <div className="space-y-10">
       {/* Capa */}
-      <header className="rounded-3xl border border-zinc-200/90 bg-gradient-to-br from-utfpr-500/15 via-white to-white p-7 shadow-xs dark:border-zinc-800 dark:from-utfpr-500/10 dark:via-zinc-900 dark:to-zinc-900">
+      <header className="rounded-2xl border border-zinc-200/90 bg-white p-7 dark:border-zinc-800 dark:bg-zinc-900">
         <Badge tom="acento">Sobre o projeto</Badge>
-        <h2 className="mt-3 font-display text-3xl font-black tracking-tight text-zinc-900 dark:text-white">
+        <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">
           <span className="text-utfpr-600 dark:text-utfpr-500">Oásis</span> UTFPR
         </h2>
         {/* Epígrafe de abertura: preâmbulo da descrição do projeto. */}
@@ -395,7 +395,7 @@ export function TelaSobre(props: { onAbrirGestaoInformacao: () => void }) {
               />
               <div className="min-w-0 flex-1">
                 <Badge tom="acento">Criador e desenvolvedor</Badge>
-                <h4 className="mt-2 font-display text-xl font-black tracking-tight text-zinc-900 dark:text-white">
+                <h4 className="mt-2 font-display text-xl font-bold tracking-tight text-zinc-900 dark:text-white">
                   Rômulo Barbosa da Silva
                 </h4>
                 <p className="mt-1 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
@@ -431,7 +431,7 @@ export function TelaSobre(props: { onAbrirGestaoInformacao: () => void }) {
           {/* Apoiadores */}
           <Card>
             <div className="mb-1 flex flex-wrap items-center gap-2">
-              <h4 className="font-display text-base font-black tracking-tight text-zinc-900 dark:text-white">
+              <h4 className="font-display text-base font-bold tracking-tight text-zinc-900 dark:text-white">
                 Apoiadores
               </h4>
               <Badge tom="neutro">{APOIADORES.length} pessoas</Badge>
@@ -444,13 +444,13 @@ export function TelaSobre(props: { onAbrirGestaoInformacao: () => void }) {
               também conferiu o resultado e apontou os erros.
             </p>
             <section>
-              <h5 className="mb-2 font-display text-xs font-black uppercase tracking-wider text-zinc-700 dark:text-zinc-300">
+              <h5 className="mb-2 font-display text-xs font-medium text-zinc-700 dark:text-zinc-300">
                 Revisores em ordem alfabética
               </h5>
               <ListaApoiadores pessoas={REVISORES} />
             </section>
             <section className="mt-5">
-              <h5 className="mb-2 font-display text-xs font-black uppercase tracking-wider text-zinc-700 dark:text-zinc-300">
+              <h5 className="mb-2 font-display text-xs font-medium text-zinc-700 dark:text-zinc-300">
                 Outros apoiadores em ordem alfabética
               </h5>
               <ListaApoiadores pessoas={OUTROS_APOIADORES} />
@@ -459,7 +459,7 @@ export function TelaSobre(props: { onAbrirGestaoInformacao: () => void }) {
 
           {/* Método de desenvolvimento */}
           <Card>
-            <h4 className="font-display text-base font-black tracking-tight text-zinc-900 dark:text-white">
+            <h4 className="font-display text-base font-bold tracking-tight text-zinc-900 dark:text-white">
               Como o site foi desenvolvido
             </h4>
             <p className="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
@@ -476,7 +476,7 @@ export function TelaSobre(props: { onAbrirGestaoInformacao: () => void }) {
 
           {/* Inspiração */}
           <Card>
-            <h4 className="font-display text-base font-black tracking-tight text-zinc-900 dark:text-white">
+            <h4 className="font-display text-base font-bold tracking-tight text-zinc-900 dark:text-white">
               Inspiração e embasamento
             </h4>
             <p className="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
@@ -520,7 +520,7 @@ export function TelaSobre(props: { onAbrirGestaoInformacao: () => void }) {
             {/* trilho vertical */}
             <span
               aria-hidden
-              className="absolute left-[9px] top-2 bottom-2 w-px bg-gradient-to-b from-utfpr-500/60 via-zinc-300 to-zinc-200 dark:from-utfpr-500/50 dark:via-zinc-700 dark:to-zinc-800"
+              className="absolute left-[9px] top-2 bottom-2 w-px bg-zinc-200 dark:bg-zinc-800 "
             />
             {ROADMAP.map((m) => {
               const concluido = m.estado === "concluido";
@@ -541,7 +541,7 @@ export function TelaSobre(props: { onAbrirGestaoInformacao: () => void }) {
                   </span>
                   <div className="flex flex-wrap items-center gap-2">
                     <span
-                      className={`font-mono text-xs font-black ${
+                      className={`font-mono text-xs font-bold ${
                         concluido
                           ? "text-utfpr-700 dark:text-utfpr-400"
                           : "text-zinc-500 dark:text-zinc-400"
@@ -551,7 +551,7 @@ export function TelaSobre(props: { onAbrirGestaoInformacao: () => void }) {
                     </span>
                     {!concluido && <Badge tom="neutro">Planejado</Badge>}
                   </div>
-                  <h4 className="mt-0.5 font-display text-sm font-black tracking-tight text-zinc-900 dark:text-white">
+                  <h4 className="mt-0.5 font-display text-sm font-bold tracking-tight text-zinc-900 dark:text-white">
                     {m.titulo}
                   </h4>
                   <p className="mt-1 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
@@ -565,7 +565,7 @@ export function TelaSobre(props: { onAbrirGestaoInformacao: () => void }) {
       </Secao>
 
       <Card classe="!border-utfpr-500/40 !border-2 text-center">
-        <h3 className="font-display text-lg font-black tracking-tight text-zinc-900 dark:text-white">
+        <h3 className="font-display text-lg font-bold tracking-tight text-zinc-900 dark:text-white">
           Achou um erro? Fale com a gente
         </h3>
         <p className="mx-auto mt-1.5 max-w-xl text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">

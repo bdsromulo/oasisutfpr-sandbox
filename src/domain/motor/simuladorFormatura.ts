@@ -561,8 +561,8 @@ export function simularFormatura(
     registrarImpossivel(
       "semestre-fixado",
       codigo,
-      d ? `${d.codigo} — ${d.nome}` : codigo,
-      `${formatarSemestre(alvo)} é anterior ao início da projeção — não há como cursar no passado.`,
+      d ? `${d.codigo} · ${d.nome}` : codigo,
+      `${formatarSemestre(alvo)} é anterior ao início da projeção, e não há como cursar no passado.`,
       codigo,
     );
   }
@@ -696,7 +696,7 @@ export function simularFormatura(
     registrarImpossivel(
       "disciplina",
       d.codigo,
-      `${d.codigo} — ${d.nome}`,
+      `${d.codigo} · ${d.nome}`,
       "é obrigatória da matriz: não há disciplina que a substitua, então ela entra no plano mesmo assim.",
       d.codigo,
     );
@@ -729,7 +729,7 @@ export function simularFormatura(
       registrarImpossivel(
         "disciplina",
         d.codigo,
-        `${d.codigo} — ${d.nome}`,
+        `${d.codigo} · ${d.nome}`,
         `sem ela a categoria não fecha: restam ${disponivelSemExcluidas}h ofertadas para ${faltante}h exigidas.`,
         d.codigo,
       );
@@ -1001,7 +1001,7 @@ export function simularFormatura(
   const trilhasAlvo = escolherTrilhasAlvo();
   if (trilhasAlvo.size < trilhasExigidas) {
     avisos.push(
-      `Só ${trilhasAlvo.size} trilha(s) conseguem fechar as 90h com a oferta conhecida — ` +
+      `Só ${trilhasAlvo.size} trilha(s) conseguem fechar as 90h com a oferta conhecida, e ` +
         `o curso exige ${trilhasExigidas}. A projeção segue, mas confira a oferta no Portal.`,
     );
   }
@@ -1558,7 +1558,7 @@ export function simularFormatura(
       registrarImpossivel(
         "semestre-fixado",
         codigo,
-        d ? `${d.codigo} — ${d.nome}` : codigo,
+        d ? `${d.codigo} · ${d.nome}` : codigo,
         `não cabe em ${formatarSemestre(semestreAtual)}: ou o pré-requisito ainda não está ` +
           `cumprido ali, ou o semestre já estourou o teto de carga, ou não sobrou turma sem ` +
           `choque. Ela foi realocada no primeiro semestre em que couber.`,
@@ -1583,7 +1583,7 @@ export function simularFormatura(
     registrarImpossivel(
       "semestre-fixado",
       codigo,
-      d ? `${d.codigo} — ${d.nome}` : codigo,
+      d ? `${d.codigo} · ${d.nome}` : codigo,
       `a projeção não chegou a ${formatarSemestre(alvo)} dentro do horizonte simulado.`,
       codigo,
     );
@@ -1597,7 +1597,7 @@ export function simularFormatura(
     const d = porCodigo.get(codigo);
     if (!d) continue;
 
-    const rotulo = `${d.codigo} — ${d.nome}`;
+    const rotulo = `${d.codigo} · ${d.nome}`;
     let motivo: string;
     if (cumpre(d.codigo, perfilOriginal, mapa)) {
       motivo = "seu histórico já a dá como cumprida: não há o que planejar.";
@@ -1606,7 +1606,7 @@ export function simularFormatura(
     } else if (d.conjunto !== null && ehTrilha(cursoDesc, d.conjunto) && !trilhasAlvo.has(d.conjunto)) {
       const nomeTrilha = matriz.conjuntos[String(d.conjunto)]?.nome ?? `trilha ${d.conjunto}`;
       motivo =
-        `pertence a ${nomeTrilha}, que não entrou nas trilhas-alvo — escolha essa trilha ` +
+        `pertence a ${nomeTrilha}, que não entrou nas trilhas-alvo. Escolha essa trilha ` +
         `para poder cursá-la.`;
     } else {
       motivo =
@@ -1629,7 +1629,7 @@ export function simularFormatura(
 
   if (!fechou) {
     avisos.push(
-      "A projeção não fecha dentro do horizonte simulado — reveja o ritmo ou verifique pré-requisitos travados.",
+      "A projeção não fecha dentro do horizonte simulado. Reveja o ritmo ou verifique pré-requisitos travados.",
     );
   }
 

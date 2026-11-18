@@ -285,7 +285,7 @@ export function montarBoardObrigatorias(matriz: Matriz): Board {
   const faixas: FaixaFluxo[] = [
     {
       id: "obrigatorias",
-      rotulo: curso.matriz === 981 ? "Obrigatórias — 1º Estrato" : "Obrigatórias",
+      rotulo: curso.matriz === 981 ? "Obrigatórias, 1º estrato" : "Obrigatórias",
       subrotulo: "Uma coluna por período previsto na matriz",
       y: PADDING,
       altura: alturaFaixaObr,

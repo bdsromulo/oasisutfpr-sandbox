@@ -29,7 +29,7 @@ import { TelaCheckin, type DadosCheckin } from "./telas/Checkin";
 import { TelaConfiguracoes, type Preferencias } from "./telas/Configuracoes";
 import { MiniGrade, type PreviewTurma } from "./MiniGrade";
 import { ModalGradeMagica } from "./telas/ModalGradeMagica";
-import { Botao, Badge, BotaoIconeComDica } from "./componentes";
+import { AbasSegmentadas, Botao, BotaoIconeComDica, CarregadorPontos, Chevron } from "./componentes";
 import { SidebarNavegacao, type AbaPrincipal } from "./SidebarNavegacao";
 /**
  * O Simulador de Formatura entra sob demanda. Ele carrega a tela, os controles
@@ -57,8 +57,7 @@ import {
   type ValorModelagem,
 } from "./telas/valoresSimulador";
 import {
-  IconBookOpen,
-  IconCalendar,
+  IconBell,
   IconClipboard,
   IconEye,
   IconHelp,
@@ -66,17 +65,16 @@ import {
   IconMenu,
   IconMoon,
   IconSettings,
-  IconSparkles,
   IconStar,
   IconSun,
-  IconUser,
   IconWarning,
   LogoUTFPR,
 } from "./icons";
 import { ModalMinhasAvaliacoes } from "./telas/ModalMinhasAvaliacoes";
 import { ModalNovidades } from "./telas/ModalNovidades";
 import { AvisoBeta } from "./telas/AvisoBeta";
-import { ProvedorToasts } from "./toasts/contexto";
+import { ProvedorToasts, useToasts } from "./toasts/contexto";
+import { avisarRemocao } from "./toasts/avisos";
 import { PilhaToasts } from "./toasts/PilhaToasts";
 import { reviewsHabilitadasPara } from "../domain/reviews/config";
 import { coletaHabilitada } from "../domain/reviews/forms";
@@ -132,6 +130,20 @@ const CHAVE_VIRADA = `oasis.virada.${SEMESTRE_PLANEJAMENTO}.v1`;
 const CHAVE_NOVIDADES = `oasis.novidades_lidas.${VERSAO_NOVIDADES}.${
   __OASIS_BETA__ ? "beta" : "release"
 }`;
+
+/**
+ * Ponto amarelo de "há novidade". Parado de propósito: o anel pulsante antigo
+ * (`animate-ping`) repintava a cada quadro em toda tela, e um sinal que pisca
+ * para sempre deixa de ser lido.
+ */
+function PontoNovidade() {
+  return (
+    <span
+      aria-hidden="true"
+      className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-utfpr-500 ring-2 ring-white dark:ring-zinc-950"
+    />
+  );
+}
 
 // Cores do seletor de período, por estado do semestre. Verde é o que ainda vai
 // começar, laranja é o que está acontecendo, cinza é o que já passou — a mesma
@@ -202,6 +214,7 @@ function lerPerfil(): PerfilAluno | null {
 }
 
 function Aplicacao() {
+  const toasts = useToasts();
   const [perfil, setPerfil] = useState<PerfilAluno | null>(lerPerfil);
   const [checkinConcluido, setCheckinConcluido] = useState<boolean>(
     () => localStorage.getItem(CHAVE_CHECKIN) === "true",
@@ -499,6 +512,12 @@ function Aplicacao() {
 
   function handleRemoverGrade(g: string) {
     if (g === "A") return;
+    // Guardados antes de apagar, para o "Desfazer" do aviso. A exclusão era
+    // imediata e sem volta: um × de 16px ao lado do nome da grade.
+    const semestre = semestreAtivo;
+    const removida = cestaGrades[g] ?? [];
+    const exclusoesRemovidas = cestaExclusoes[g];
+    const eraAtiva = gradeAtiva === g;
     const novaCesta = { ...cestaGrades };
     delete novaCesta[g];
     setTodasCestasPorSemestre((prev) => {
@@ -516,6 +535,29 @@ function Aplicacao() {
       localStorage.setItem(CHAVE_GRADE_ATIVA, "A");
       setSelecao(novaCesta["A"] ?? []);
     }
+    avisarRemocao(toasts, {
+      chave: "remover-grade",
+      titulo: `Grade ${g} excluída`,
+      descricao:
+        removida.length > 0
+          ? `${removida.length} ${removida.length === 1 ? "turma estava" : "turmas estavam"} nela.`
+          : undefined,
+      desfazer: () => {
+        setTodasCestasPorSemestre((prev) => {
+          const n = { ...prev, [semestre]: { ...(prev[semestre] ?? {}), [g]: removida } };
+          localStorage.setItem(CHAVE_CESTAS_POR_SEMESTRE, JSON.stringify(n));
+          return n;
+        });
+        if (exclusoesRemovidas) {
+          setCestaExclusoes((prev: any) => ({ ...prev, [g]: exclusoesRemovidas }));
+        }
+        if (eraAtiva) {
+          setGradeAtiva(g);
+          localStorage.setItem(CHAVE_GRADE_ATIVA, g);
+          setSelecao(removida);
+        }
+      },
+    });
   }
   const [modalGradeMagica, setModalGradeMagica] = useState(false);
 
@@ -842,6 +884,19 @@ function Aplicacao() {
     localStorage.removeItem(CHAVE_GRADE_SIMULADOR);
   }
 
+  // "sistema" segue o SO. O botão do topo sempre oferece o tema oposto ao que
+  // está na tela, qualquer que seja a origem dele.
+  const temaEscuroAtivo =
+    preferencias.tema === "escuro" ||
+    (preferencias.tema === "sistema" &&
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+  // A barra de abas do celular existe sempre que a pessoa está dentro da
+  // plataforma. As telas de material do projeto têm o próprio "Voltar".
+  const navMobileVisivel =
+    (!!perfil || checkinConcluido) && !sobreAberta && !giAberta && !comoUsarAberta;
+
   const barraGradeMobileVisivel =
     (!!perfil || checkinConcluido) &&
     aba === "planejamento" &&
@@ -851,169 +906,119 @@ function Aplicacao() {
     !comoUsarAberta;
 
   return (
-    <div className="mx-auto max-w-6xl px-4 pb-[calc(5rem+env(safe-area-inset-bottom))] pt-6">
-      <header className="mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-zinc-200/80 pb-6 dark:border-zinc-800/80">
-        <div className="flex items-center gap-3.5">
+    <div className={`mx-auto max-w-6xl px-4 pt-4 sm:pt-6 lg:pb-20 ${navMobileVisivel ? "pb-[calc(9rem+env(safe-area-inset-bottom))]" : "pb-[calc(5rem+env(safe-area-inset-bottom))]"}`}>
+      <header className="mb-6 flex items-center justify-between gap-3 border-b border-zinc-200 pb-4 sm:mb-8 sm:pb-6 dark:border-zinc-800">
+        <div className="flex min-w-0 items-center gap-3">
           <LogoUTFPR className="h-9 w-9 shrink-0" />
-          <div>
-            <div className="flex items-center gap-2.5">
-              <h1 className="font-display text-2xl font-black tracking-tight leading-none">
-                <span className="text-utfpr-600 dark:text-utfpr-500">Oásis</span> UTFPR
-              </h1>
-            </div>
-            <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-              {dadosCurso.rotulo} · Câmpus Curitiba · Matriz {matriz.matriz}
+          <div className="min-w-0">
+            <h1 className="font-display text-xl font-bold leading-none tracking-tight sm:text-2xl">
+              <span className="text-utfpr-600 dark:text-utfpr-500">Oásis</span> UTFPR
+            </h1>
+            {/* No celular o rótulo curto cabe numa linha só. O longo quebrava
+                em duas e empurrava o conteúdo para baixo. */}
+            <p className="mt-1 truncate text-xs text-zinc-500 dark:text-zinc-400">
+              <span className="sm:hidden">
+                {dadosCurso.rotuloCurto} · Matriz {matriz.matriz}
+                {perfil && <> · {perfil.periodo}º período</>}
+              </span>
+              <span className="hidden sm:inline">
+                {dadosCurso.rotulo} · Câmpus Curitiba · Matriz {matriz.matriz}
+              </span>
             </p>
           </div>
         </div>
 
-        {/* No celular estas ações viram um único botão de menu: eram cinco
-            ícones de 32px em duas linhas, abaixo do mínimo de toque, e dois
-            deles só mostravam o rótulo no hover. O chip de perfil continua
-            visível, porque é contexto e não ação. */}
-        <div className="flex items-center gap-2 sm:hidden">
-          {perfil ? (
-            <span className="flex min-w-0 items-center gap-1.5 rounded-2xl border border-zinc-200/80 bg-white/80 px-3 py-2 text-xs font-semibold text-zinc-700 dark:border-zinc-800/80 dark:bg-zinc-900/80 dark:text-zinc-300">
-              <IconUser className="h-4 w-4 shrink-0 text-utfpr-600 dark:text-utfpr-500" />
-              <span className="truncate">
-                {perfil.nome.split(" ")[0]}
-                <span className="font-normal text-zinc-400"> · {perfil.periodo}º</span>
-              </span>
-            </span>
-          ) : (
-            checkinConcluido && <Badge tom="neutro">Modo Livre</Badge>
-          )}
-          {/* No celular só o ícone cabe ao lado do chip de perfil e do Menu; o
-              rótulo iria empurrar o Menu para uma segunda linha. Gated também
-              por perfil/checkinConcluido, como no bloco desktop logo abaixo:
-              sem isso o convite para avaliar aparecia na própria tela de
-              check-in, citando telas (Planejamento, Configurações) que quem
-              ainda não entrou na plataforma nunca viu. */}
+        {/* No celular as ações viram um único botão de menu: eram cinco ícones
+            de 32px em duas linhas, abaixo do mínimo de toque. O período do aluno
+            subiu para a linha do curso, e o cabeçalho cabe numa linha só. */}
+        <div className="flex shrink-0 items-center gap-1 sm:hidden">
+          {/* Só depois do check-in, como no bloco do desktop. Antes disso a
+              pessoa ainda não entrou na plataforma para o que mudou fazer
+              sentido. */}
           {(!!perfil || checkinConcluido) && (
             <button
               type="button"
               onClick={abrirNovidades}
-              aria-label="Novidades"
+              aria-label={novidadesLidas ? "Novidades" : "Novidades (há algo novo)"}
               title="O que mudou no Oásis"
-              className="relative flex h-11 min-w-[44px] shrink-0 cursor-pointer items-center justify-center rounded-2xl border border-utfpr-500/60 bg-utfpr-500/15 px-3 text-utfpr-800 shadow-2xs active:scale-95 dark:border-utfpr-500/50 dark:text-utfpr-300"
+              className="relative flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg text-zinc-600 transition-colors hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
             >
-              <IconSparkles className="h-5 w-5 shrink-0" />
-              {!novidadesLidas && (
-                <span className="absolute -right-1 -top-1 flex h-2.5 w-2.5">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-utfpr-500 opacity-75" />
-                  <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-utfpr-600 dark:bg-utfpr-400" />
-                </span>
-              )}
+              <IconBell className="h-5 w-5 shrink-0" />
+              {!novidadesLidas && <PontoNovidade />}
             </button>
           )}
           <button
             type="button"
             onClick={() => setMenuMobileAberto(true)}
             aria-label="Abrir menu"
-            className="flex h-11 min-w-[44px] shrink-0 cursor-pointer items-center justify-center gap-2 rounded-2xl border border-zinc-200/80 bg-white/90 px-3.5 font-display text-sm font-bold text-zinc-700 shadow-2xs active:scale-95 dark:border-zinc-800/80 dark:bg-zinc-900/90 dark:text-zinc-200"
+            className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg text-zinc-700 transition-colors hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
           >
             <IconMenu className="h-5 w-5 shrink-0" />
-            <span>Menu</span>
           </button>
         </div>
 
-        <div className="hidden flex-wrap items-center gap-3 sm:flex">
-          {/* Controles do Cabeçalho visíveis quando já iniciou a plataforma */}
+        <div className="hidden items-center gap-1 sm:flex">
+          {/* Controles do cabeçalho visíveis quando já iniciou a plataforma */}
           {(perfil || checkinConcluido) && (
             <>
-            {/* comutador de tema visível no topo da página (apenas ícones claro/escuro) */}
-            <div className="flex rounded-xl border border-zinc-200/80 bg-zinc-100/70 p-0.5 text-xs font-bold dark:border-zinc-800/80 dark:bg-zinc-900/70">
-              {[
-                { id: "claro" as const, rotulo: "Modo Claro", icon: IconSun },
-                { id: "escuro" as const, rotulo: "Modo Escuro", icon: IconMoon },
-              ].map((op) => {
-                const ativo = preferencias.tema === op.id || (preferencias.tema === "sistema" && op.id === "escuro" && window.matchMedia("(prefers-color-scheme: dark)").matches) || (preferencias.tema === "sistema" && op.id === "claro" && !window.matchMedia("(prefers-color-scheme: dark)").matches);
-                const Icone = op.icon;
-                return (
-                  <button
-                    key={op.id}
-                    type="button"
-                    onClick={() => setPreferencias({ ...preferencias, tema: op.id })}
-                    title={op.rotulo}
-                    className={`flex items-center justify-center rounded-[10px] p-2 transition-colors ${
-                      ativo
-                        ? "bg-utfpr-500 text-zinc-900 shadow-2xs"
-                        : "text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-200"
-                    }`}
-                  >
-                    <Icone className="w-4 h-4" />
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Informação do Perfil ou Modo Livre */}
-            <div className="flex items-center gap-3 rounded-2xl border border-zinc-200/80 bg-white/80 py-1.5 pl-3.5 pr-2 shadow-2xs backdrop-blur-sm dark:border-zinc-800/80 dark:bg-zinc-900/80">
-              {perfil ? (
-                <div className="flex items-center gap-2 text-sm font-semibold text-zinc-700 dark:text-zinc-300">
-                  <IconUser className="h-4 w-4 text-utfpr-600 dark:text-utfpr-500" />
-                  <span>
-                    {perfil.nome.split(" ")[0]} ·{" "}
-                    <span className="text-zinc-400 font-normal">{perfil.periodo}º período</span>
-                  </span>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2 text-xs font-bold text-zinc-600 dark:text-zinc-300">
-                  <Badge tom="neutro">Modo Livre</Badge>
-                  <span className="hidden sm:inline">Sem histórico</span>
-                </div>
-              )}
-              <Botao
+              {/* Perfil e configurações juntos: a engrenagem é onde se troca o
+                  histórico, então fica ao lado de quem ele descreve. */}
+              <button
+                type="button"
                 onClick={() => setModalConfigAberto(true)}
-                variante="sutil"
-                classe="!p-2 text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white"
                 title="Configurações"
+                className="mr-1 flex h-9 cursor-pointer items-center gap-2 rounded-lg border border-zinc-200 bg-white pl-3 pr-2 text-sm transition-colors hover:border-zinc-300 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700 dark:hover:bg-zinc-800"
               >
-                <IconSettings className="h-4 w-4" />
-              </Botao>
-            </div>
+                {perfil ? (
+                  <span className="flex items-center gap-1.5 font-medium text-zinc-800 dark:text-zinc-200">
+                    {perfil.nome.split(" ")[0]}
+                    <span className="font-normal text-zinc-500 dark:text-zinc-400">
+                      · {perfil.periodo}º período
+                    </span>
+                  </span>
+                ) : (
+                  <span className="font-medium text-zinc-600 dark:text-zinc-300">Modo Livre</span>
+                )}
+                <IconSettings className="h-4 w-4 text-zinc-500 dark:text-zinc-400" />
+              </button>
 
-            {/* Fica dentro deste bloco de propósito: antes do check-in a
-                fileira inteira não existe, e ali a pessoa ainda não entrou na
-                plataforma para o que mudou fazer sentido. Não depende mais de
-                avaliações — o modal abre sozinho para todo mundo, e sem o botão
-                quem não tivesse reviews ficava sem como reabri-lo. */}
-            <button
-              type="button"
-              onClick={abrirNovidades}
-              title="O que mudou no Oásis"
-              className="relative flex h-9 cursor-pointer items-center gap-1.5 rounded-2xl border border-utfpr-500/60 bg-utfpr-500/15 px-3.5 font-display text-sm font-bold text-utfpr-800 shadow-2xs transition-all hover:bg-utfpr-500 hover:text-zinc-950 dark:border-utfpr-500/50 dark:text-utfpr-300 dark:hover:bg-utfpr-400 dark:hover:text-zinc-950"
-            >
-              <IconSparkles className="h-4 w-4 shrink-0" />
-              <span>Novidades</span>
-              {!novidadesLidas && (
-                <span className="absolute -right-1 -top-1 flex h-2.5 w-2.5">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-utfpr-500 opacity-75" />
-                  <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-utfpr-600 dark:bg-utfpr-400" />
-                </span>
-              )}
-            </button>
-
-            {/* Avaliar não vive só na tela de progresso: quem quer opinar sobre
-                uma matéria antiga precisa de um caminho direto (RF15). */}
-            {perfil && reviewsHabilitadasPara(matriz.matriz) && coletaHabilitada() && (
+              {/* Um botão só para o tema. Dois ícones lado a lado pediam uma
+                  escolha onde só existe "o outro". */}
               <BotaoIconeComDica
-                dica="Avaliar uma disciplina"
-                classe="text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white"
-                onClick={() => setModalAvaliacoesAberto(true)}
+                dica={temaEscuroAtivo ? "Usar tema claro" : "Usar tema escuro"}
+                onClick={() =>
+                  setPreferencias({ ...preferencias, tema: temaEscuroAtivo ? "claro" : "escuro" })
+                }
               >
-                <IconStar className="h-4 w-4" />
+                {temaEscuroAtivo ? <IconSun className="h-4 w-4" /> : <IconMoon className="h-4 w-4" />}
               </BotaoIconeComDica>
-            )}
+
+              {/* Não depende de avaliações: o modal abre sozinho para todo
+                  mundo, e sem o botão não haveria como reabri-lo. */}
+              <BotaoIconeComDica dica="Novidades" onClick={abrirNovidades}>
+                <span className="relative flex">
+                  <IconBell className="h-4 w-4" />
+                  {!novidadesLidas && <PontoNovidade />}
+                </span>
+              </BotaoIconeComDica>
+
+              {/* Avaliar não vive só na tela de progresso: quem quer opinar sobre
+                  uma matéria antiga precisa de um caminho direto (RF15). */}
+              {perfil && reviewsHabilitadasPara(matriz.matriz) && coletaHabilitada() && (
+                <BotaoIconeComDica
+                  dica="Avaliar uma disciplina"
+                  onClick={() => setModalAvaliacoesAberto(true)}
+                >
+                  <IconStar className="h-4 w-4" />
+                </BotaoIconeComDica>
+              )}
             </>
           )}
 
-          {/* Ajuda e "Sobre" acompanham a engrenagem, mas valem para qualquer
-              ambiente: são material do projeto, então aparecem também antes do
-              check-in. O "?" revela o rótulo no hover para não pesar o topo. */}
+          {/* Ajuda e "Sobre" valem para qualquer ambiente. São material do
+              projeto, então aparecem também antes do check-in. */}
           <BotaoIconeComDica
-            dica="Como Usar o Site"
-            classe="text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white"
+            dica="Como usar o site"
             onClick={() => {
               setGiAberta(false);
               setSobreAberta(false);
@@ -1024,8 +1029,7 @@ function Aplicacao() {
           </BotaoIconeComDica>
 
           <BotaoIconeComDica
-            dica="Sobre o Projeto"
-            classe="text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white"
+            dica="Sobre o projeto"
             onClick={() => {
               setGiAberta(false);
               setComoUsarAberta(false);
@@ -1049,54 +1053,46 @@ function Aplicacao() {
           PDF publicado e mostra turmas espelhadas — precisa dizer isso em voz
           alta. O corrente tem oferta oficial e consolidada. Os passados não
           merecem faixa nenhuma: quem escolhe um deles sabe o que está fazendo. */}
+      {/* Uma linha só, com o detalhe sob demanda. A versão anterior ocupava
+          um quarto da tela do celular antes de qualquer conteúdo. O essencial
+          (planejamento, turmas prováveis, vão mudar) continua sempre visível. */}
       {descritorSemestre.estado === "planejamento" && !sobreAberta && !comoUsarAberta && (
-        <div className="mx-auto max-w-7xl px-4 pt-5 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between gap-3 rounded-2xl border-2 border-emerald-500/70 bg-gradient-to-r from-emerald-500/15 via-teal-500/10 to-emerald-500/15 p-4.5 text-xs text-zinc-900 shadow-lg dark:border-emerald-500/80 dark:from-emerald-950/90 dark:via-teal-950/80 dark:to-emerald-950/90 dark:text-emerald-100">
-            <div className="flex items-center gap-3.5">
-              <IconClipboard className="h-4 w-4 shrink-0" />
-              <div>
-                <div className="flex items-center gap-2 font-display text-sm font-black tracking-wide text-emerald-900 uppercase dark:text-emerald-100">
-                  <span>Planejando {descritorSemestre.rotulo}</span>
-                  <span className="inline-flex items-center rounded-lg bg-emerald-600 px-2 py-0.5 text-[10px] font-black text-white shadow-2xs">
-                    TURMAS PROVÁVEIS
-                  </span>
-                </div>
-                <p className="mt-1 text-xs leading-relaxed font-semibold text-zinc-800 dark:text-zinc-200">
-                  A UTFPR ainda não publicou o PDF de <em>Turmas Abertas</em> de{" "}
-                  <strong className="text-emerald-700 underline dark:text-emerald-300">
-                    {descritorSemestre.rotulo}
-                  </strong>
-                  . Até lá, a lista de matérias e horários é a{" "}
-                  <strong>oferta real de{" "}
-                    {descritorSemestre.ofertaEspelhada
-                      ? formatarSemestre(descritorSemestre.ofertaEspelhada)
-                      : "um semestre de mesma paridade"}
-                  </strong>
-                  , o último semestre de mesma paridade — serve para{" "}
-                  <strong className="text-emerald-700 dark:text-emerald-300">
-                    ensaiar a matrícula
-                  </strong>
-                  , mas <strong className="uppercase">turmas, horários e docentes vão mudar</strong>.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+        <details className="group mb-5 rounded-xl border border-zinc-200 bg-white text-sm text-zinc-800 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200">
+          <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2.5 px-3.5 py-2.5 [&::-webkit-details-marker]:hidden">
+            <IconClipboard className="h-4 w-4 shrink-0 text-emerald-700 dark:text-emerald-400" />
+            <span className="min-w-0 flex-1">
+              <strong className="font-semibold">Planejando {descritorSemestre.rotulo}</strong>
+              <span className="text-zinc-600 dark:text-zinc-400">
+                {" "}com turmas prováveis. Turmas, horários e docentes ainda vão mudar.
+              </span>
+            </span>
+            <span className="shrink-0 text-xs font-medium text-zinc-600 underline decoration-dotted underline-offset-2 dark:text-zinc-400">
+              <span className="group-open:hidden">Entenda</span>
+              <span className="hidden group-open:inline">Fechar</span>
+            </span>
+          </summary>
+          <p className="border-t border-zinc-200 px-3.5 py-3 pl-10 text-xs leading-relaxed text-zinc-600 dark:border-zinc-800 dark:text-zinc-400">
+            A UTFPR ainda não publicou o PDF de <em>Turmas Abertas</em> de{" "}
+            {descritorSemestre.rotulo}. Até lá, a lista de matérias e horários é a oferta real de{" "}
+            <strong className="font-semibold">
+              {descritorSemestre.ofertaEspelhada
+                ? formatarSemestre(descritorSemestre.ofertaEspelhada)
+                : "um semestre de mesma paridade"}
+            </strong>
+            , o último semestre de mesma paridade. Serve para ensaiar a matrícula, mas a oferta
+            oficial vai trazer outras turmas.
+          </p>
+        </details>
       )}
 
       {descritorSemestre.estado === "corrente" && !sobreAberta && !comoUsarAberta && (
-        <div className="mx-auto max-w-7xl px-4 pt-5 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-3.5 rounded-2xl border border-orange-500/50 bg-orange-500/10 p-3.5 text-xs text-zinc-900 dark:border-orange-500/50 dark:bg-orange-950/50 dark:text-orange-100">
-            <IconClipboard className="h-4 w-4 shrink-0" />
-            <p className="leading-relaxed font-semibold">
-              <strong className="font-display tracking-wide uppercase">
-                Semestre corrente: {descritorSemestre.rotulo}
-              </strong>{" "}
-              — a matrícula já passou e as turmas abaixo são a oferta oficial consolidada. Para
-              montar a grade do próximo semestre, troque o período em{" "}
-              <em>Montando grade para</em>.
-            </p>
-          </div>
+        <div className="mb-5 flex items-start gap-2.5 rounded-xl border border-zinc-200 bg-white px-3.5 py-2.5 text-sm text-zinc-800 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200">
+          <IconClipboard className="mt-0.5 h-4 w-4 shrink-0 text-orange-700 dark:text-orange-400" />
+          <p className="leading-relaxed">
+            <strong className="font-semibold">Semestre corrente: {descritorSemestre.rotulo}.</strong>{" "}
+            A matrícula já passou e estas turmas são a oferta oficial. Para montar a grade do
+            próximo semestre, troque o período em <em>Montando grade para</em>.
+          </p>
         </div>
       )}
 
@@ -1105,7 +1101,7 @@ function Aplicacao() {
       {comoUsarAberta ? (
         <div className="space-y-5">
           <Botao variante="sutil" onClick={() => setComoUsarAberta(false)}>
-            <span>←</span>
+            <Chevron aberto={false} classe="rotate-90" />
             <span>Voltar</span>
           </Botao>
           <TelaComoUsar />
@@ -1113,7 +1109,7 @@ function Aplicacao() {
       ) : sobreAberta ? (
         <div className="space-y-5">
           <Botao variante="sutil" onClick={() => setSobreAberta(false)}>
-            <span>←</span>
+            <Chevron aberto={false} classe="rotate-90" />
             <span>Voltar</span>
           </Botao>
           <TelaSobre
@@ -1126,7 +1122,7 @@ function Aplicacao() {
       ) : giAberta ? (
         <div className="space-y-5">
           <Botao variante="sutil" onClick={() => setGiAberta(false)}>
-            <span>←</span>
+            <Chevron aberto={false} classe="rotate-90" />
             <span>Voltar ao início</span>
           </Botao>
           <TelaGestaoInformacao />
@@ -1176,32 +1172,16 @@ function Aplicacao() {
             {aba === "situacao" && (
               <div className="space-y-6">
                 {/* Sub-navegação em Minha Situação: Resumo, Catálogo e Trilhas */}
-                <div className="w-full rounded-3xl border-2 border-zinc-200/90 bg-white/95 p-2 shadow-md backdrop-blur-md dark:border-zinc-800/90 dark:bg-zinc-900/95 transition-all">
-                  <div className="grid grid-cols-3 gap-2">
-                    {[
-                      { id: "painel" as const, rotulo: "Painel Geral", icone: <IconUser className="h-4 w-4" /> },
-                      { id: "catalogo" as const, rotulo: "Catálogo", icone: <IconCalendar className="h-4 w-4" /> },
-                      { id: "trilhas" as const, rotulo: "Árvore & Trilhas", icone: <span>⚡</span> },
-                    ].map((op) => {
-                      const ativo = abaSituacao === op.id;
-                      return (
-                        <button
-                          key={op.id}
-                          type="button"
-                          onClick={() => setAbaSituacao(op.id)}
-                          className={`flex items-center justify-center gap-2 rounded-2xl py-3 px-3 font-display text-xs sm:text-sm font-black transition-all cursor-pointer ${
-                            ativo
-                              ? "bg-zinc-900 text-utfpr-400 shadow-md ring-2 ring-utfpr-500/40 dark:bg-zinc-800 dark:text-utfpr-400"
-                              : "bg-zinc-50/90 text-zinc-700 hover:bg-utfpr-50 dark:bg-zinc-800/60 dark:text-zinc-300"
-                          }`}
-                        >
-                          {op.icone}
-                          <span className="truncate">{op.rotulo}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
+                <AbasSegmentadas
+                  rotulo="Seções de Minha Situação"
+                  valor={abaSituacao}
+                  onMudar={setAbaSituacao}
+                  opcoes={[
+                    { id: "painel", rotulo: "Painel geral" },
+                    { id: "catalogo", rotulo: "Catálogo" },
+                    { id: "trilhas", rotulo: "Árvore e trilhas" },
+                  ]}
+                />
 
                 {/* Antes do painel, e não depois: o que ele mostra já leva a
                     presunção em conta, e quem não souber disso lê os números
@@ -1250,109 +1230,71 @@ function Aplicacao() {
             {aba === "planejamento" && (
               <div className="space-y-6">
                 {/* Contexto de matrícula: o período escolhido vale para as turmas
-                    listadas e para a grade em montagem — e só para isso. */}
-                <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3 rounded-3xl border-2 border-zinc-200/90 bg-white/95 px-4 py-3 shadow-md backdrop-blur-md dark:border-zinc-800/90 dark:bg-zinc-900/95">
-                  <div className="flex items-center gap-3">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-utfpr-500/20 text-lg">
-                      <IconCalendar className="h-5 w-5 text-utfpr-600 dark:text-utfpr-400" />
-                    </span>
-                    <div className="min-w-0">
-                      <div className="font-display text-[11px] font-black uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
-                        Montando grade para
-                      </div>
-                      <label
-                        className={`relative mt-0.5 inline-flex cursor-pointer items-center gap-1.5 rounded-lg border py-0.5 pr-5 pl-2.5 font-mono text-sm font-bold shadow-2xs transition-colors select-none ${CAPSULA_SEMESTRE[descritorSemestre.estado]}`}
-                        title="Período letivo usado para listar turmas e montar a grade"
-                      >
-                        {/* O pulso é da expectativa: só o semestre que ainda vai
-                            começar merece piscar. */}
-                        <span
-                          className={`h-1.5 w-1.5 shrink-0 rounded-full ${PONTO_SEMESTRE[descritorSemestre.estado]} ${
-                            descritorSemestre.estado === "planejamento" ? "animate-pulse" : ""
-                          }`}
-                        />
-                        <select
-                          value={semestreAtivo}
-                          onChange={(e) => mudarSemestre(e.target.value)}
-                          className="cursor-pointer appearance-none bg-transparent font-mono text-sm font-bold text-current focus:outline-none max-sm:min-h-11"
-                        >
-                          {semestresDisponiveis.map((sem) => {
-                            const d = descritorDoSemestre(sem, semestresReais);
-                            return (
-                              <option
-                                key={sem}
-                                value={sem}
-                                className={`bg-white font-bold dark:bg-zinc-900 ${OPCAO_SEMESTRE[d.estado]}`}
-                              >
-                                {d.rotulo} ({d.rotuloEstado})
-                              </option>
-                            );
-                          })}
-                        </select>
-                        <span className="absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none text-[9px] opacity-70">▾</span>
-                      </label>
-                    </div>
-                  </div>
-                  <p className="max-w-xs text-xs font-medium leading-snug text-zinc-500 dark:text-zinc-400">
-                    Vale para as turmas e para a grade desta aba. Seu histórico, progresso e
-                    coeficiente continuam no período atual.
+                    listadas e para a grade em montagem, e só para isso. A cor do
+                    seletor diz o estado do semestre (verde vai começar, laranja
+                    está acontecendo, cinza já passou). */}
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
+                  <label
+                    htmlFor="seletor-semestre"
+                    className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
+                  >
+                    Montando grade para
+                  </label>
+                  <span
+                    className={`relative inline-flex items-center rounded-lg border transition-colors ${CAPSULA_SEMESTRE[descritorSemestre.estado]}`}
+                  >
+                    <span
+                      aria-hidden="true"
+                      className={`pointer-events-none absolute left-2.5 h-1.5 w-1.5 rounded-full ${PONTO_SEMESTRE[descritorSemestre.estado]}`}
+                    />
+                    <select
+                      id="seletor-semestre"
+                      value={semestreAtivo}
+                      onChange={(e) => mudarSemestre(e.target.value)}
+                      title="Período letivo usado para listar turmas e montar a grade"
+                      className="min-h-9 cursor-pointer appearance-none bg-transparent py-1 pl-6 pr-8 text-sm font-semibold text-current focus:outline-none max-sm:min-h-11"
+                    >
+                      {semestresDisponiveis.map((sem) => {
+                        const d = descritorDoSemestre(sem, semestresReais);
+                        return (
+                          <option
+                            key={sem}
+                            value={sem}
+                            className={`bg-white dark:bg-zinc-900 ${OPCAO_SEMESTRE[d.estado]}`}
+                          >
+                            {d.rotulo} ({d.rotuloEstado})
+                          </option>
+                        );
+                      })}
+                    </select>
+                    <svg
+                      aria-hidden="true"
+                      viewBox="0 0 12 12"
+                      className="pointer-events-none absolute right-2.5 h-3 w-3 opacity-70"
+                    >
+                      <path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" strokeWidth="1.5" />
+                    </svg>
+                  </span>
+                  <p className="w-full text-xs text-zinc-500 sm:w-auto dark:text-zinc-400">
+                    Vale para as turmas e a grade. Histórico e coeficiente seguem no período atual.
                   </p>
                 </div>
 
-                {/* Sub-navegação totalizando o cabeçalho, com ícones e texto maiores e coloridos */}
-                <div className="w-full rounded-3xl border-2 border-zinc-200/90 bg-white/95 p-2.5 shadow-lg backdrop-blur-md dark:border-zinc-800/90 dark:bg-zinc-900/95 transition-all">
-                  <div className="grid grid-cols-2 gap-3">
-                    <button
-                      onClick={() => setAbaPlanejamento("cursar")}
-                      className={`flex items-center justify-center gap-3 rounded-2xl py-4 px-5 font-display text-base sm:text-lg font-black transition-all duration-200 cursor-pointer ${
-                        abaPlanejamento === "cursar"
-                          ? "bg-gradient-to-r from-utfpr-500 via-amber-400 to-utfpr-500 text-zinc-950 shadow-md ring-2 ring-utfpr-500/50 scale-[1.01]"
-                          : "bg-zinc-50/90 text-zinc-700 hover:bg-utfpr-50 hover:text-zinc-950 hover:border-utfpr-300 dark:bg-zinc-800/60 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white border border-zinc-200/80 dark:border-zinc-700/80"
-                      }`}
-                    >
-                      <span className={`flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-xl transition-transform ${
-                        abaPlanejamento === "cursar"
-                          ? "bg-zinc-950/20 text-zinc-950 scale-110"
-                          : "bg-utfpr-500/20 text-utfpr-600 dark:bg-utfpr-500/20 dark:text-utfpr-400 group-hover:scale-110"
-                      }`}>
-                        <IconBookOpen className="h-5 w-5 sm:h-6 sm:w-6" />
-                      </span>
-                      <span className="truncate">Matérias Abertas</span>
-                      <span className={`shrink-0 rounded-full px-2.5 py-1 font-mono text-xs sm:text-sm font-black shadow-2xs ${
-                        abaPlanejamento === "cursar"
-                          ? "bg-zinc-950 text-utfpr-400"
-                          : "bg-zinc-200 text-zinc-800 dark:bg-zinc-700 dark:text-zinc-200"
-                      }`}>
-                        {oferta.disciplinas.reduce((acc, d) => acc + d.turmas.length, 0)} turmas
-                      </span>
-                    </button>
-
-                    <button
-                      onClick={() => setAbaPlanejamento("grade")}
-                      className={`flex items-center justify-center gap-3 rounded-2xl py-4 px-5 font-display text-base sm:text-lg font-black transition-all duration-200 cursor-pointer ${
-                        abaPlanejamento === "grade"
-                          ? "bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-500 text-zinc-950 shadow-md ring-2 ring-emerald-500/50 scale-[1.01]"
-                          : "bg-zinc-50/90 text-zinc-700 hover:bg-emerald-50 hover:text-zinc-950 hover:border-emerald-300 dark:bg-zinc-800/60 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white border border-zinc-200/80 dark:border-zinc-700/80"
-                      }`}
-                    >
-                      <span className={`flex h-8 w-8 sm:h-9 sm:w-9 shrink-0 items-center justify-center rounded-xl transition-transform ${
-                        abaPlanejamento === "grade"
-                          ? "bg-zinc-950/20 text-zinc-950 scale-110"
-                          : "bg-emerald-500/20 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400 group-hover:scale-110"
-                      }`}>
-                        <IconCalendar className="h-5 w-5 sm:h-6 sm:w-6" />
-                      </span>
-                      <span className="truncate">Minha Grade</span>
-                      <span className={`shrink-0 rounded-full px-2.5 py-1 font-mono text-xs sm:text-sm font-black shadow-2xs ${
-                        abaPlanejamento === "grade"
-                          ? "bg-zinc-950 text-emerald-400"
-                          : "bg-zinc-200 text-zinc-800 dark:bg-zinc-700 dark:text-zinc-200"
-                      }`}>
-                        {selecao.length} {selecao.length === 1 ? "turma" : "turmas"}
-                      </span>
-                    </button>
-                  </div>
-                </div>
+                {/* As duas metades do Planejamento. A contagem fica ao lado do
+                    rótulo, em cinza: é informação, não chamada para ação. */}
+                <AbasSegmentadas
+                  rotulo="Seções do Planejamento"
+                  valor={abaPlanejamento}
+                  onMudar={setAbaPlanejamento}
+                  opcoes={[
+                    {
+                      id: "cursar",
+                      rotulo: "Matérias abertas",
+                      contagem: oferta.disciplinas.reduce((acc, d) => acc + d.turmas.length, 0),
+                    },
+                    { id: "grade", rotulo: "Minha grade", contagem: selecao.length },
+                  ]}
+                />
 
                 {abaPlanejamento === "cursar" ? (
                   (preferencias.layout ?? layout) === "gnh" ? (
@@ -1427,8 +1369,9 @@ function Aplicacao() {
             {aba === "simulador" && SIMULADOR_LIBERADO && perfil && (
               <Suspense
                 fallback={
-                  <div className="rounded-3xl border border-zinc-200/80 bg-white/80 p-8 text-center text-sm font-semibold text-zinc-500 dark:border-zinc-800/80 dark:bg-zinc-900/80 dark:text-zinc-400">
-                    Carregando o Simulador de Formatura…
+                  <div className="flex items-center justify-center gap-3 rounded-2xl border border-zinc-200 bg-white p-8 text-sm text-zinc-500 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400">
+                    <CarregadorPontos classe="text-utfpr-600 dark:text-utfpr-500" />
+                    Carregando o Simulador de Formatura
                   </div>
                 }
               >
@@ -1572,11 +1515,11 @@ function Aplicacao() {
           de grade não pode ficar flutuando por cima delas. */}
       {barraGradeMobileVisivel && (
         <>
-          <div className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] left-4 right-4 z-40 lg:hidden">
-            <div className="flex items-center justify-between rounded-2xl border border-zinc-200/80 bg-zinc-900/90 p-3.5 px-5 shadow-2xl backdrop-blur-md dark:border-zinc-700 dark:bg-zinc-950/90 text-white">
+          <div className="fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom))] left-3 right-3 z-40 lg:hidden">
+            <div className="flex items-center justify-between rounded-2xl border border-zinc-200/80 bg-zinc-900/90 p-3.5 px-5 shadow-2xl dark:border-zinc-700 dark:bg-zinc-950/90 text-white">
               <div className="flex flex-col min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="font-display text-sm font-black">Grade {gradeAtiva}</span>
+                  <span className="font-display text-sm font-bold">Grade {gradeAtiva}</span>
                   <span className="rounded-full bg-utfpr-500/20 px-2 py-0.5 font-mono text-xs font-bold text-utfpr-400">
                     {selecao.length} {selecao.length === 1 ? "turma" : "turmas"}
                   </span>
@@ -1594,7 +1537,7 @@ function Aplicacao() {
               <button
                 type="button"
                 onClick={() => setMobileGradeDrawerAberto(true)}
-                className="ml-3 min-h-11 shrink-0 cursor-pointer rounded-xl bg-utfpr-500 px-4 py-2 font-display text-xs font-black text-zinc-950 shadow-md transition-all hover:bg-utfpr-400 active:scale-95"
+                className="ml-3 min-h-11 shrink-0 cursor-pointer rounded-xl bg-utfpr-500 px-4 py-2 font-display text-xs font-bold text-zinc-950 shadow-md transition-colors hover:bg-utfpr-400"
               >
                 {preview ? "Ver Preview" : "Abrir Grade"}
               </button>
@@ -1604,7 +1547,7 @@ function Aplicacao() {
           {mobileGradeDrawerAberto && (
             <div className="fixed inset-0 z-50 flex flex-col justify-end lg:hidden">
               <div
-                className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
+                className="fixed inset-0 bg-black/60 transition-opacity"
                 onClick={() => {
                   setMobileGradeDrawerAberto(false);
                   if (preview) setPreview(null);
@@ -1613,7 +1556,7 @@ function Aplicacao() {
               <div className="relative z-10 flex max-h-[85dvh] flex-col overflow-y-auto rounded-t-3xl border-t border-zinc-200/80 bg-white p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-2xl dark:border-zinc-800 dark:bg-zinc-900">
                 <div className="flex items-center justify-between border-b border-zinc-200/80 pb-4 mb-4 dark:border-zinc-800">
                   <div className="flex items-center gap-2">
-                    <h3 className="font-display text-lg font-black text-zinc-900 dark:text-white">
+                    <h3 className="font-display text-lg font-bold text-zinc-900 dark:text-white">
                       Mini-Grade no Celular
                     </h3>
                     {preview && (
@@ -1673,11 +1616,11 @@ function Aplicacao() {
       )}
 
       <footer className="mt-20 border-t border-zinc-200/80 pt-6 pb-24 text-center text-xs text-zinc-400 dark:border-zinc-800/80 dark:text-zinc-500">
-        Projeto acadêmico independente desenvolvido por e para estudantes da UTFPR — não oficial. Sempre verifique e confirme seus dados no Portal do Aluno da UTFPR.
+        Projeto acadêmico independente, feito por e para estudantes da UTFPR. Não é um site oficial, então confira seus dados no Portal do Aluno.
       </footer>
 
       {/* contato sempre à mão, em qualquer tela da plataforma */}
-      <PilulaFaleConosco barraGradeMobileAtiva={barraGradeMobileVisivel} />
+      <PilulaFaleConosco barraGradeMobileAtiva={barraGradeMobileVisivel} navMobileAtiva={navMobileVisivel} />
 
       <PainelMenuMobile
         aberto={menuMobileAberto}
@@ -1704,7 +1647,7 @@ function Aplicacao() {
 
       {/* A pilha de avisos fecha a árvore: fica acima de tudo e sobe quando a
           barra de grade flutuante do mobile está na tela. */}
-      <PilhaToasts acimaDaBarraMobile={barraGradeMobileVisivel} />
+      <PilhaToasts acimaDaBarraMobile={barraGradeMobileVisivel} acimaDaNavMobile={navMobileVisivel} />
     </div>
   );
 }

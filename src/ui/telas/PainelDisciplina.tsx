@@ -24,6 +24,7 @@ import {
 } from "./reviewsComuns";
 import acervo from "../../../data/reviews.json";
 import type { AcervoReviews, Review } from "../../domain/reviews/tipos";
+import { nomeLegivel } from "../textos";
 
 export interface AlvoPainelDisciplina {
   codigo: string;
@@ -95,7 +96,7 @@ export function PainelDisciplina(props: {
   return (
     <CascaPainel
       aberto
-      titulo={alvo.nome}
+      titulo={nomeLegivel(alvo.nome)}
       subtitulo={
         alvo.nomeProfessor
           ? `${alvo.codigo} · ${alvo.nomeProfessor}`
@@ -142,7 +143,7 @@ export function PainelDisciplina(props: {
           ) : (
             dados.porProfessor.map((g) => (
               <div key={g.id} className="border-t border-zinc-200 pt-4 dark:border-zinc-800">
-                <Resumo titulo={g.nome} ag={agregar(g.reviews)} />
+                <Resumo titulo={nomeLegivel(g.nome)} ag={agregar(g.reviews)} />
                 <div className="mt-2">
                   <ListaReviews reviews={g.reviews} mostrarCodigo={false} />
                 </div>

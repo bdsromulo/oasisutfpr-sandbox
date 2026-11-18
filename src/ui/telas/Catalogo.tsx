@@ -22,6 +22,7 @@ import {
   exigeExtensao,
   grupoOpcaoDe,
 } from "../../domain/cursos";
+import { nomeLegivel } from "../textos";
 
 function normNome(nome: string): string {
   return nome
@@ -446,7 +447,7 @@ export function TelaCatalogo(props: {
       {/* Cabeçalho da página de Catálogo */}
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-zinc-200/80 pb-5 dark:border-zinc-800/80">
         <div>
-          <h2 className="font-display text-2xl font-black tracking-tight text-zinc-900 dark:text-zinc-100">
+          <h2 className="font-display text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
             Catálogo e Lista de Matérias do Curso
           </h2>
         </div>
@@ -455,14 +456,14 @@ export function TelaCatalogo(props: {
       {/* Filtros de Categoria (Dropdown) e Período (exclusivo para Catálogo) */}
       <div className="flex flex-wrap items-center gap-4 rounded-2xl border border-zinc-200/80 bg-zinc-100/70 p-3.5 dark:border-zinc-800/80 dark:bg-zinc-900/70">
         <div className="flex flex-wrap items-center gap-2 flex-1 min-w-[240px]">
-          <label htmlFor="categoria-catalogo" className="font-display text-xs font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider">
+          <label htmlFor="categoria-catalogo" className="font-display text-xs font-medium text-zinc-700 dark:text-zinc-300">
             Categoria:
           </label>
           <select
             id="categoria-catalogo"
             value={categoria}
             onChange={(e) => setCategoria(e.target.value as CategoriaCatalogo)}
-            className="flex-1 cursor-pointer rounded-xl border border-zinc-300 bg-white px-3.5 py-2 font-display text-xs font-bold text-zinc-900 shadow-2xs transition-all focus:border-utfpr-500 focus:outline-none focus:ring-2 focus:ring-utfpr-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:focus:border-utfpr-400"
+            className="flex-1 cursor-pointer rounded-xl border border-zinc-300 bg-white px-3.5 py-2 font-display text-xs font-bold text-zinc-900 shadow-2xs transition-colors focus:border-utfpr-500 focus:outline-none focus:ring-2 focus:ring-utfpr-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:focus:border-utfpr-400"
           >
             {categoriasOpcoes.map(([id, rotulo]) => (
               <option key={id} value={id}>
@@ -473,14 +474,14 @@ export function TelaCatalogo(props: {
         </div>
 
         <div className="flex flex-wrap items-center gap-2 flex-1 min-w-[240px]">
-          <label htmlFor="periodo-catalogo" className="font-display text-xs font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider">
+          <label htmlFor="periodo-catalogo" className="font-display text-xs font-medium text-zinc-700 dark:text-zinc-300">
             Período:
           </label>
           <select
             id="periodo-catalogo"
             value={filtroPeriodo}
             onChange={(e) => setFiltroPeriodo(e.target.value)}
-            className="flex-1 cursor-pointer rounded-xl border border-zinc-300 bg-white px-3.5 py-2 font-display text-xs font-bold text-zinc-900 shadow-2xs transition-all focus:border-utfpr-500 focus:outline-none focus:ring-2 focus:ring-utfpr-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:focus:border-utfpr-400"
+            className="flex-1 cursor-pointer rounded-xl border border-zinc-300 bg-white px-3.5 py-2 font-display text-xs font-bold text-zinc-900 shadow-2xs transition-colors focus:border-utfpr-500 focus:outline-none focus:ring-2 focus:ring-utfpr-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:focus:border-utfpr-400"
           >
             <option value="todos">Todos os Períodos</option>
             {periodosDisponiveis.map((periodo) => (
@@ -498,10 +499,10 @@ export function TelaCatalogo(props: {
         <Card classe="p-5 bg-white dark:bg-zinc-900 border-zinc-200/90 dark:border-zinc-800">
           <div className="flex flex-wrap items-center justify-between gap-4 mb-2">
             <div>
-              <span className="text-xs font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider block">
+              <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400 block">
                 Progresso: {infoProgresso.titulo}
               </span>
-              <div className="font-display text-2xl font-black text-zinc-900 dark:text-zinc-100 mt-0.5">
+              <div className="font-display text-2xl font-bold text-zinc-900 dark:text-zinc-100 mt-0.5">
                 {infoProgresso.cumprido} <span className="text-zinc-400 font-normal text-sm">/ {infoProgresso.exigido}h</span>
               </div>
             </div>
@@ -546,7 +547,7 @@ export function TelaCatalogo(props: {
                   <div>
                     <div className="mb-2 flex items-start justify-between gap-2">
                       <h4 className="font-display text-sm font-bold text-zinc-900 dark:text-zinc-100 leading-snug">
-                        {trilha.nome}
+                        {nomeLegivel(trilha.nome)}
                       </h4>
                       <div className="flex items-center gap-2">
                         <span className={`font-mono text-xs font-bold shrink-0 ${trilha.validado ? "text-emerald-600 dark:text-emerald-400" : "text-zinc-500 dark:text-zinc-400"}`}>
@@ -563,7 +564,7 @@ export function TelaCatalogo(props: {
                   </div>
 
                   <div className="mt-4 border-t border-zinc-100 pt-3 dark:border-zinc-800 space-y-2">
-                    <span className="block text-[11px] font-bold uppercase tracking-wider text-zinc-400">
+                    <span className="block text-xs font-medium text-zinc-400">
                       Disciplinas da Trilha ({disciplinasTrilha.length}):
                     </span>
                     <ul className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
@@ -581,13 +582,13 @@ export function TelaCatalogo(props: {
                           >
                             <div className="min-w-0 flex items-center gap-1.5">
                               <span
-                                title={`${dt.disciplina.codigo} — ${dt.disciplina.nome}`}
+                                title={`${dt.disciplina.codigo} · ${nomeLegivel(dt.disciplina.nome)}`}
                                 className="font-mono font-bold text-zinc-900 dark:text-zinc-100 shrink-0 text-[11px] cursor-help underline decoration-dotted decoration-zinc-400"
                               >
                                 {dt.disciplina.codigo}
                               </span>
-                              <span className="truncate text-zinc-700 dark:text-zinc-300 text-[11px]" title={dt.disciplina.nome}>
-                                {dt.disciplina.nome}
+                              <span className="truncate text-zinc-700 dark:text-zinc-300 text-[11px]" title={nomeLegivel(dt.disciplina.nome)}>
+                                {nomeLegivel(dt.disciplina.nome)}
                               </span>
                             </div>
                             {dt.concluida ? (
@@ -623,7 +624,7 @@ export function TelaCatalogo(props: {
                   <div>
                     <div className="mb-2 flex items-start justify-between gap-2">
                       <h4 className="font-display text-sm font-bold text-zinc-900 dark:text-zinc-100 leading-snug">
-                        {isoladas.nome}
+                        {nomeLegivel(isoladas.nome)}
                       </h4>
                       <div className="flex items-center gap-2">
                         <span className="shrink-0 font-mono text-xs font-bold text-zinc-500 dark:text-zinc-400">
@@ -638,7 +639,7 @@ export function TelaCatalogo(props: {
                   </div>
 
                   <div className="mt-4 border-t border-zinc-100 pt-3 dark:border-zinc-800 space-y-2">
-                    <span className="block text-[11px] font-bold uppercase tracking-wider text-zinc-400">
+                    <span className="block text-xs font-medium text-zinc-400">
                       Disciplinas isoladas ({disciplinasIsoladas.length}):
                     </span>
                     <ul className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
@@ -656,13 +657,13 @@ export function TelaCatalogo(props: {
                           >
                             <div className="min-w-0 flex items-center gap-1.5">
                               <span
-                                title={`${disciplina.disciplina.codigo} — ${disciplina.disciplina.nome}`}
+                                title={`${disciplina.disciplina.codigo} · ${nomeLegivel(disciplina.disciplina.nome)}`}
                                 className="shrink-0 cursor-help font-mono text-[11px] font-bold text-zinc-900 underline decoration-dotted decoration-zinc-400 dark:text-zinc-100"
                               >
                                 {disciplina.disciplina.codigo}
                               </span>
-                              <span className="truncate text-[11px] text-zinc-700 dark:text-zinc-300" title={disciplina.disciplina.nome}>
-                                {disciplina.disciplina.nome}
+                              <span className="truncate text-[11px] text-zinc-700 dark:text-zinc-300" title={nomeLegivel(disciplina.disciplina.nome)}>
+                                {nomeLegivel(disciplina.disciplina.nome)}
                               </span>
                             </div>
                             {disciplina.concluida ? (
@@ -693,14 +694,14 @@ export function TelaCatalogo(props: {
               value={busca}
               onChange={(e) => setBusca(e.target.value)}
               placeholder="Buscar matéria por nome ou código..."
-              className="w-full rounded-xl border border-zinc-200 bg-zinc-50 py-2 pl-10 pr-4 text-sm font-medium text-zinc-900 placeholder-zinc-400 outline-none transition-all focus:border-utfpr-500 focus:bg-white focus:ring-2 focus:ring-utfpr-500/20 dark:border-zinc-800 dark:bg-zinc-800/60 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:bg-zinc-900"
+              className="w-full rounded-xl border border-zinc-200 bg-zinc-50 py-2 pl-10 pr-4 text-sm font-medium text-zinc-900 placeholder-zinc-400 outline-none transition-colors focus:border-utfpr-500 focus:bg-white focus:ring-2 focus:ring-utfpr-500/20 dark:border-zinc-800 dark:bg-zinc-800/60 dark:text-zinc-100 dark:placeholder-zinc-500 dark:focus:bg-zinc-900"
             />
           </div>
 
           <div className="flex flex-wrap items-center gap-1 rounded-xl bg-zinc-100 p-1 dark:bg-zinc-800">
             <button
               onClick={() => setFiltroStatus("todas")}
-              className={`rounded-lg px-3 py-1.5 font-display text-xs font-bold transition-all cursor-pointer ${
+              className={`rounded-lg px-3 py-1.5 font-display text-xs font-bold transition-colors cursor-pointer ${
                 filtroStatus === "todas"
                   ? "bg-white text-zinc-950 shadow-xs dark:bg-zinc-700 dark:text-white"
                   : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200"
@@ -710,7 +711,7 @@ export function TelaCatalogo(props: {
             </button>
             <button
               onClick={() => setFiltroStatus("pendentes")}
-              className={`rounded-lg px-3 py-1.5 font-display text-xs font-bold transition-all cursor-pointer ${
+              className={`rounded-lg px-3 py-1.5 font-display text-xs font-bold transition-colors cursor-pointer ${
                 filtroStatus === "pendentes"
                   ? "bg-white text-zinc-950 shadow-xs dark:bg-zinc-700 dark:text-white"
                   : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200"
@@ -720,7 +721,7 @@ export function TelaCatalogo(props: {
             </button>
             <button
               onClick={() => setFiltroStatus("abertas")}
-              className={`rounded-lg px-3 py-1.5 font-display text-xs font-bold transition-all cursor-pointer ${
+              className={`rounded-lg px-3 py-1.5 font-display text-xs font-bold transition-colors cursor-pointer ${
                 filtroStatus === "abertas"
                   ? "bg-white text-zinc-950 shadow-xs dark:bg-zinc-700 dark:text-white"
                   : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200"
@@ -730,7 +731,7 @@ export function TelaCatalogo(props: {
             </button>
             <button
               onClick={() => setFiltroStatus("semoferta")}
-              className={`rounded-lg px-3 py-1.5 font-display text-xs font-bold transition-all cursor-pointer ${
+              className={`rounded-lg px-3 py-1.5 font-display text-xs font-bold transition-colors cursor-pointer ${
                 filtroStatus === "semoferta"
                   ? "bg-white text-zinc-950 shadow-xs dark:bg-zinc-700 dark:text-white"
                   : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200"
@@ -740,7 +741,7 @@ export function TelaCatalogo(props: {
             </button>
             <button
               onClick={() => setFiltroStatus("concluidas")}
-              className={`rounded-lg px-3 py-1.5 font-display text-xs font-bold transition-all cursor-pointer ${
+              className={`rounded-lg px-3 py-1.5 font-display text-xs font-bold transition-colors cursor-pointer ${
                 filtroStatus === "concluidas"
                   ? "bg-white text-zinc-950 shadow-xs dark:bg-zinc-700 dark:text-white"
                   : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200"
@@ -775,7 +776,7 @@ export function TelaCatalogo(props: {
             return (
               <div
                 key={d.codigo}
-                className={`flex flex-col justify-between rounded-2xl border p-4 transition-all ${
+                className={`flex flex-col justify-between rounded-2xl border p-4 transition-colors ${
                   concluida
                     ? "border-emerald-200/80 bg-emerald-50/40 dark:border-emerald-900/40 dark:bg-emerald-950/20"
                     : "border-zinc-200/90 bg-white hover:border-zinc-300 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700"
@@ -785,7 +786,7 @@ export function TelaCatalogo(props: {
                   <div className="mb-2 flex items-start justify-between gap-2">
                     <div className="flex items-center gap-1.5">
                       <span
-                        title={`${d.codigo} — ${d.nome}`}
+                        title={`${d.codigo} · ${nomeLegivel(d.nome)}`}
                         className="font-mono text-sm font-bold text-zinc-900 dark:text-zinc-100 cursor-help underline decoration-dotted decoration-zinc-400"
                       >
                         {d.codigo}
@@ -812,7 +813,7 @@ export function TelaCatalogo(props: {
                   </div>
 
                   <h3 className="font-display text-base font-bold text-zinc-900 dark:text-zinc-100 leading-snug">
-                    {d.nome}
+                    {nomeLegivel(d.nome)}
                   </h3>
 
                   <div className="mt-2 flex flex-wrap gap-1.5">

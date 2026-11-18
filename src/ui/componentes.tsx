@@ -7,10 +7,55 @@ import {
   IconStar,
   IconTrophy,
   IconTrendUp,
-  IconSparkles,
 } from "./icons";
 import { calcularProgressoMateria, type StatusIcone } from "../domain/motor/progressoGrade";
 import type { Matriz, PerfilAluno } from "../domain/tipos";
+import { nomeLegivel } from "./textos";
+
+/**
+ * Carregador de pontos 3x3, que acende em diagonal. Inspirado nos loaders de
+ * matriz de pontos: comunica "trabalhando" sem o anel girando de sempre. É só
+ * CSS (opacidade com atraso por ponto), sem JavaScript por quadro.
+ */
+export function CarregadorPontos(props: { classe?: string; rotulo?: string }) {
+  return (
+    <span
+      role="status"
+      aria-label={props.rotulo ?? "Carregando"}
+      className={`inline-grid shrink-0 grid-cols-3 gap-[3px] ${props.classe ?? ""}`}
+    >
+      {Array.from({ length: 9 }, (_, i) => (
+        <span
+          key={i}
+          aria-hidden="true"
+          className="carregador-ponto h-[4px] w-[4px] rounded-[1px] bg-current"
+          style={{ animationDelay: `${((i % 3) + Math.floor(i / 3)) * 110}ms` }}
+        />
+      ))}
+    </span>
+  );
+}
+
+/**
+ * Seta de abrir e fechar. Substitui os triângulos de texto (▲ ▼), que mudavam
+ * de tamanho conforme a fonte e liam como emoji em alguns celulares.
+ */
+export function Chevron(props: { aberto: boolean; classe?: string }) {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className={`h-3.5 w-3.5 shrink-0 transition-transform duration-150 ${props.aberto ? "rotate-180" : ""} ${props.classe ?? ""}`}
+    >
+      <path d="M4 6l4 4 4-4" />
+    </svg>
+  );
+}
 
 export function Card({
   titulo,
@@ -31,14 +76,62 @@ export function Card({
   return (
     <div
       {...resto}
-      className={`rounded-2xl border border-zinc-200/90 bg-white p-5 shadow-xs transition-all hover:border-zinc-300 hover:shadow-sm dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-none dark:hover:border-zinc-700/80 ${props.classe ?? ""}`}
+      className={`rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900 ${props.classe ?? ""}`}
     >
       {props.titulo && (
-        <div className="mb-3 font-display text-sm font-bold tracking-tight text-zinc-600 dark:text-zinc-400">
+        <div className="mb-3 font-display text-sm font-semibold text-zinc-600 dark:text-zinc-400">
           {props.titulo}
         </div>
       )}
       {props.children}
+    </div>
+  );
+}
+
+/**
+ * Controle segmentado para alternar seções irmãs dentro de uma tela.
+ *
+ * Um padrão só para todas as sub-abas: antes cada uma tinha botões grandes com
+ * degradê, anel e escala próprios, e a seção ativa disputava atenção com o
+ * conteúdo. Aqui a ativa é a que parece "levantada" (fundo branco), as outras
+ * ficam no trilho. Ocupa a largura toda no celular e encolhe ao conteúdo no
+ * desktop, sem cortar rótulo.
+ */
+export function AbasSegmentadas<T extends string>(props: {
+  rotulo: string;
+  valor: T;
+  onMudar: (v: T) => void;
+  opcoes: { id: T; rotulo: string; contagem?: number }[];
+  classe?: string;
+}) {
+  return (
+    <div
+      role="tablist"
+      aria-label={props.rotulo}
+      className={`flex w-full gap-1 rounded-xl bg-zinc-200/60 p-1 sm:w-fit dark:bg-zinc-900 ${props.classe ?? ""}`}
+    >
+      {props.opcoes.map((op) => {
+        const ativo = op.id === props.valor;
+        return (
+          <button
+            key={op.id}
+            type="button"
+            role="tab"
+            aria-selected={ativo}
+            onClick={() => props.onMudar(op.id)}
+            className={`flex min-h-10 flex-1 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-lg px-4 text-sm font-medium transition-colors sm:flex-none ${
+              ativo
+                ? "bg-white text-zinc-950 shadow-xs dark:bg-zinc-800 dark:text-white"
+                : "text-zinc-600 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-white"
+            }`}
+          >
+            <span>{op.rotulo}</span>
+            {op.contagem !== undefined && (
+              <span className="text-xs text-zinc-500 dark:text-zinc-400">{op.contagem}</span>
+            )}
+          </button>
+        );
+      })}
     </div>
   );
 }
@@ -64,7 +157,7 @@ export function Badge(props: {
   return (
     <span
       onClick={props.onClick}
-      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-display text-xs font-semibold tracking-tight transition-all ${tons[props.tom ?? "neutro"]} ${props.onClick ? "cursor-pointer hover:scale-105 active:scale-95" : ""} ${props.classe ?? ""}`}
+      className={`inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 text-xs font-medium transition-colors ${tons[props.tom ?? "neutro"]} ${props.onClick ? "cursor-pointer" : ""} ${props.classe ?? ""}`}
     >
       {props.icon}
       {props.children}
@@ -78,7 +171,7 @@ export function Barra(props: { valor: number; max: number; cor?: string; classe?
   return (
     <div className={`h-2.5 w-full overflow-hidden rounded-full bg-zinc-200/80 dark:bg-zinc-800/80 ${props.classe ?? ""}`}>
       <div
-        className={`h-full rounded-full transition-all duration-300 ${corBarra}`}
+        className={`h-full rounded-full transition-[width] duration-300 ${corBarra}`}
         style={{ width: `${p}%` }}
       />
     </div>
@@ -138,18 +231,18 @@ export function Rosca(props: {
             strokeLinecap="round"
             strokeDasharray={circunferencia}
             strokeDashoffset={circunferencia * (1 - fracao)}
-            className={`transition-all duration-500 ${
+            className={`transition-[stroke-dashoffset] duration-500 ${
               props.cor ?? (completo ? "stroke-emerald-500" : "stroke-utfpr-500")
             }`}
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="font-display text-2xl font-black leading-none tracking-tight text-zinc-900 dark:text-zinc-100">
+          <span className="font-display text-2xl font-bold leading-none tracking-tight text-zinc-900 dark:text-zinc-100">
             {pct}
             <span className="text-sm font-bold text-zinc-400">%</span>
           </span>
           {props.rotuloCentro && (
-            <span className="mt-0.5 text-[10px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+            <span className="mt-0.5 text-xs font-medium text-zinc-400 dark:text-zinc-500">
               {props.rotuloCentro}
             </span>
           )}
@@ -181,16 +274,16 @@ export function BotaoIconeComDica(props: {
       onMouseEnter={() => setVisivel(true)}
       onMouseLeave={() => setVisivel(false)}
     >
-      <Botao
+      <button
+        type="button"
         onClick={props.onClick}
-        variante="sutil"
-        classe={`!rounded-2xl !p-2 ${props.classe ?? ""}`}
-        title={props.dica}
+        aria-label={props.dica}
+        onFocus={() => setVisivel(true)}
+        onBlur={() => setVisivel(false)}
+        className={`flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg text-zinc-600 transition-colors hover:bg-zinc-200/60 hover:text-zinc-950 max-sm:h-11 max-sm:w-11 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white ${props.classe ?? ""}`}
       >
-        <span onFocus={() => setVisivel(true)} onBlur={() => setVisivel(false)}>
-          {props.children}
-        </span>
-      </Botao>
+        {props.children}
+      </button>
       {/* A opacidade vai no style, e não em `opacity-*`: é o único par de
           estados do componente e, inline, não depende de o utilitário ter sido
           gerado no build — falha aqui seria silenciosa (dica invisível). */}
@@ -198,7 +291,7 @@ export function BotaoIconeComDica(props: {
         role="tooltip"
         aria-hidden={!visivel}
         style={{ opacity: visivel ? 1 : 0 }}
-        className="pointer-events-none absolute right-0 top-full z-50 mt-2 whitespace-nowrap rounded-xl bg-zinc-900 px-2.5 py-1.5 font-display text-xs font-bold text-white shadow-lg transition-opacity duration-150 dark:bg-zinc-100 dark:text-zinc-900"
+        className="pointer-events-none absolute right-0 top-full z-50 mt-1.5 whitespace-nowrap rounded-md bg-zinc-900 px-2 py-1 text-xs font-medium text-white transition-opacity duration-150 dark:bg-zinc-100 dark:text-zinc-900"
       >
         {props.dica}
       </span>
@@ -216,22 +309,23 @@ export function Botao(props: {
 }) {
   const variantes = {
     primario:
-      "bg-utfpr-500 text-zinc-950 shadow-xs hover:bg-utfpr-400 active:scale-[0.98] font-bold disabled:opacity-40",
+      "bg-utfpr-500 text-zinc-950 hover:bg-utfpr-400 font-semibold disabled:opacity-40",
     sutil:
-      "border border-zinc-200 bg-white text-zinc-700 shadow-xs hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-950 active:scale-[0.98] dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800 dark:hover:text-white disabled:opacity-40",
+      "border border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300 hover:bg-zinc-50 hover:text-zinc-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800 dark:hover:text-white disabled:opacity-40",
     neutro:
-      "border border-zinc-200 bg-zinc-100 text-zinc-700 shadow-xs hover:border-zinc-300 hover:bg-zinc-200/80 active:scale-[0.98] dark:border-zinc-800 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700 disabled:opacity-40",
+      "border border-zinc-200 bg-zinc-100 text-zinc-700 hover:border-zinc-300 hover:bg-zinc-200/80 dark:border-zinc-800 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700 disabled:opacity-40",
     perigo:
-      "border border-red-200/80 bg-red-50 text-red-700 hover:bg-red-100 active:scale-[0.98] dark:border-red-900/60 dark:bg-red-950/50 dark:text-red-300 dark:hover:bg-red-900/40 disabled:opacity-40",
+      "border border-red-200/80 bg-red-50 text-red-700 hover:bg-red-100 dark:border-red-900/60 dark:bg-red-950/50 dark:text-red-300 dark:hover:bg-red-900/40 disabled:opacity-40",
   };
   return (
     <button
+      type="button"
       onClick={props.onClick}
       disabled={props.desabilitado}
       title={props.title}
       // max-sm:min-h-11 dá o mínimo confortável de toque no celular sem mexer
       // na densidade do desktop, onde o cursor não erra 36px
-      className={`inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-xl px-3.5 py-2 text-sm transition-all duration-150 max-sm:min-h-11 ${variantes[props.variante ?? "sutil"]} ${props.classe ?? ""}`}
+      className={`inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-medium transition-colors duration-150 max-sm:min-h-11 ${variantes[props.variante ?? "sutil"]} ${props.classe ?? ""}`}
     >
       {props.children}
     </button>
@@ -248,8 +342,8 @@ export const OPCOES_ORDENACAO_PADRAO: OpcaoOrdenacao[] = [
   { id: "za", rotulo: "Ordem Alfabética (Z-A)" },
   { id: "ch_desc", rotulo: "Mais Horas (90h, 75h, 60h...)" },
   { id: "ch_asc", rotulo: "Menos Horas (30h, 45h, 60h...)" },
-  { id: "per_asc", rotulo: "Período (Mais Anterior 1º→8º)" },
-  { id: "per_desc", rotulo: "Período (Mais Posterior 8º→1º)" },
+  { id: "per_asc", rotulo: "Período, do 1º ao 8º" },
+  { id: "per_desc", rotulo: "Período, do 8º ao 1º" },
 ];
 
 export function MenuOrdenacao(props: {
@@ -283,15 +377,15 @@ export function MenuOrdenacao(props: {
     <div ref={ref} className={`relative inline-block text-left ${props.classe ?? ""}`}>
       <button
         onClick={() => setAberto(!aberto)}
-        title={`Ordenação atual: ${opAtual?.rotulo ?? "Padrão"} — Clique para alterar`}
-        className="flex h-11 w-11 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-600 shadow-xs transition-all hover:border-zinc-900 hover:bg-zinc-50 hover:text-zinc-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-amber-400 dark:hover:bg-zinc-800/80 dark:hover:text-amber-400 cursor-pointer"
+        title={`Ordenação atual: ${opAtual?.rotulo ?? "Padrão"}. Clique para alterar`}
+        className="flex h-11 w-11 items-center justify-center rounded-lg border border-zinc-300 bg-white text-zinc-700 transition-colors hover:bg-zinc-50 hover:text-zinc-950 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white cursor-pointer"
       >
         <IconSortUpDown className="h-4.5 w-4.5" />
       </button>
 
       {aberto && (
         <div className="absolute right-0 top-full mt-2 w-64 rounded-2xl border border-zinc-200 bg-white p-1.5 shadow-2xl dark:border-zinc-800 dark:bg-zinc-900 z-50 animate-in fade-in duration-150">
-          <div className="px-2 py-1.5 text-[10px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 border-b border-zinc-100 dark:border-zinc-800/80 mb-1">
+          <div className="px-2 py-1.5 text-xs font-medium text-zinc-400 dark:text-zinc-500 border-b border-zinc-100 dark:border-zinc-800/80 mb-1">
             Opções de Ordenação
           </div>
           <div className="space-y-0.5">
@@ -343,14 +437,14 @@ export function BarraProgressoComPreview(props: {
     <div className={`h-2.5 w-full overflow-hidden rounded-full flex ${cor3} ${props.classe ?? ""}`}>
       {pCumprido > 0 && (
         <div
-          className={`h-full transition-all duration-300 ${cor1}`}
+          className={`h-full transition-[width] duration-300 ${cor1}`}
           style={{ width: `${pCumprido}%` }}
           title={`Já cumprido: ${props.cumprido}h (${Math.round(pCumprido)}%)`}
         />
       )}
       {pPreview > 0 && (
         <div
-          className={`h-full transition-all duration-300 ${cor2}`}
+          className={`h-full transition-[width] duration-300 ${cor2}`}
           style={{ width: `${pPreview}%` }}
           title={`Impulso previsto: +${props.preview}h (${Math.round(pPreview)}%)`}
         />
@@ -378,15 +472,15 @@ export function CardPreviewHoverMateria(props: {
 
   return (
     <div
-      className={`rounded-xl border-2 border-utfpr-500/70 bg-white p-3.5 shadow-lg dark:border-utfpr-500/60 dark:bg-zinc-900 transition-all animate-in fade-in duration-150 ${props.classe ?? ""}`}
+      className={`rounded-xl border-2 border-utfpr-500/70 bg-white p-3.5 shadow-lg dark:border-utfpr-500/60 dark:bg-zinc-900 transition-colors animate-in fade-in duration-150 ${props.classe ?? ""}`}
     >
       <div className="flex items-start justify-between gap-2 border-b border-zinc-100 pb-2 dark:border-zinc-800">
         <div className="min-w-0">
           <div className="flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-wider text-utfpr-700 dark:text-utfpr-400">
-            <span className="inline-flex items-center gap-1.5"><IconSparkles className="h-4 w-4 shrink-0" />{props.tituloCustom ?? "Preview do Hover · Impacto na Categoria"}</span>
+            <span className="inline-flex items-center gap-1.5">{props.tituloCustom ?? "Preview do Hover · Impacto na Categoria"}</span>
           </div>
           <div className="mt-0.5 font-display text-sm font-bold text-zinc-900 dark:text-zinc-100 leading-tight truncate">
-            {props.codigoDisciplina} — {props.nomeDisciplina ?? dados.categoriaNome}
+            {props.codigoDisciplina} · {nomeLegivel(props.nomeDisciplina ?? dados.categoriaNome)}
           </div>
           <div className="mt-0.5 font-mono text-xs font-semibold text-zinc-500 dark:text-zinc-400">
             {dados.categoriaNome}
@@ -478,7 +572,7 @@ export function BalaoProgressoHover(props: {
   if (!props.perfil || !props.perfil.cursadas?.length || props.semHistorico) {
     return (
       <div
-        className={`absolute left-1/2 -translate-x-1/2 z-50 w-64 rounded-xl border border-zinc-200/95 bg-white/95 p-2.5 shadow-2xl backdrop-blur-md dark:border-zinc-700/90 dark:bg-zinc-900/95 transition-all animate-in fade-in zoom-in-95 duration-150 pointer-events-none ${
+        className={`absolute left-1/2 -translate-x-1/2 z-50 w-64 rounded-xl border border-zinc-200/95 bg-white/95 p-2.5 shadow-2xl dark:border-zinc-700/90 dark:bg-zinc-900/95 transition-colors animate-in fade-in zoom-in-95 duration-150 pointer-events-none ${
           sup ? "bottom-full mb-3" : "top-full mt-3"
         } ${props.classe ?? ""}`}
       >
@@ -494,7 +588,7 @@ export function BalaoProgressoHover(props: {
             {props.codigoDisciplina}
           </span>
           <div className="font-display text-xs font-bold text-zinc-900 dark:text-zinc-100 leading-snug">
-            {props.nomeDisciplina ?? props.codigoDisciplina}
+            {nomeLegivel(props.nomeDisciplina) || props.codigoDisciplina}
           </div>
         </div>
       </div>
@@ -504,7 +598,7 @@ export function BalaoProgressoHover(props: {
   if (props.carregando) {
     return (
       <div
-        className={`absolute left-1/2 -translate-x-1/2 z-50 w-64 rounded-xl border border-zinc-200/95 bg-white/95 p-2.5 shadow-2xl backdrop-blur-md dark:border-zinc-700/90 dark:bg-zinc-900/95 transition-all animate-in fade-in zoom-in-95 duration-150 pointer-events-none ${
+        className={`absolute left-1/2 -translate-x-1/2 z-50 w-64 rounded-xl border border-zinc-200/95 bg-white/95 p-2.5 shadow-2xl dark:border-zinc-700/90 dark:bg-zinc-900/95 transition-colors animate-in fade-in zoom-in-95 duration-150 pointer-events-none ${
           sup ? "bottom-full mb-3" : "top-full mt-3"
         } ${props.classe ?? ""}`}
       >
@@ -536,7 +630,7 @@ export function BalaoProgressoHover(props: {
           </div>
           <div className="min-w-0 flex-1">
             <div className="font-display text-xs font-bold text-zinc-900 dark:text-zinc-100 leading-snug truncate">
-              {props.nomeDisciplina ?? props.codigoDisciplina}
+              {nomeLegivel(props.nomeDisciplina) || props.codigoDisciplina}
             </div>
             <div className="text-[10px] font-medium text-zinc-500 dark:text-zinc-400 truncate mt-0.5">
               Carregando progresso (1s)...
@@ -557,7 +651,7 @@ export function BalaoProgressoHover(props: {
 
   return (
     <div
-      className={`absolute left-1/2 -translate-x-1/2 z-50 w-72 rounded-xl border border-zinc-200/95 bg-white/95 p-3 shadow-2xl backdrop-blur-md dark:border-zinc-700/90 dark:bg-zinc-900/95 transition-all animate-in fade-in zoom-in-95 duration-200 pointer-events-none ${
+      className={`absolute left-1/2 -translate-x-1/2 z-50 w-72 rounded-xl border border-zinc-200/95 bg-white/95 p-3 shadow-2xl dark:border-zinc-700/90 dark:bg-zinc-900/95 transition-colors animate-in fade-in zoom-in-95 duration-200 pointer-events-none ${
         sup ? "bottom-full mb-3" : "top-full mt-3"
       } ${props.classe ?? ""}`}
     >
@@ -572,7 +666,7 @@ export function BalaoProgressoHover(props: {
 
       <div className="flex flex-col gap-1 text-left">
         <div className="font-display text-xs font-bold text-zinc-900 dark:text-zinc-100 leading-snug truncate">
-          {props.nomeDisciplina ?? props.codigoDisciplina}
+          {nomeLegivel(props.nomeDisciplina) || props.codigoDisciplina}
         </div>
         <div className="font-mono text-[11px] font-semibold text-utfpr-600 dark:text-utfpr-400 truncate">
           {dados.categoriaNome}

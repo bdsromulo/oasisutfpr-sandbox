@@ -57,21 +57,21 @@ export function ModalComoGerarHistorico(props: { aberto: boolean; onFechar: () =
 
   return (
     <div
-      className="fixed inset-0 z-50 flex animate-in items-center justify-center bg-black/60 p-4 fade-in backdrop-blur-xs duration-150"
+      className="fixed inset-0 z-50 flex animate-in items-center justify-center bg-black/60 p-4 fade-in duration-150"
       role="dialog"
       aria-modal="true"
       aria-labelledby="titulo-como-gerar-historico"
       onClick={onFechar}
     >
       <div
-        className="flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl border border-zinc-200/80 bg-white shadow-2xl animate-in zoom-in-95 duration-150 dark:border-zinc-800/80 dark:bg-zinc-900"
+        className="flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-zinc-200/80 bg-white shadow-2xl animate-in zoom-in-95 duration-150 dark:border-zinc-800/80 dark:bg-zinc-900"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between gap-3 border-b border-zinc-200/80 px-6 py-5 dark:border-zinc-800/80">
           <div>
             <h2
               id="titulo-como-gerar-historico"
-              className="font-display text-lg font-black tracking-tight text-zinc-900 dark:text-white"
+              className="font-display text-lg font-bold tracking-tight text-zinc-900 dark:text-white"
             >
               Como gerar seu Histórico Completo
             </h2>
@@ -94,11 +94,11 @@ export function ModalComoGerarHistorico(props: { aberto: boolean; onFechar: () =
             {PASSOS.map((passo, i) => (
               <li key={passo.imagem}>
                 <div className="mb-2.5 flex items-start gap-3">
-                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-utfpr-500 font-mono text-xs font-black text-zinc-950">
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-utfpr-500 font-mono text-xs font-bold text-zinc-950">
                     {i + 1}
                   </span>
                   <div className="min-w-0 pt-0.5">
-                    <h3 className="font-display text-sm font-black tracking-tight text-zinc-900 dark:text-white">
+                    <h3 className="font-display text-sm font-bold tracking-tight text-zinc-900 dark:text-white">
                       {passo.titulo}
                     </h3>
                     <p className="mt-1 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
@@ -109,7 +109,7 @@ export function ModalComoGerarHistorico(props: { aberto: boolean; onFechar: () =
                         <div className="flex items-start gap-2.5 rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-emerald-950 dark:border-emerald-900/60 dark:bg-emerald-950/30 dark:text-emerald-100">
                           <IconCheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
                           <div>
-                            <p className="text-xs font-black uppercase tracking-wide text-emerald-700 dark:text-emerald-400">
+                            <p className="text-xs font-medium text-emerald-700 dark:text-emerald-400">
                               Use esta opção
                             </p>
                             <p className="mt-0.5 text-sm font-bold">Salvar como PDF</p>
@@ -121,7 +121,7 @@ export function ModalComoGerarHistorico(props: { aberto: boolean; onFechar: () =
                         <div className="flex items-start gap-2.5 rounded-xl border border-red-200 bg-red-50 p-3 text-red-950 dark:border-red-900/60 dark:bg-red-950/30 dark:text-red-100">
                           <IconX className="mt-0.5 h-4 w-4 shrink-0 text-red-600 dark:text-red-400" />
                           <div>
-                            <p className="text-xs font-black uppercase tracking-wide text-red-700 dark:text-red-400">
+                            <p className="text-xs font-medium text-red-700 dark:text-red-400">
                               Não use esta impressora
                             </p>
                             <p className="mt-0.5 text-sm font-bold">Microsoft Print to PDF</p>
@@ -151,7 +151,7 @@ export function ModalComoGerarHistorico(props: { aberto: boolean; onFechar: () =
           <button
             type="button"
             onClick={onFechar}
-            className="min-h-11 w-full cursor-pointer rounded-xl bg-utfpr-500 py-2.5 font-display text-sm font-black text-zinc-950 shadow-sm transition-all hover:bg-utfpr-400 active:scale-[0.98]"
+            className="min-h-11 w-full cursor-pointer rounded-xl bg-utfpr-500 py-2.5 font-display text-sm font-bold text-zinc-950 shadow-sm transition-colors hover:bg-utfpr-400"
           >
             Entendi, voltar para o envio
           </button>
