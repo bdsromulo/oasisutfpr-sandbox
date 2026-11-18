@@ -35,7 +35,7 @@ function LinhaAcao(props: {
         {props.icone}
       </span>
       <span className="min-w-0">
-        <span className="block font-display text-sm font-black text-zinc-900 dark:text-zinc-100">
+        <span className="block font-display text-sm font-bold text-zinc-900 dark:text-zinc-100">
           {props.rotulo}
         </span>
         {props.descricao && (
@@ -92,7 +92,7 @@ export function PainelMenuMobile(props: {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex animate-in items-end bg-black/60 fade-in backdrop-blur-xs duration-150 sm:hidden"
+      className="fixed inset-0 z-50 flex animate-in items-end bg-black/60 fade-in duration-150 sm:hidden"
       role="dialog"
       aria-modal="true"
       aria-label="Menu"
@@ -106,7 +106,7 @@ export function PainelMenuMobile(props: {
         <div className="mx-auto mb-4 h-1.5 w-10 rounded-full bg-zinc-300 dark:bg-zinc-700" />
 
         <div className="mb-3">
-          <span className="mb-2 block font-display text-[11px] font-black uppercase tracking-wider text-zinc-400">
+          <span className="mb-2 block font-display text-xs font-medium text-zinc-400">
             Aparência
           </span>
           <div className="grid grid-cols-2 gap-2">
@@ -136,7 +136,7 @@ export function PainelMenuMobile(props: {
           </div>
         </div>
 
-        <span className="mb-2 block font-display text-[11px] font-black uppercase tracking-wider text-zinc-400">
+        <span className="mb-2 block font-display text-xs font-medium text-zinc-400">
           Plataforma
         </span>
         <div className="space-y-2">
@@ -173,7 +173,7 @@ export function PainelMenuMobile(props: {
         <button
           type="button"
           onClick={onFechar}
-          className="mt-4 min-h-[48px] w-full cursor-pointer rounded-2xl bg-zinc-200 font-display text-sm font-black text-zinc-700 transition-colors active:bg-zinc-300 dark:bg-zinc-800 dark:text-zinc-200"
+          className="mt-4 min-h-[48px] w-full cursor-pointer rounded-2xl bg-zinc-200 font-display text-sm font-bold text-zinc-700 transition-colors active:bg-zinc-300 dark:bg-zinc-800 dark:text-zinc-200"
         >
           Fechar
         </button>

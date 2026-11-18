@@ -218,10 +218,10 @@ function Secao(props: {
     <section id={idDaSecao(props.numero)} className="scroll-mt-24 space-y-3.5">
       <div>
         <div className="flex items-baseline gap-2.5">
-          <span className="rounded-lg bg-utfpr-500/20 px-2 py-0.5 font-mono text-xs font-black text-utfpr-700 dark:text-utfpr-400">
+          <span className="rounded-lg bg-utfpr-500/20 px-2 py-0.5 font-mono text-xs font-bold text-utfpr-700 dark:text-utfpr-400">
             {props.numero}
           </span>
-          <h3 className="font-display text-lg font-black tracking-tight text-zinc-900 dark:text-white">
+          <h3 className="font-display text-lg font-bold tracking-tight text-zinc-900 dark:text-white">
             {props.titulo}
           </h3>
         </div>
@@ -240,11 +240,11 @@ function Secao(props: {
 function Passo(props: { n: number; titulo: string; children: ReactNode }) {
   return (
     <li className="flex gap-3.5">
-      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-utfpr-500 font-mono text-xs font-black text-zinc-950">
+      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-utfpr-500 font-mono text-xs font-bold text-zinc-950">
         {props.n}
       </span>
       <div className="min-w-0 pt-0.5">
-        <h4 className="font-display text-sm font-black tracking-tight text-zinc-900 dark:text-white">
+        <h4 className="font-display text-sm font-bold tracking-tight text-zinc-900 dark:text-white">
           {props.titulo}
         </h4>
         <p className="mt-1 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
@@ -261,9 +261,9 @@ export function TelaComoUsar() {
   return (
     <div className="space-y-10">
       {/* Capa */}
-      <header className="rounded-3xl border border-zinc-200/90 bg-gradient-to-br from-utfpr-500/15 via-white to-white p-7 shadow-xs dark:border-zinc-800 dark:from-utfpr-500/10 dark:via-zinc-900 dark:to-zinc-900">
+      <header className="rounded-2xl border border-zinc-200/90 bg-white p-7 dark:border-zinc-800 dark:bg-zinc-900">
         <Badge tom="acento">Manual da plataforma</Badge>
-        <h2 className="mt-3 font-display text-3xl font-black tracking-tight text-zinc-900 dark:text-white">
+        <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">
           Como usar o site
         </h2>
         <p className="mt-2 max-w-3xl text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
@@ -288,7 +288,7 @@ export function TelaComoUsar() {
           <Card>
             <div className="flex items-center gap-2">
               <IconFileText className="h-4.5 w-4.5 text-utfpr-600 dark:text-utfpr-500" />
-              <h4 className="font-display text-sm font-black tracking-tight text-zinc-900 dark:text-white">
+              <h4 className="font-display text-sm font-bold tracking-tight text-zinc-900 dark:text-white">
                 Com o seu histórico
               </h4>
             </div>
@@ -301,7 +301,7 @@ export function TelaComoUsar() {
           <Card>
             <div className="flex items-center gap-2">
               <IconCalendar className="h-4.5 w-4.5 text-utfpr-600 dark:text-utfpr-500" />
-              <h4 className="font-display text-sm font-black tracking-tight text-zinc-900 dark:text-white">
+              <h4 className="font-display text-sm font-bold tracking-tight text-zinc-900 dark:text-white">
                 Modo Livre, sem histórico
               </h4>
             </div>
@@ -373,7 +373,7 @@ export function TelaComoUsar() {
           {TELAS.map((t) => (
             <Card key={t.nome}>
               <div className="flex flex-wrap items-center gap-2">
-                <h4 className="font-display text-base font-black tracking-tight text-zinc-900 dark:text-white">
+                <h4 className="font-display text-base font-bold tracking-tight text-zinc-900 dark:text-white">
                   {t.nome}
                 </h4>
                 {t.exige === "historico" ? (
@@ -387,7 +387,7 @@ export function TelaComoUsar() {
               </p>
               <div className="mt-3.5 grid gap-3.5 sm:grid-cols-2">
                 <div className="rounded-xl border border-zinc-200/80 bg-zinc-50/60 p-3 dark:border-zinc-800 dark:bg-zinc-800/40">
-                  <span className="font-display text-[11px] font-black uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                  <span className="font-display text-xs font-medium text-zinc-500 dark:text-zinc-400">
                     Interações
                   </span>
                   <ul className="mt-1.5 space-y-1">
@@ -400,7 +400,7 @@ export function TelaComoUsar() {
                   </ul>
                 </div>
                 <div className="rounded-xl border border-zinc-200/80 bg-zinc-50/60 p-3 dark:border-zinc-800 dark:bg-zinc-800/40">
-                  <span className="font-display text-[11px] font-black uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                  <span className="font-display text-xs font-medium text-zinc-500 dark:text-zinc-400">
                     O que alimenta
                   </span>
                   <p className="mt-1.5 text-xs leading-relaxed text-zinc-600 dark:text-zinc-300">
@@ -432,12 +432,12 @@ export function TelaComoUsar() {
           {FONTES.map((f, i) => (
             <Card key={f.titulo}>
               <div className="flex items-start gap-3.5">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-utfpr-500/20 font-mono text-sm font-black text-utfpr-700 dark:text-utfpr-400">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-utfpr-500/20 font-mono text-sm font-bold text-utfpr-700 dark:text-utfpr-400">
                   {i + 1}
                 </span>
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <h4 className="font-display text-sm font-black tracking-tight text-zinc-900 dark:text-white">
+                    <h4 className="font-display text-sm font-bold tracking-tight text-zinc-900 dark:text-white">
                       {f.titulo}
                     </h4>
                     <Badge tom={f.etiqueta === "Local" ? "ok" : f.etiqueta === "Comunidade" ? "acento" : "neutro"}>
@@ -545,7 +545,7 @@ export function TelaComoUsar() {
             <Card key={p.titulo}>
               <div className="flex items-center gap-2 text-utfpr-600 dark:text-utfpr-500">
                 {p.icone}
-                <h4 className="font-display text-sm font-black tracking-tight text-zinc-900 dark:text-white">
+                <h4 className="font-display text-sm font-bold tracking-tight text-zinc-900 dark:text-white">
                   {p.titulo}
                 </h4>
               </div>

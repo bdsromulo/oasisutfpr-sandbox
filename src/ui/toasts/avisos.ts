@@ -19,6 +19,25 @@ const ROTULO_PEDIDO: Record<TipoExclusao, string> = {
 };
 
 /**
+ * Confirmação de remoção com volta. A chave é fixa por tipo de remoção: remover
+ * duas turmas seguidas troca o aviso em vez de empilhar dois "Desfazer", e só a
+ * última remoção pode ser desfeita, que é o que a pessoa espera.
+ */
+export function avisarRemocao(
+  toasts: ApiToasts,
+  pedido: { chave: string; titulo: string; descricao?: string; desfazer: () => void },
+): void {
+  toasts.publicar({
+    chave: `desfazer:${pedido.chave}`,
+    tom: "info",
+    titulo: pedido.titulo,
+    descricao: pedido.descricao,
+    acao: { rotulo: "Desfazer", executar: pedido.desfazer },
+    duracaoMs: 8_000,
+  });
+}
+
+/**
  * Choque de horário ao tentar adicionar turma.
  *
  * Usa `publicar` e não `publicarUmaVez` de propósito: clicar duas vezes na

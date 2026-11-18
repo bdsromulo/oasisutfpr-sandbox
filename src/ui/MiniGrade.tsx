@@ -162,7 +162,7 @@ export function MiniGrade(props: {
           localStorage.setItem("minigrade_minimizada", "false");
         }
       }}
-      className={`rounded-2xl border border-zinc-200/80 bg-white p-3 shadow-sm dark:border-zinc-800/80 dark:bg-zinc-900 transition-all max-h-[calc(100vh-2rem)] overflow-y-auto ${
+      className={`rounded-2xl border border-zinc-200/80 bg-white p-3 shadow-sm dark:border-zinc-800/80 dark:bg-zinc-900 transition-colors max-h-[calc(100vh-2rem)] overflow-y-auto ${
         minimizada ? "cursor-pointer hover:border-utfpr-500/50 hover:shadow-md" : ""
       }`}
       title={minimizada ? "Clique em qualquer lugar para expandir a Prévia de Planejamento" : undefined}
@@ -171,8 +171,11 @@ export function MiniGrade(props: {
       <div className="flex items-center justify-between gap-2">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <h4 className="font-display text-xs font-black uppercase tracking-wider text-zinc-800 dark:text-zinc-100 truncate">
-              Prévia de Planejamento de Matrícula
+            <h4
+              className="truncate font-display text-sm font-semibold text-zinc-900 dark:text-zinc-100"
+              title="Prévia de planejamento de matrícula"
+            >
+              Prévia da grade
             </h4>
             {minimizada && itens.length > 0 && (
               <span className="inline-flex items-center rounded-full bg-utfpr-500/20 px-2 py-0.5 text-[10px] font-bold text-utfpr-700 dark:text-utfpr-300 shrink-0">
@@ -193,7 +196,7 @@ export function MiniGrade(props: {
               e.stopPropagation();
               setModalCompletoAberto(true);
             }}
-            className="group/btn flex items-center gap-1.5 rounded-lg bg-zinc-100 px-2 py-1 font-display text-xs font-bold text-zinc-700 hover:bg-utfpr-500 hover:text-zinc-950 dark:bg-zinc-800 dark:text-zinc-300 transition-all cursor-pointer shadow-2xs overflow-hidden"
+            className="group/btn flex items-center gap-1.5 rounded-lg bg-zinc-100 px-2 py-1 font-display text-xs font-bold text-zinc-700 hover:bg-utfpr-500 hover:text-zinc-950 dark:bg-zinc-800 dark:text-zinc-300 transition-colors cursor-pointer shadow-2xs overflow-hidden"
             title="Expandir visualização da Grade Completa em Pop-up Grande"
           >
             <span className="text-sm leading-none">⛶</span>
@@ -226,7 +229,7 @@ export function MiniGrade(props: {
                     <div key={g} className="group relative flex items-center">
                       <button
                         onClick={() => onMudarGradeAtiva(g)}
-                        className={`flex h-7 w-8 items-center justify-center rounded-lg font-mono text-xs font-black transition-all ${
+                        className={`flex h-7 w-8 items-center justify-center rounded-lg font-mono text-xs font-bold transition-colors ${
                           ativa
                             ? "bg-zinc-900 text-utfpr-500 shadow-xs dark:bg-zinc-800 dark:text-utfpr-400 border border-utfpr-500/40"
                             : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800/60 dark:text-zinc-400 dark:hover:bg-zinc-800"
@@ -358,7 +361,7 @@ export function MiniGrade(props: {
                             }
                             onMouseEnter={() => ocupantes.length > 0 && iniciarHover(ocupantes[0].codigo)}
                             onMouseLeave={cancelarHover}
-                            className={`h-3.5 rounded-sm transition-all flex items-center justify-center relative ${
+                            className={`h-3.5 rounded-sm transition-colors flex items-center justify-center relative ${
                               choque
                                 ? "bg-red-500 ring-1 ring-red-600"
                                 : ocupantes.length
@@ -376,7 +379,7 @@ export function MiniGrade(props: {
                                   e.stopPropagation();
                                   onRemoverTurma?.(ocupantes[0].codigo);
                                 }}
-                                className="flex h-3 w-3 items-center justify-center rounded-full bg-red-600 text-[8px] font-black text-white shadow-2xs hover:bg-red-700 cursor-pointer"
+                                className="flex h-3 w-3 items-center justify-center rounded-full bg-red-600 text-[8px] font-bold text-white shadow-2xs hover:bg-red-700 cursor-pointer"
                                 title={`Remover ${ocupantes[0].codigo}`}
                               >
                                 ×
@@ -468,7 +471,7 @@ export function MiniGrade(props: {
                     onMouseEnter={() => iniciarHover(codIdentificador)}
                     onMouseLeave={cancelarHover}
                     title={`${item.disciplina.nome}${codigoCurricular !== item.disciplina.codigo ? ` · oferta ${item.disciplina.codigo}` : ""}`}
-                    className={`group relative flex items-center justify-between gap-1.5 text-xs rounded-md px-1.5 py-1 transition-all ${
+                    className={`group relative flex items-center justify-between gap-1.5 text-xs rounded-md px-1.5 py-1 transition-colors ${
                       isHovered ? "bg-zinc-100 dark:bg-zinc-800 ring-1 ring-zinc-300 dark:ring-zinc-700 scale-[1.01] z-40 overflow-visible" : ""
                     }`}
                   >
@@ -512,8 +515,8 @@ export function MiniGrade(props: {
       )}
 
       {modalCompletoAberto && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 sm:p-6 transition-all">
-          <div className="relative flex max-h-[90vh] w-full max-w-5xl flex-col rounded-3xl border border-zinc-200 bg-white p-6 shadow-2xl dark:border-zinc-800 dark:bg-zinc-900 overflow-hidden text-left">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 sm:p-6 transition-colors">
+          <div className="relative flex max-h-[90vh] w-full max-w-5xl flex-col rounded-2xl border border-zinc-200 bg-white p-6 shadow-2xl dark:border-zinc-800 dark:bg-zinc-900 overflow-hidden text-left">
             <div className="flex items-center justify-between border-b border-zinc-100 pb-4 dark:border-zinc-800 shrink-0">
               <div>
                 <h3 className="font-display text-xl font-bold text-zinc-900 dark:text-zinc-100">
@@ -569,11 +572,11 @@ export function MiniGrade(props: {
                                       key={`${ocup.codigo}-${ocup.turma}-${idxItem}`}
                                       onMouseEnter={() => setDisciplinaHoverId(ocup.codigo)}
                                       onMouseLeave={() => setDisciplinaHoverId(null)}
-                                      className={`group relative rounded-xl p-2 shadow-2xs transition-all ${ocup.cor} ${
+                                      className={`group relative rounded-xl p-2 shadow-2xs transition-colors ${ocup.cor} ${
                                         isHovered ? "ring-2 ring-zinc-950 dark:ring-white scale-[1.03] z-10 brightness-105" : ""
                                       }`}
                                     >
-                                      <div className="font-mono text-[11px] font-black tracking-tight flex items-center justify-between">
+                                      <div className="font-mono text-[11px] font-bold tracking-tight flex items-center justify-between">
                                         <span>{ocup.codigo}</span>
                                         <span className="opacity-80">{ocup.turma}</span>
                                       </div>
@@ -630,11 +633,11 @@ export function MiniGrade(props: {
       )}
 
       {modalConfirmarLimpar && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs animate-in fade-in duration-150">
-          <div className="flex max-w-md w-full flex-col rounded-3xl bg-white p-6 shadow-2xl dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 text-left">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 animate-in fade-in duration-150">
+          <div className="flex max-w-md w-full flex-col rounded-2xl bg-white p-6 shadow-2xl dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 text-left">
             <div className="flex items-center gap-3 text-red-600 dark:text-red-400 mb-2">
               <IconTrash className="h-4 w-4 shrink-0" />
-              <h3 className="font-display text-lg font-black text-zinc-900 dark:text-white">
+              <h3 className="font-display text-lg font-bold text-zinc-900 dark:text-white">
                 Tem certeza que deseja limpar a prévia de Matrícula?
               </h3>
             </div>

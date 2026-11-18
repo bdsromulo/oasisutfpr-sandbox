@@ -31,9 +31,9 @@ import {
   IconLock,
   IconPin,
   IconPlus,
-  IconSparkles,
   IconTrash,
   IconWarning,
+  IconGrade,
 } from "../icons";
 import { renderizarTextoComCodigos } from "./Situacao";
 import { BotaoReviews, useContagemPorTurma } from "./reviewsComuns";
@@ -170,8 +170,19 @@ function CardDisciplinaPossoCursar({
 
   return (
     <Card classe="flex flex-col justify-start !p-0 overflow-hidden">
+      {/* Alterna as turmas. Tem papel de botão e responde a Enter e espaço:
+          como div clicável pura, ficava fora do alcance de quem usa teclado. */}
       <div
+        role="button"
+        tabIndex={0}
+        aria-expanded={expandido}
         onClick={() => setExpandido(!expandido)}
+        onKeyDown={(ev) => {
+          if (ev.key === "Enter" || ev.key === " ") {
+            ev.preventDefault();
+            setExpandido(!expandido);
+          }
+        }}
         className="cursor-pointer select-none p-4 transition-colors hover:bg-zinc-50/80 dark:hover:bg-zinc-800/40 group"
       >
         <div className="flex items-start justify-between gap-3">
@@ -185,8 +196,16 @@ function CardDisciplinaPossoCursar({
             {e.disciplina.nome}
           </div>
           {e.oferta && e.oferta.turmas.length > 0 && (
-            <div className="flex items-center justify-center h-8 w-8 shrink-0 rounded-xl bg-zinc-100 text-xs font-black text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 group-hover:bg-utfpr-500 group-hover:text-zinc-950 transition-all shadow-2xs">
-              {expandido ? "▲" : "▼"}
+            <div
+              aria-hidden="true"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-zinc-500 transition-colors group-hover:bg-zinc-100 group-hover:text-zinc-900 dark:text-zinc-400 dark:group-hover:bg-zinc-800 dark:group-hover:text-white"
+            >
+              <svg
+                viewBox="0 0 12 12"
+                className={`h-3.5 w-3.5 transition-transform duration-150 ${expandido ? "rotate-180" : ""}`}
+              >
+                <path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" strokeWidth="1.5" />
+              </svg>
             </div>
           )}
         </div>
@@ -325,7 +344,7 @@ function CardDisciplinaPossoCursar({
                                 onPreview(p);
                                 if (onAbrirMobilePreview) onAbrirMobilePreview(p);
                               }}
-                              className="inline-flex items-center gap-1 rounded-xl border border-zinc-200/80 bg-zinc-50 px-2.5 py-1 text-xs font-bold text-zinc-700 hover:bg-utfpr-500 hover:text-zinc-950 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-utfpr-400 dark:hover:text-zinc-950 transition-all cursor-pointer shadow-2xs"
+                              className="inline-flex items-center gap-1 rounded-xl border border-zinc-200/80 bg-zinc-50 px-2.5 py-1 text-xs font-bold text-zinc-700 hover:bg-utfpr-500 hover:text-zinc-950 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-utfpr-400 dark:hover:text-zinc-950 transition-colors cursor-pointer shadow-2xs"
                               title="Espiar nesta turma na grade (ideal no celular ou para teste rápido)"
                             >
                               <IconEye className="h-4 w-4 shrink-0" />
@@ -349,7 +368,7 @@ function CardDisciplinaPossoCursar({
                                     setProgressoCarregadoTurma(t.codigo);
                                   }
                                 }}
-                                className="inline-flex items-center gap-1 rounded-xl border border-zinc-200/80 bg-zinc-50 px-2.5 py-1 text-xs font-bold text-zinc-700 hover:bg-utfpr-500 hover:text-zinc-950 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-utfpr-400 dark:hover:text-zinc-950 transition-all cursor-pointer shadow-2xs"
+                                className="inline-flex items-center gap-1 rounded-xl border border-zinc-200/80 bg-zinc-50 px-2.5 py-1 text-xs font-bold text-zinc-700 hover:bg-utfpr-500 hover:text-zinc-950 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-utfpr-400 dark:hover:text-zinc-950 transition-colors cursor-pointer shadow-2xs"
                                 title="Status de progresso desta matéria no currículo"
                               >
                                 <IconBarChart className="h-4 w-4 shrink-0" />
@@ -597,7 +616,7 @@ export function TelaPossoCursar(props: {
       {/* Busca e filtros no MESMO bloco: abrir os filtros expande este cartão
           para baixo, em vez de fazer nascer um segundo cartão solto. Eram duas
           caixas falando da mesma coisa. */}
-      <div className="rounded-2xl border border-zinc-200/80 bg-white/80 text-sm shadow-2xs backdrop-blur-sm dark:border-zinc-800/80 dark:bg-zinc-900/80">
+      <div className="rounded-2xl border border-zinc-200/80 bg-white/80 text-sm shadow-2xs dark:border-zinc-800/80 dark:bg-zinc-900/80">
       <div className="flex flex-wrap items-center justify-between gap-4 p-3.5">
         <div className="flex flex-wrap items-center gap-3 flex-1">
           <input
@@ -609,7 +628,7 @@ export function TelaPossoCursar(props: {
           />
           <button
             onClick={() => setFiltrosAbertos(!filtrosAbertos)}
-            className={`inline-flex cursor-pointer items-center gap-2 rounded-xl px-4 py-2 font-display text-sm font-bold transition-all max-sm:min-h-11 ${
+            className={`inline-flex cursor-pointer items-center gap-2 rounded-xl px-4 py-2 font-display text-sm font-bold transition-colors max-sm:min-h-11 ${
               filtrosAbertos || grupo !== "todas" || !soOfertadas || !soLiberadas || horarioFiltrado
                 ? "bg-utfpr-500 text-zinc-950 shadow-xs border-2 border-zinc-900 dark:border-amber-400"
                 : "border border-zinc-300 bg-zinc-100 text-zinc-800 hover:border-zinc-900 hover:bg-zinc-200 dark:border-amber-400/70 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:border-amber-400 dark:hover:bg-zinc-700"
@@ -626,14 +645,14 @@ export function TelaPossoCursar(props: {
             <button
               onClick={() => perfil && onAbrirGradeMagica()}
               disabled={!perfil}
-              className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 font-display text-sm font-bold transition-all max-sm:min-h-11 ${
+              className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 font-display text-sm font-bold transition-colors max-sm:min-h-11 ${
                 perfil
-                  ? "bg-gradient-to-r from-amber-500 to-utfpr-500 text-zinc-950 shadow-md hover:brightness-105 cursor-pointer"
+                  ? " bg-utfpr-500 text-zinc-950 shadow-md hover:brightness-105 cursor-pointer"
                   : "border border-zinc-200 bg-zinc-100 text-zinc-400 cursor-not-allowed dark:border-zinc-800 dark:bg-zinc-800/60 dark:text-zinc-500"
               }`}
               title={perfil ? "Preenchimento com Sugestão de Grade" : EXIGE_HISTORICO}
             >
-              {perfil ? <IconSparkles className="h-4 w-4 shrink-0" /> : <IconLock className="h-4 w-4 shrink-0" />}
+              {perfil ? <IconGrade className="h-4 w-4 shrink-0" /> : <IconLock className="h-4 w-4 shrink-0" />}
               <span className="hidden sm:inline">Sugestão de Grade</span>
               <span className="sm:hidden">Sugestão</span>
             </button>
@@ -646,10 +665,10 @@ export function TelaPossoCursar(props: {
       </div>
 
       {filtrosAbertos && (
-        <div className="animate-in fade-in space-y-3 border-t border-zinc-200/80 p-4 transition-all dark:border-zinc-800/80">
+        <div className="animate-in fade-in space-y-3 border-t border-zinc-200/80 p-4 transition-colors dark:border-zinc-800/80">
           {/* grupos de categoria (Dropdown) */}
           <div className="flex flex-wrap items-center gap-2">
-            <label htmlFor="grupo-possocursar" className="font-display text-xs font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider">
+            <label htmlFor="grupo-possocursar" className="font-display text-xs font-medium text-zinc-700 dark:text-zinc-300">
               Categoria:
             </label>
             <select
@@ -660,7 +679,7 @@ export function TelaPossoCursar(props: {
                 setGrupo(id);
                 if (id !== "trilhas") setTrilha("todas");
               }}
-              className="cursor-pointer rounded-xl border border-zinc-300 bg-white px-3.5 py-2 font-display text-xs font-bold text-zinc-900 shadow-2xs transition-all focus:border-utfpr-500 focus:outline-none focus:ring-2 focus:ring-utfpr-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:focus:border-utfpr-400 min-w-[200px]"
+              className="cursor-pointer rounded-xl border border-zinc-300 bg-white px-3.5 py-2 font-display text-xs font-bold text-zinc-900 shadow-2xs transition-colors focus:border-utfpr-500 focus:outline-none focus:ring-2 focus:ring-utfpr-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:focus:border-utfpr-400 min-w-[200px]"
             >
               {grupos.map(([id, rotulo]) => (
                 <option key={id} value={id}>
@@ -673,7 +692,7 @@ export function TelaPossoCursar(props: {
           {/* sub-filtro: só aparece com Trilhas selecionado */}
           {grupo === "trilhas" && (
             <div className="flex flex-wrap items-center gap-2 border-t border-zinc-100 pt-3 dark:border-zinc-800">
-              <span className="text-xs font-semibold uppercase tracking-wide text-zinc-400">
+              <span className="text-xs font-semibold text-zinc-400">
                 {curso.matriz === 981 ? "Trilha:" : "Grupo optativo:"}
               </span>
               <select
@@ -711,7 +730,7 @@ export function TelaPossoCursar(props: {
                 type="checkbox"
                 checked={soOfertadas}
                 onChange={(e) => setSoOfertadas(e.target.checked)}
-                className="h-4 w-4 rounded border-zinc-300 accent-utfpr-500 transition-all dark:border-zinc-700"
+                className="h-4 w-4 rounded border-zinc-300 accent-utfpr-500 transition-colors dark:border-zinc-700"
               />
               <span>Com turma aberta em {oferta.semestre}</span>
             </label>
@@ -720,7 +739,7 @@ export function TelaPossoCursar(props: {
                 type="checkbox"
                 checked={soLiberadas}
                 onChange={(e) => setSoLiberadas(e.target.checked)}
-                className="h-4 w-4 rounded border-zinc-300 accent-utfpr-500 transition-all dark:border-zinc-700"
+                className="h-4 w-4 rounded border-zinc-300 accent-utfpr-500 transition-colors dark:border-zinc-700"
               />
               <span>Liberadas (pré-requisitos cumpridos)</span>
             </label>
@@ -733,7 +752,7 @@ export function TelaPossoCursar(props: {
               ainda veria turma de manhã na hora de escolher. */}
           <div className="space-y-2.5 border-t border-zinc-100 pt-3 dark:border-zinc-800">
             <div className="flex flex-wrap items-center gap-4">
-              <span className="font-display text-xs font-bold uppercase tracking-wider text-zinc-700 dark:text-zinc-300">
+              <span className="font-display text-xs font-medium text-zinc-700 dark:text-zinc-300">
                 Turno:
               </span>
               {(
@@ -759,7 +778,7 @@ export function TelaPossoCursar(props: {
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
-              <span className="font-display text-xs font-bold uppercase tracking-wider text-zinc-700 dark:text-zinc-300">
+              <span className="font-display text-xs font-medium text-zinc-700 dark:text-zinc-300">
                 Horário:
               </span>
               <select

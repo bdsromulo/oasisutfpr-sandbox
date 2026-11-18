@@ -141,7 +141,7 @@ export function ModalEnvioForms(props: {
 
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-end justify-center bg-black/40 backdrop-blur-sm sm:items-center sm:p-4"
+      className="fixed inset-0 z-[60] flex items-end justify-center bg-black/40 sm:items-center sm:p-4"
       onClick={onFechar}
     >
       <div

@@ -100,7 +100,7 @@ export function SeletorTrilhasAlvo(props: {
 
   return (
     <div>
-      <label className="block font-display text-[11px] font-black uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+      <label className="block font-display text-xs font-medium text-zinc-400 dark:text-zinc-500">
         Trilhas que quero cursar
       </label>
       <p className="mt-1 text-[11px] font-semibold text-zinc-500 dark:text-zinc-400">
@@ -120,7 +120,7 @@ export function SeletorTrilhasAlvo(props: {
               type="button"
               onClick={() => alternar(t.conjunto)}
               title={`${t.nome} — ${t.cursada}h de ${t.exigida}h`}
-              className={`cursor-pointer rounded-xl border px-3 py-2 text-left text-xs font-bold transition-all ${
+              className={`cursor-pointer rounded-xl border px-3 py-2 text-left text-xs font-bold transition-colors ${
                 marcada
                   ? "border-utfpr-500 bg-utfpr-500/15 text-utfpr-900 dark:text-utfpr-200"
                   : "border-zinc-200 bg-zinc-50 text-zinc-700 hover:border-zinc-300 dark:border-zinc-800 dark:bg-zinc-800/50 dark:text-zinc-300"
@@ -167,7 +167,7 @@ export function ControlesAvancados(props: {
     <div className="space-y-5">
       {/* ---- ritmo por semestre ---- */}
       <div>
-        <label className="block font-display text-[11px] font-black uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+        <label className="block font-display text-xs font-medium text-zinc-400 dark:text-zinc-500">
           Ritmo de um semestre específico
         </label>
         <p className="mt-1 text-[11px] font-semibold text-zinc-500 dark:text-zinc-400">
@@ -207,7 +207,7 @@ export function ControlesAvancados(props: {
 
       {/* ---- janela de aulas ---- */}
       <div>
-        <label className="block font-display text-[11px] font-black uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+        <label className="block font-display text-xs font-medium text-zinc-400 dark:text-zinc-500">
           Janela de aulas
         </label>
         <p className="mt-1 text-[11px] font-semibold text-zinc-500 dark:text-zinc-400">
@@ -248,7 +248,7 @@ export function ControlesAvancados(props: {
       {/* ---- disciplinas fixadas ---- */}
       {valor.disciplinasFixadas.length > 0 && (
         <div>
-          <label className="block font-display text-[11px] font-black uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+          <label className="block font-display text-xs font-medium text-zinc-400 dark:text-zinc-500">
             Matérias que eu quero cursar
           </label>
           <p className="mt-1 text-[11px] font-semibold text-zinc-500 dark:text-zinc-400">

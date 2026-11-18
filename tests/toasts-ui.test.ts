@@ -2,7 +2,9 @@ import { readFileSync } from "node:fs";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { CartaoToast } from "../src/ui/toasts/PilhaToasts";
-import type { Toast } from "../src/ui/toasts/pilha";
+import { ESTADO_INICIAL, publicar, type Toast } from "../src/ui/toasts/pilha";
+import { avisarRemocao } from "../src/ui/toasts/avisos";
+import type { ApiToasts } from "../src/ui/toasts/contexto";
 
 function fonte(caminho: string) {
   return readFileSync(new URL(`../${caminho}`, import.meta.url), "utf8");
@@ -60,6 +62,33 @@ describe("cartão de aviso flutuante", () => {
   });
 });
 
+describe("desfazer remoção", () => {
+  it("o cartão só mostra o botão quando o aviso traz uma ação", () => {
+    expect(cartao({})).not.toContain("Desfazer");
+    const html = cartao({ acao: { rotulo: "Desfazer", executar: () => undefined } });
+    expect(html).toContain(">Desfazer</button>");
+  });
+
+  it("publica um aviso curto com a volta, e a segunda remoção troca a primeira", () => {
+    let estado = ESTADO_INICIAL;
+    const api = {
+      publicar: (p) => {
+        estado = publicar(estado, p, 0);
+      },
+    } as ApiToasts;
+    let desfeito = "";
+    avisarRemocao(api, { chave: "remover-turma", titulo: "A saiu", desfazer: () => (desfeito = "A") });
+    avisarRemocao(api, { chave: "remover-turma", titulo: "B saiu", desfazer: () => (desfeito = "B") });
+
+    expect(estado.pilha).toHaveLength(1);
+    const [t] = estado.pilha;
+    expect(t.titulo).toBe("B saiu");
+    expect(t.duracaoMs).toBeGreaterThan(0);
+    t.acao!.executar();
+    expect(desfeito).toBe("B");
+  });
+});
+
 describe("contêiner da pilha", () => {
   const arquivo = fonte("src/ui/toasts/PilhaToasts.tsx");
 
@@ -70,10 +99,11 @@ describe("contêiner da pilha", () => {
     expect(arquivo).toContain("env(safe-area-inset-bottom)");
   });
 
-  it("sobe acima da barra de grade flutuante do mobile", () => {
+  it("sobe acima da barra de grade flutuante e da barra de abas do mobile", () => {
     expect(arquivo).toContain("acimaDaBarraMobile");
+    expect(arquivo).toContain("acimaDaNavMobile");
     expect(fonte("src/ui/App.tsx")).toContain(
-      "<PilhaToasts acimaDaBarraMobile={barraGradeMobileVisivel} />",
+      "<PilhaToasts acimaDaBarraMobile={barraGradeMobileVisivel} acimaDaNavMobile={navMobileVisivel} />",
     );
   });
 });

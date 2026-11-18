@@ -23,10 +23,10 @@ export function AvisoBeta() {
 
   return (
     <div className="mx-auto mb-6 max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div className="overflow-hidden rounded-3xl border-2 border-amber-500/80 bg-amber-50 shadow-lg dark:border-amber-500/60 dark:bg-amber-950/60">
+      <div className="overflow-hidden rounded-2xl border-2 border-amber-500/80 bg-amber-50 shadow-lg dark:border-amber-500/60 dark:bg-amber-950/60">
         <div className="flex items-center gap-3 border-b-2 border-amber-500/50 bg-amber-500 px-5 py-3 dark:bg-amber-500/90">
           <IconWarning className="h-6 w-6 shrink-0 text-zinc-950" />
-          <span className="font-display text-lg font-black uppercase tracking-wide text-zinc-950 sm:text-xl">
+          <span className="font-display text-lg font-medium text-zinc-950 sm:text-xl">
             Ambiente de testes — não é o Oásis oficial
           </span>
         </div>
@@ -42,7 +42,7 @@ export function AvisoBeta() {
             Para usar a versão estável, acesse{" "}
             <a
               href={SITE_ESTAVEL}
-              className="font-black underline decoration-2 underline-offset-2 hover:text-amber-700 dark:hover:text-amber-300"
+              className="font-bold underline decoration-2 underline-offset-2 hover:text-amber-700 dark:hover:text-amber-300"
             >
               oasisutfpr.com.br
             </a>

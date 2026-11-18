@@ -2,6 +2,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import {
   IconGraduationCap,
   IconSearch,
+  IconFolders,
+  IconTarget,
 } from "../icons";
 import type { Matriz, OfertaSemestre, PerfilAluno } from "../../domain/tipos";
 import {
@@ -263,7 +265,7 @@ export function TelaFluxograma(props: {
   return (
     <div className="space-y-4">
       {/* Abas dos dois boards */}
-      <div className={`grid ${quantidadeBoards === 3 ? "grid-cols-3" : quantidadeBoards === 2 ? "grid-cols-2" : "grid-cols-1"} gap-2 rounded-3xl border-2 border-zinc-200/90 bg-white/95 p-2 shadow-md dark:border-zinc-800/90 dark:bg-zinc-900/95`}>
+      <div className={`grid ${quantidadeBoards === 3 ? "grid-cols-3" : quantidadeBoards === 2 ? "grid-cols-2" : "grid-cols-1"} gap-2 rounded-2xl border-2 border-zinc-200/90 bg-white/95 p-2 shadow-md dark:border-zinc-800/90 dark:bg-zinc-900/95`}>
         {(
           [
             { id: "obrigatorias" as const, rotulo: curso.matriz === 981 ? "Obrigatórias & 2º Estrato" : "Obrigatórias", icone: <IconGraduationCap className="h-4 w-4 shrink-0" />, qtd: boardObr.nos.length },
@@ -272,10 +274,10 @@ export function TelaFluxograma(props: {
             // existe em BSI e na 962 — travar no `gruposOpcao` deixava as
             // disciplinas montadas no board e inalcançáveis na tela.
             ...(temBoardOpcoes
-              ? [{ id: "opcoes" as const, rotulo: curso.rotuloOpcoes ?? "Escolhas do Curso", icone: "◈", qtd: boardOpc.nos.filter((n) => !n.externo).length }]
+              ? [{ id: "opcoes" as const, rotulo: curso.rotuloOpcoes ?? "Escolhas do Curso", icone: <IconFolders className="h-4 w-4 shrink-0" />, qtd: boardOpc.nos.filter((n) => !n.externo).length }]
               : []),
             ...(temBoardTrilhas
-              ? [{ id: "trilhas" as const, rotulo: curso.matriz === 981 ? "Trilhas do 3º Estrato" : "Trilhas Optativas", icone: "⚡", qtd: boardTri.nos.filter((n) => !n.externo).length }]
+              ? [{ id: "trilhas" as const, rotulo: curso.matriz === 981 ? "Trilhas do 3º Estrato" : "Trilhas Optativas", icone: <IconTarget className="h-4 w-4 shrink-0" />, qtd: boardTri.nos.filter((n) => !n.externo).length }]
               : []),
           ]
         ).map((op) => {
@@ -285,7 +287,7 @@ export function TelaFluxograma(props: {
               key={op.id}
               type="button"
               onClick={() => setAbaBoard(op.id)}
-              className={`flex items-center justify-center gap-2.5 rounded-2xl px-4 py-3 font-display text-sm font-black transition-all cursor-pointer ${
+              className={`flex items-center justify-center gap-2.5 rounded-2xl px-4 py-3 font-display text-sm font-bold transition-colors cursor-pointer ${
                 ativo
                   ? "bg-zinc-900 text-utfpr-400 shadow-md ring-2 ring-utfpr-500/40 dark:bg-zinc-800"
                   : "bg-zinc-50/90 text-zinc-700 hover:bg-utfpr-50 dark:bg-zinc-800/60 dark:text-zinc-300"
@@ -294,7 +296,7 @@ export function TelaFluxograma(props: {
               <span>{op.icone}</span>
               <span className="truncate">{op.rotulo}</span>
               <span
-                className={`shrink-0 rounded-full px-2 py-0.5 font-mono text-[11px] font-black ${
+                className={`shrink-0 rounded-full px-2 py-0.5 font-mono text-[11px] font-bold ${
                   ativo ? "bg-utfpr-500 text-zinc-950" : "bg-zinc-200 text-zinc-700 dark:bg-zinc-700 dark:text-zinc-300"
                 }`}
               >
@@ -344,7 +346,7 @@ export function TelaFluxograma(props: {
           <button
             type="button"
             onClick={() => setSelecionado(null)}
-            className="rounded-xl bg-utfpr-500/20 px-3 py-1.5 font-display text-xs font-black text-utfpr-700 transition-colors hover:bg-utfpr-500/30 dark:text-utfpr-400 cursor-pointer"
+            className="rounded-xl bg-utfpr-500/20 px-3 py-1.5 font-display text-xs font-bold text-utfpr-700 transition-colors hover:bg-utfpr-500/30 dark:text-utfpr-400 cursor-pointer"
           >
             Limpar cadeia ✕
           </button>
@@ -355,7 +357,7 @@ export function TelaFluxograma(props: {
             type="button"
             onClick={() => setZoom((z) => Math.max(ZOOM_MIN, z / 1.15))}
             title="Reduzir"
-            className="flex h-9 w-9 items-center justify-center rounded-xl bg-zinc-100 font-black text-zinc-600 transition-colors hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 cursor-pointer"
+            className="flex h-9 w-9 items-center justify-center rounded-xl bg-zinc-100 font-bold text-zinc-600 transition-colors hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 cursor-pointer"
           >
             −
           </button>
@@ -366,7 +368,7 @@ export function TelaFluxograma(props: {
             type="button"
             onClick={() => setZoom((z) => Math.min(ZOOM_MAX, z * 1.15))}
             title="Ampliar"
-            className="flex h-9 w-9 items-center justify-center rounded-xl bg-zinc-100 font-black text-zinc-600 transition-colors hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 cursor-pointer"
+            className="flex h-9 w-9 items-center justify-center rounded-xl bg-zinc-100 font-bold text-zinc-600 transition-colors hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 cursor-pointer"
           >
             +
           </button>
@@ -376,7 +378,7 @@ export function TelaFluxograma(props: {
               setZoom(0.72);
               setPan({ x: 0, y: 0 });
             }}
-            className="rounded-xl bg-zinc-100 px-3 py-2 font-display text-xs font-black text-zinc-600 transition-colors hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 cursor-pointer"
+            className="rounded-xl bg-zinc-100 px-3 py-2 font-display text-xs font-bold text-zinc-600 transition-colors hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 cursor-pointer"
           >
             Reenquadrar
           </button>
@@ -406,7 +408,7 @@ export function TelaFluxograma(props: {
       <div
         ref={viewportRef}
         onMouseDown={iniciarArrasto}
-        className="relative h-[620px] cursor-grab overflow-hidden rounded-3xl border-2 border-zinc-200/90 bg-zinc-50 shadow-inner active:cursor-grabbing dark:border-zinc-800/90 dark:bg-zinc-950/60"
+        className="relative h-[620px] cursor-grab overflow-hidden rounded-2xl border-2 border-zinc-200/90 bg-zinc-50 shadow-inner active:cursor-grabbing dark:border-zinc-800/90 dark:bg-zinc-950/60"
         style={{
           backgroundImage:
             "radial-gradient(circle, rgb(161 161 170 / 0.28) 1px, transparent 1px)",
@@ -430,7 +432,7 @@ export function TelaFluxograma(props: {
               style={{ left: 12, top: f.y, width: board.largura - 24, height: f.altura }}
             >
               <div className="px-4 pt-3">
-                <div className="font-display text-sm font-black tracking-tight text-zinc-800 dark:text-zinc-200">
+                <div className="font-display text-sm font-bold tracking-tight text-zinc-800 dark:text-zinc-200">
                   {f.rotulo}
                 </div>
                 {f.subrotulo && (
@@ -446,7 +448,7 @@ export function TelaFluxograma(props: {
           {board.colunas.map((c) => (
             <div
               key={c.rotulo}
-              className="absolute font-display text-[11px] font-black uppercase tracking-wider text-zinc-400 dark:text-zinc-600"
+              className="absolute font-display text-xs font-medium text-zinc-400 dark:text-zinc-600"
               style={{ left: c.x, top: 14, width: LARGURA_NO, textAlign: "center" }}
             >
               {c.rotulo}
@@ -510,7 +512,7 @@ export function TelaFluxograma(props: {
                 title={`${n.codigo} — ${n.nome}${n.horas ? ` · ${n.horas}h` : ""}${
                   n.exigePeriodo ? ` · exige ${n.exigePeriodo}º período` : ""
                 }`}
-                className={`absolute flex flex-col justify-center overflow-hidden rounded-xl border-2 px-3 text-left shadow-xs transition-all hover:z-10 hover:shadow-lg cursor-pointer ${cor.no} ${
+                className={`absolute flex flex-col justify-center overflow-hidden rounded-xl border-2 px-3 text-left shadow-xs transition-colors hover:z-10 hover:shadow-lg cursor-pointer ${cor.no} ${
                   estado === "ativo" ? "ring-2 ring-utfpr-500 ring-offset-1 dark:ring-offset-zinc-950" : ""
                 } ${selecionado === n.id ? "scale-[1.03] shadow-lg" : ""}`}
                 style={{
@@ -533,7 +535,7 @@ export function TelaFluxograma(props: {
                 </span>
                 {concluida && (
                   <span
-                    className="absolute right-1.5 top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500 text-[9px] font-black text-white"
+                    className="absolute right-1.5 top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500 text-[9px] font-bold text-white"
                     title="Concluída no seu histórico"
                   >
                     ✓
@@ -550,7 +552,7 @@ export function TelaFluxograma(props: {
         </div>
 
         {/* dica de navegação */}
-        <div className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-zinc-900/80 px-3.5 py-1.5 text-[11px] font-semibold text-zinc-300 backdrop-blur-sm">
+        <div className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-zinc-900/80 px-3.5 py-1.5 text-[11px] font-semibold text-zinc-300">
           Arraste para mover · roda do mouse para zoom · clique num bloco para ver a cadeia de pré-requisitos
         </div>
       </div>
@@ -565,7 +567,7 @@ export function TelaFluxograma(props: {
         ))}
         {perfil && (
           <span className="flex items-center gap-2 text-xs font-semibold text-zinc-600 dark:text-zinc-400">
-            <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-emerald-500 text-[8px] font-black text-white">
+            <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-emerald-500 text-[8px] font-bold text-white">
               ✓
             </span>
             Concluída no seu histórico

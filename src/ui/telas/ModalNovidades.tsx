@@ -46,18 +46,18 @@ export function ModalNovidades(props: {
 
   return (
     <div
-      className="fixed inset-0 z-[70] flex items-end justify-center bg-black/50 p-0 backdrop-blur-xs sm:items-center sm:p-4"
+      className="fixed inset-0 z-[70] flex items-end justify-center bg-black/50 p-0 sm:items-center sm:p-4"
       role="dialog"
       aria-modal="true"
       aria-label="Novidades"
       onClick={onFechar}
     >
       <div
-        className="max-h-[88vh] w-full overflow-y-auto rounded-t-3xl border-zinc-200 bg-white shadow-2xl sm:max-w-xl sm:rounded-3xl sm:border dark:border-zinc-800 dark:bg-zinc-900"
+        className="max-h-[88vh] w-full overflow-y-auto rounded-t-3xl border-zinc-200 bg-white shadow-2xl sm:max-w-xl sm:rounded-2xl sm:border dark:border-zinc-800 dark:bg-zinc-900"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="border-b border-zinc-200 bg-gradient-to-br from-utfpr-500/25 via-utfpr-500/10 to-transparent p-6 dark:border-zinc-800">
-          <h2 className="font-display text-3xl font-black tracking-[0.14em] text-zinc-950 uppercase dark:text-white">
+        <div className="border-b border-zinc-200 bg-utfpr-500/25 p-6 dark:border-zinc-800">
+          <h2 className="font-display text-3xl font-medium text-zinc-950 dark:text-white">
             Novidades
           </h2>
           <p className="mt-2 text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
@@ -81,7 +81,7 @@ export function ModalNovidades(props: {
               >
                 <div className="flex items-center gap-2">
                   <Icone className="h-5 w-5 shrink-0 text-utfpr-600 dark:text-utfpr-400" />
-                  <h3 className="font-display text-base font-black text-zinc-900 dark:text-zinc-100">
+                  <h3 className="font-display text-base font-bold text-zinc-900 dark:text-zinc-100">
                     {item.titulo}
                   </h3>
                 </div>

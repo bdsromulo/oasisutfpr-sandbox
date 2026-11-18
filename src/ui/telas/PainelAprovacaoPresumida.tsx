@@ -134,7 +134,7 @@ export function PainelAprovacaoPresumida(props: {
           <span className="font-semibold text-emerald-900 dark:text-emerald-200">
             {resumo} nesta projeção
           </span>
-          <span className="ml-auto shrink-0 text-[10px] font-black tracking-wider text-emerald-900/70 uppercase dark:text-emerald-200/70">
+          <span className="ml-auto shrink-0 text-xs font-medium text-emerald-900/70 dark:text-emerald-200/70">
             <span className="group-open:hidden">ajustar</span>
             <span className="hidden group-open:inline">ocultar</span>
           </span>
@@ -164,7 +164,7 @@ export function PainelAprovacaoPresumida(props: {
     <Card>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h3 className="font-display text-sm font-black tracking-tight text-zinc-900 dark:text-white">
+          <h3 className="font-display text-sm font-bold tracking-tight text-zinc-900 dark:text-white">
             Matérias em curso
             {semestreDoPdf ? ` · ${formatarSemestre(semestreDoPdf)}` : ""}
           </h3>

@@ -28,15 +28,17 @@ import {
   IconInfo,
   IconLock,
   IconPin,
-  IconSparkles,
   IconStar,
   IconTarget,
   IconTrash,
   IconTrendUp,
   IconUser,
   IconWarning,
+  IconGrade,
 } from "../icons";
 import { ModalGradeMagica } from "./ModalGradeMagica";
+import { useToasts } from "../toasts/contexto";
+import { avisarRemocao } from "../toasts/avisos";
 import { PainelProfessor, type AlvoPainelProfessor } from "./PainelProfessor";
 import { reviewsHabilitadasPara } from "../../domain/reviews/config";
 import { PainelDisciplina, type AlvoPainelDisciplina } from "./PainelDisciplina";
@@ -77,7 +79,7 @@ function CardResumoCategoria({ r, isSubTrilha }: { r: ResumoCategoriaGrade; isSu
   return (
     <div
       key={r.categoriaId}
-      className={`flex flex-col justify-between rounded-2xl border p-4.5 transition-all ${
+      className={`flex flex-col justify-between rounded-2xl border p-4.5 transition-colors ${
         ehExcedenteConcluido
           ? "border-amber-500/60 bg-amber-50/50 dark:border-amber-500/50 dark:bg-amber-950/30 ring-1 ring-amber-500/30 shadow-md"
           : r.impulsoGrade > 0
@@ -92,8 +94,8 @@ function CardResumoCategoria({ r, isSubTrilha }: { r: ResumoCategoriaGrade; isSu
           </span>
           {r.impulsoGrade > 0 && (
             ehExcedenteConcluido ? (
-              <span className="shrink-0 rounded-lg bg-amber-500/25 border border-amber-500/50 px-2 py-0.5 font-mono text-xs font-black text-amber-900 dark:text-amber-200 ring-1 ring-amber-500/30 flex items-center gap-1">
-                ⚡ +{r.impulsoGrade}h (Excedente)
+              <span className="shrink-0 rounded-lg bg-amber-500/25 border border-amber-500/50 px-2 py-0.5 font-mono text-xs font-bold text-amber-900 dark:text-amber-200 ring-1 ring-amber-500/30 flex items-center gap-1">
+                +{r.impulsoGrade}h excedente
               </span>
             ) : (
               <span className="shrink-0 rounded-lg bg-utfpr-500/15 border border-utfpr-500/30 px-2 py-0.5 font-mono text-xs font-bold text-utfpr-800 dark:text-utfpr-300">
@@ -134,7 +136,7 @@ function CardResumoCategoria({ r, isSubTrilha }: { r: ResumoCategoriaGrade; isSu
 
         {r.disciplinasEnvolvidas.length > 0 && (
           <div className="mt-3 pt-2.5 border-t border-zinc-200/60 dark:border-zinc-800/80 space-y-1">
-            <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+            <div className="text-xs font-medium text-zinc-400 dark:text-zinc-500">
               Matérias na grade ({r.disciplinasEnvolvidas.length}):
             </div>
             <div className="flex flex-wrap gap-1">
@@ -177,12 +179,12 @@ function SecaoResumoImpactoGrade(props: {
 
   if (!temHistorico) {
     return (
-      <div className="mt-8 rounded-3xl border border-zinc-200/90 bg-white p-6 shadow-md dark:border-zinc-800 dark:bg-zinc-900 space-y-5 animate-in fade-in duration-300">
+      <div className="mt-8 rounded-2xl border border-zinc-200/90 bg-white p-6 shadow-md dark:border-zinc-800 dark:bg-zinc-900 space-y-5 animate-in fade-in duration-300">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-100 pb-4 dark:border-zinc-800">
           <div>
             <div className="flex items-center gap-2">
               <IconTrendUp className="h-4 w-4 shrink-0" />
-              <h3 className="font-display text-lg font-black text-zinc-900 dark:text-zinc-100">
+              <h3 className="font-display text-lg font-bold text-zinc-900 dark:text-zinc-100">
                 Resumo do Impacto Curricular da Grade
               </h3>
             </div>
@@ -194,7 +196,7 @@ function SecaoResumoImpactoGrade(props: {
 
         <div className="relative overflow-hidden rounded-2xl">
           {/* Overlay bloqueio com mensagem */}
-          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center rounded-2xl bg-white/75 p-6 text-center backdrop-blur-md dark:bg-zinc-900/80 border border-zinc-200/80 dark:border-zinc-800 shadow-lg">
+          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center rounded-2xl bg-white/75 p-6 text-center dark:bg-zinc-900/80 border border-zinc-200/80 dark:border-zinc-800 shadow-lg">
             <IconLock className="h-4 w-4 shrink-0" />
             <h4 className="font-display text-base font-bold text-zinc-900 dark:text-zinc-100">
               Histórico do Aluno não carregado
@@ -254,12 +256,12 @@ function SecaoResumoImpactoGrade(props: {
   );
 
   return (
-    <div className="mt-8 rounded-3xl border border-zinc-200/90 bg-white p-6 shadow-md dark:border-zinc-800 dark:bg-zinc-900 space-y-5 animate-in fade-in duration-300">
+    <div className="mt-8 rounded-2xl border border-zinc-200/90 bg-white p-6 shadow-md dark:border-zinc-800 dark:bg-zinc-900 space-y-5 animate-in fade-in duration-300">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-100 pb-4 dark:border-zinc-800">
         <div>
           <div className="flex items-center gap-2">
             <IconTrendUp className="h-4 w-4 shrink-0" />
-            <h3 className="font-display text-lg font-black text-zinc-900 dark:text-zinc-100">
+            <h3 className="font-display text-lg font-bold text-zinc-900 dark:text-zinc-100">
               Resumo do Impacto Curricular da Grade
             </h3>
           </div>
@@ -286,14 +288,14 @@ function SecaoResumoImpactoGrade(props: {
         ))}
 
         {(resumoTrilhasGeral || resumosSubTrilhas.length > 0) && (
-          <div className="col-span-full rounded-3xl border-2 border-utfpr-500/35 bg-gradient-to-br from-zinc-50/95 via-white to-utfpr-500/5 p-5 dark:from-zinc-900/95 dark:via-zinc-900 dark:to-utfpr-500/10 shadow-lg space-y-5">
+          <div className="col-span-full rounded-2xl border-2 border-utfpr-500/35 bg-white p-5 dark:bg-zinc-900 space-y-5">
             {resumoTrilhasGeral && (
               <div className="flex flex-col justify-between rounded-2xl border border-utfpr-500/40 bg-white/90 p-4.5 dark:bg-zinc-900/90 shadow-sm">
                 <div>
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-center gap-2">
                       <IconTarget className="h-4 w-4 shrink-0" />
-                      <span className="font-display text-base font-black text-zinc-900 dark:text-zinc-100 leading-snug">
+                      <span className="font-display text-base font-bold text-zinc-900 dark:text-zinc-100 leading-snug">
                         {resumoTrilhasGeral.categoriaNome}
                       </span>
                     </div>
@@ -326,7 +328,7 @@ function SecaoResumoImpactoGrade(props: {
 
                   {resumoTrilhasGeral.disciplinasEnvolvidas.length > 0 && (
                     <div className="mt-3 pt-2.5 border-t border-zinc-200/60 dark:border-zinc-800/80 space-y-1">
-                      <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+                      <div className="text-xs font-medium text-zinc-400 dark:text-zinc-500">
                         Matérias de Trilhas nesta grade ({resumoTrilhasGeral.disciplinasEnvolvidas.length}):
                       </div>
                       <div className="flex flex-wrap gap-1">
@@ -452,7 +454,35 @@ export function TelaGrade(props: {
     setElementoHoverKey(null);
     setProgressoCarregadoKey(null);
   };
-  const [modalConfirmarLimpar, setModalConfirmarLimpar] = useState(false);
+  const toasts = useToasts();
+
+  /**
+   * Limpa a grade na hora e oferece a volta. Antes havia um modal de "tem
+   * certeza?" a partir de duas matérias. O desfazer devolve as turmas; as
+   * exclusões da Sugestão de Grade, que também são zeradas, ficam zeradas.
+   */
+  function limparGrade() {
+    const anterior = selecao;
+    setSelecao([]);
+    props.onLimparExclusoes?.();
+    if (anterior.length === 0) return;
+    avisarRemocao(toasts, {
+      chave: "limpar-grade",
+      titulo: `Grade ${props.gradeAtiva || "A"} limpa`,
+      descricao: `${anterior.length} ${anterior.length === 1 ? "turma removida" : "turmas removidas"}.`,
+      desfazer: () => setSelecao(anterior),
+    });
+  }
+
+  function removerDisciplina(codigo: string) {
+    const anterior = selecao;
+    setSelecao(selecao.filter((s) => s.codDisciplina !== codigo));
+    avisarRemocao(toasts, {
+      chave: "remover-turma",
+      titulo: `${codigo} saiu da grade`,
+      desfazer: () => setSelecao(anterior),
+    });
+  }
   const [baixandoImagem, setBaixandoImagem] = useState(false);
   const gradeTableRef = useRef<HTMLDivElement>(null);
 
@@ -595,7 +625,7 @@ export function TelaGrade(props: {
     Boolean(props.onEnviarParaSimulador) && estadoDaGrade !== "passado";
   const chavesGrades = props.cestaGrades ? Object.keys(props.cestaGrades).sort() : ["A"];
   const barraAbas = props.cestaGrades && props.onMudarGradeAtiva && (
-    <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-zinc-200/80 bg-white/80 p-3 shadow-2xs backdrop-blur-sm dark:border-zinc-800/80 dark:bg-zinc-900/80">
+    <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-zinc-200/80 bg-white/80 p-3 shadow-2xs dark:border-zinc-800/80 dark:bg-zinc-900/80">
       <div className="flex flex-wrap items-center gap-2">
         <span className="font-display text-xs font-bold text-zinc-500 dark:text-zinc-400 mr-1">Cenários de Grade:</span>
         {chavesGrades.map((g) => {
@@ -605,7 +635,7 @@ export function TelaGrade(props: {
             <div key={g} className="group relative flex items-center">
               <button
                 onClick={() => props.onMudarGradeAtiva!(g)}
-                className={`flex min-h-11 items-center gap-1.5 rounded-xl px-3 py-1.5 font-mono text-xs font-black transition-all sm:min-h-8 ${
+                className={`flex min-h-11 items-center gap-1.5 rounded-xl px-3 py-1.5 font-mono text-xs font-bold transition-colors sm:min-h-8 ${
                   ativa
                     ? "bg-zinc-900 text-utfpr-500 shadow-xs dark:bg-zinc-800 dark:text-utfpr-400 border border-utfpr-500/40"
                     : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800/60 dark:text-zinc-400 dark:hover:bg-zinc-800"
@@ -703,14 +733,14 @@ export function TelaGrade(props: {
       />
 
       {modalImportarAberto && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs">
-          <div className="flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className="flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl bg-white shadow-2xl dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 animate-in fade-in zoom-in-95 duration-200">
             {/* Header */}
             <div className="flex items-center justify-between border-b border-zinc-200/80 px-6 py-5 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-zinc-900/50">
               <div className="flex items-center gap-3">
                 <IconDownload className="h-4 w-4 shrink-0" />
                 <div>
-                  <h2 className="font-display text-lg font-black tracking-tight text-zinc-900 dark:text-white">
+                  <h2 className="font-display text-lg font-bold tracking-tight text-zinc-900 dark:text-white">
                     Importar Matérias de Outro Semestre
                   </h2>
                   <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium">
@@ -742,7 +772,7 @@ export function TelaGrade(props: {
 
               {/* Botões de semestres */}
               <div className="space-y-3">
-                <label className="font-display text-xs font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider">
+                <label className="font-display text-xs font-medium text-zinc-700 dark:text-zinc-300">
                   1. Escolha o Semestre de Origem
                 </label>
                 <div className="flex flex-wrap gap-2">
@@ -756,7 +786,7 @@ export function TelaGrade(props: {
                           setGradeOrigemSelecionada(s.abas[0]?.aba ?? "A");
                           setConfirmacaoSobreescreverImportacao(false);
                         }}
-                        className={`flex items-center gap-2 rounded-xl px-4 py-2.5 font-mono text-xs font-bold transition-all cursor-pointer ${
+                        className={`flex items-center gap-2 rounded-xl px-4 py-2.5 font-mono text-xs font-bold transition-colors cursor-pointer ${
                           sel
                             ? "bg-zinc-900 text-utfpr-400 shadow-sm dark:bg-zinc-800 dark:text-utfpr-300 border-2 border-utfpr-500"
                             : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800/60 dark:text-zinc-400 dark:hover:bg-zinc-800 border-2 border-transparent"
@@ -775,7 +805,7 @@ export function TelaGrade(props: {
               {/* Sub-botões com a opção de grade (A, B, C...) */}
               {semestreObjOrigem && (
                 <div className="space-y-3 pt-2 animate-in fade-in duration-150">
-                  <label className="font-display text-xs font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider">
+                  <label className="font-display text-xs font-medium text-zinc-700 dark:text-zinc-300">
                     2. Escolha a Grade Cadastrada
                   </label>
                   <div className="flex flex-wrap gap-2">
@@ -788,14 +818,14 @@ export function TelaGrade(props: {
                             setGradeOrigemSelecionada(a.aba);
                             setConfirmacaoSobreescreverImportacao(false);
                           }}
-                          className={`flex items-center gap-2 rounded-xl px-4 py-2 font-mono text-xs font-bold transition-all cursor-pointer ${
+                          className={`flex items-center gap-2 rounded-xl px-4 py-2 font-mono text-xs font-bold transition-colors cursor-pointer ${
                             sel
-                              ? "bg-utfpr-500 text-zinc-950 shadow-xs font-black"
+                              ? "bg-utfpr-500 text-zinc-950 shadow-xs font-bold"
                               : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800/60 dark:text-zinc-400 dark:hover:bg-zinc-800"
                           }`}
                         >
                           <span>Grade {a.aba}</span>
-                          <span className={`rounded-md px-1.5 py-0.5 text-[10px] ${sel ? "bg-zinc-950/15 text-zinc-950 font-black" : "bg-zinc-200/80 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-400"}`}>
+                          <span className={`rounded-md px-1.5 py-0.5 text-[10px] ${sel ? "bg-zinc-950/15 text-zinc-950 font-bold" : "bg-zinc-200/80 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-400"}`}>
                             {a.selecao.length} matérias
                           </span>
                         </button>
@@ -809,7 +839,7 @@ export function TelaGrade(props: {
               {semestreObjOrigem && (
                 <div className="space-y-3 pt-2">
                   <div className="flex items-center justify-between">
-                    <label className="font-display text-xs font-bold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider">
+                    <label className="font-display text-xs font-medium text-zinc-700 dark:text-zinc-300">
                       3. Preview das Matérias ({itensPreviewImportacao.length})
                     </label>
                     <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
@@ -883,7 +913,7 @@ export function TelaGrade(props: {
                     </button>
                     <button
                       onClick={() => setConfirmacaoSobreescreverImportacao(true)}
-                      className="rounded-xl bg-amber-600 hover:bg-amber-700 text-white px-3.5 py-2 font-display text-xs font-black shadow-sm transition-all cursor-pointer"
+                      className="rounded-xl bg-amber-600 hover:bg-amber-700 text-white px-3.5 py-2 font-display text-xs font-bold shadow-sm transition-colors cursor-pointer"
                     >
                       Sim, Sobreescrever
                     </button>
@@ -903,7 +933,7 @@ export function TelaGrade(props: {
                   <button
                     onClick={handleExecutarImportacao}
                     disabled={itensPreviewImportacao.filter((x) => x.compativel).length === 0}
-                    className={`flex items-center gap-2 rounded-xl px-5 py-2.5 font-display text-xs font-black transition-all ${
+                    className={`flex items-center gap-2 rounded-xl px-5 py-2.5 font-display text-xs font-bold transition-colors ${
                       itensPreviewImportacao.filter((x) => x.compativel).length === 0
                         ? "bg-zinc-200 text-zinc-400 cursor-not-allowed dark:bg-zinc-800 dark:text-zinc-600"
                         : "bg-utfpr-500 text-zinc-950 hover:bg-utfpr-400 shadow-sm cursor-pointer"
@@ -918,41 +948,6 @@ export function TelaGrade(props: {
         </div>
       )}
 
-      {modalConfirmarLimpar && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs animate-in fade-in duration-150">
-          <div className="flex max-w-md w-full flex-col rounded-3xl bg-white p-6 shadow-2xl dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 text-left">
-            <div className="flex items-center gap-3 text-red-600 dark:text-red-400 mb-2">
-              <IconTrash className="h-4 w-4 shrink-0" />
-              <h3 className="font-display text-lg font-black text-zinc-900 dark:text-white">
-                Tem certeza que deseja limpar a prévia de Matrícula?
-              </h3>
-            </div>
-            <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed">
-              Você está prestes a remover todas as <strong className="text-zinc-900 dark:text-white">{itens.length} disciplinas</strong> selecionadas na Grade <strong>{props.gradeAtiva || "A"}</strong>. Esta ação limpa os horários da aba, mas você poderá recriá-los ou utilizar as abas alternativas (B ou C).
-            </p>
-            <div className="mt-6 flex items-center justify-end gap-3">
-              <button
-                type="button"
-                onClick={() => setModalConfirmarLimpar(false)}
-                className="rounded-xl bg-zinc-100 px-4 py-2 font-display text-xs font-bold text-zinc-700 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700 transition-colors cursor-pointer"
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setSelecao([]);
-                  props.onLimparExclusoes?.();
-                  setModalConfirmarLimpar(false);
-                }}
-                className="rounded-xl bg-red-600 px-4 py-2 font-display text-xs font-bold text-white hover:bg-red-700 transition-colors shadow-md cursor-pointer"
-              >
-                Sim, Limpar Grade
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 
@@ -960,16 +955,16 @@ export function TelaGrade(props: {
     return (
       <div className="space-y-6">
         {barraAbas}
-        <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-zinc-200/80 bg-white/80 p-4 shadow-2xs backdrop-blur-sm dark:border-zinc-800/80 dark:bg-zinc-900/80">
+        <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-zinc-200/80 bg-white/80 p-4 shadow-2xs dark:border-zinc-800/80 dark:bg-zinc-900/80">
           <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
             Dica: você pode gerar uma grade ideal automaticamente ou adicionar matérias na aba Matérias Abertas.
           </p>
           <Botao
             variante="primario"
             onClick={props.onAbrirGradeMagica || (() => setModalGradeMagica(true))}
-            classe="!bg-gradient-to-r !from-amber-500 !to-utfpr-500 !text-zinc-950 !border-amber-600/30 hover:!brightness-105 transition-all shadow-md font-bold cursor-pointer"
+            classe=" !bg-utfpr-500 !text-zinc-950 !border-amber-600/30 hover:!brightness-105 transition-colors shadow-md font-bold cursor-pointer"
           >
-            {<IconSparkles className="inline h-4 w-4 shrink-0 align-[-0.2em]" />} Sugestão de Grade
+            <IconGrade className="inline h-4 w-4 shrink-0 align-[-0.2em]" /> Sugestão de Grade
           </Botao>
         </div>
         <Card classe="p-12 text-center">
@@ -1009,7 +1004,7 @@ export function TelaGrade(props: {
         </div>
       ))}
 
-      <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-zinc-200/80 bg-white/80 p-4 shadow-2xs backdrop-blur-sm dark:border-zinc-800/80 dark:bg-zinc-900/80">
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-zinc-200/80 bg-white/80 p-4 shadow-2xs dark:border-zinc-800/80 dark:bg-zinc-900/80">
         <div className="flex flex-wrap items-center gap-3">
           <Badge tom="acento" icon={<IconCalendar className="h-3.5 w-3.5" />}>
             {aulasSemanais(itens)} aulas / semana
@@ -1046,7 +1041,7 @@ export function TelaGrade(props: {
                 setBaixandoImagem(false);
               }
             }}
-            classe="hover:!border-utfpr-500/80 transition-all font-semibold cursor-pointer text-xs"
+            classe="hover:!border-utfpr-500/80 transition-colors font-semibold cursor-pointer text-xs"
             title="Baixar imagem PNG da sua grade horária montada"
           >
             <span className="inline-flex items-center gap-1.5">{baixandoImagem ? <IconHourglass className="h-4 w-4 shrink-0" /> : <IconImage className="h-4 w-4 shrink-0" />}<span>{baixandoImagem ? "Gerando PNG..." : "Baixar Imagem (PNG)"}</span></span>
@@ -1054,15 +1049,15 @@ export function TelaGrade(props: {
           <Botao
             variante="primario"
             onClick={props.onAbrirGradeMagica || (() => setModalGradeMagica(true))}
-            classe="!bg-gradient-to-r !from-amber-500 !to-utfpr-500 !text-zinc-950 !border-amber-600/30 hover:!brightness-105 transition-all shadow-md font-bold cursor-pointer"
+            classe=" !bg-utfpr-500 !text-zinc-950 !border-amber-600/30 hover:!brightness-105 transition-colors shadow-md font-bold cursor-pointer"
           >
-            {<IconSparkles className="inline h-4 w-4 shrink-0 align-[-0.2em]" />} Sugestão de Grade
+            <IconGrade className="inline h-4 w-4 shrink-0 align-[-0.2em]" /> Sugestão de Grade
           </Botao>
           {podeEnviarAoSimulador && (
             <Botao
               variante="neutro"
               onClick={props.onEnviarParaSimulador}
-              classe={`transition-all font-semibold cursor-pointer text-xs ${
+              classe={`transition-colors font-semibold cursor-pointer text-xs ${
                 props.gradeNoSimulador
                   ? "!border-utfpr-500 !text-utfpr-700 dark:!text-utfpr-300"
                   : "hover:!border-utfpr-500/80"
@@ -1101,14 +1096,7 @@ export function TelaGrade(props: {
           </Botao>
           <Botao
             variante="perigo"
-            onClick={() => {
-              if (itens.length > 1) {
-                setModalConfirmarLimpar(true);
-              } else {
-                setSelecao([]);
-                props.onLimparExclusoes?.();
-              }
-            }}
+            onClick={limparGrade}
           >
             <IconTrash className="h-4 w-4" />
             <span>Limpar grade</span>
@@ -1118,14 +1106,14 @@ export function TelaGrade(props: {
 
       <div className="flex flex-wrap items-center justify-between gap-3 px-1">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Filtrar Turno:</span>
+          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Filtrar Turno:</span>
           <div className="flex flex-wrap gap-1.5">
             {(["TODOS", "M", "T", "N"] as const).map((t) => (
               <button
                 key={t}
                 type="button"
                 onClick={() => setTurnoFiltro(t)}
-                className={`min-h-11 rounded-lg px-3 py-1 font-display text-xs font-bold transition-all cursor-pointer sm:min-h-0 ${
+                className={`min-h-11 rounded-lg px-3 py-1 font-display text-xs font-bold transition-colors cursor-pointer sm:min-h-0 ${
                   turnoFiltro === t
                     ? "bg-utfpr-500 text-zinc-950 shadow-xs"
                     : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700"
@@ -1157,7 +1145,7 @@ export function TelaGrade(props: {
               {DIAS.map(([, rot]) => (
                 <th
                   key={rot}
-                  className="border-b border-l border-zinc-200/80 p-2.5 font-display text-xs font-bold tracking-wide text-zinc-700 uppercase dark:border-zinc-800/80 dark:text-zinc-300"
+                  className="border-b border-l border-zinc-200/80 p-2.5 font-display text-xs font-medium text-zinc-700 dark:border-zinc-800/80 dark:text-zinc-300"
                 >
                   {rot}
                 </th>
@@ -1219,10 +1207,10 @@ export function TelaGrade(props: {
                                 key={i}
                                 onMouseEnter={() => iniciarHover(codIdentificador)}
                                 onMouseLeave={cancelarHover}
-                                className={`group relative flex items-center justify-between gap-1 rounded-lg px-2 py-1 text-xs transition-all ${o.cor} ${
+                                className={`group relative flex items-center justify-between gap-1 rounded-lg px-2 py-1 text-xs transition-colors ${o.cor} ${
                                   isHovered
                                     ? "ring-2 ring-zinc-950 dark:ring-white scale-[1.03] shadow-md z-40 brightness-105 overflow-visible"
-                                    : "hover:scale-[1.01]"
+                                    : ""
                                 }`}
                                 title={`${o.item.disciplina.nome} — ${o.item.turma.codigo}${o.sala ? ` (${o.sala})` : ""}`}
                               >
@@ -1304,7 +1292,7 @@ export function TelaGrade(props: {
         )}
 
       <div className="space-y-2">
-        <h3 className="font-display text-sm font-bold tracking-tight text-zinc-500 uppercase dark:text-zinc-400">
+        <h3 className="font-display text-sm font-medium tracking-tight text-zinc-500 dark:text-zinc-400">
           Disciplinas selecionadas ({itens.length})
         </h3>
         {/* grid-cols-1 explícito: sem ele a coluna implícita vira max-content e
@@ -1363,7 +1351,7 @@ export function TelaGrade(props: {
                     iniciarHover(codIdentificador, chaveElemento);
                   }
                 }}
-                className={`relative flex flex-col justify-between gap-3 rounded-xl border p-3.5 shadow-2xs transition-all ${
+                className={`relative flex flex-col justify-between gap-3 rounded-xl border p-3.5 shadow-2xs transition-colors ${
                   isHovered
                     ? "border-utfpr-500 bg-utfpr-500/5 ring-1 ring-utfpr-500 dark:border-utfpr-400 dark:bg-utfpr-500/10 scale-[1.01] z-40 overflow-visible"
                     : "border-zinc-200/80 bg-white dark:border-zinc-800/80 dark:bg-zinc-900"
@@ -1477,7 +1465,7 @@ export function TelaGrade(props: {
                     onClick={(e?: any) => {
                       // o card inteiro alterna o balão; remover não pode abrí-lo
                       e?.stopPropagation?.();
-                      setSelecao(selecao.filter((s) => s.codDisciplina !== codIdentificador));
+                      removerDisciplina(codIdentificador);
                     }}
                   >
                     <IconTrash className="h-3.5 w-3.5" />

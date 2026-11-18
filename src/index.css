@@ -43,6 +43,17 @@
   }
 }
 
+/* Carregador de pontos (CarregadorPontos em componentes.tsx). Só opacidade:
+   não mexe em layout nem pede camada de composição, então custa quase nada
+   mesmo em placa de vídeo integrada antiga. */
+@keyframes ponto-acende {
+  0%, 100% { opacity: 0.18; }
+  40% { opacity: 1; }
+}
+.carregador-ponto {
+  animation: ponto-acende 1.1s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-toast-entra,
   .animate-toast-sai {
@@ -52,53 +63,61 @@
 
 html {
   color-scheme: light dark;
+  /* Toque sem o atraso de 300ms e sem o flash cinza do WebKit: o feedback de
+     clique já vem dos estados :hover/:active de cada controle. */
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
+/* Fundo liso. O degradê diagonal antigo era repintado inteiro a cada rolagem
+   em máquina sem aceleração de vídeo (os PCs dos laboratórios), e não dizia
+   nada ao aluno. */
 body {
-  @apply bg-gradient-to-br from-[#f2f5f9] via-[#e9edf5] to-[#f0f4fb] font-sans text-zinc-950 antialiased selection:bg-utfpr-500/40 selection:text-zinc-950 min-h-screen dark:bg-zinc-950 dark:from-zinc-950 dark:via-zinc-950 dark:to-zinc-950 dark:text-zinc-100 dark:selection:bg-utfpr-500/30 dark:selection:text-utfpr-400;
+  @apply bg-zinc-50 font-sans text-zinc-950 antialiased selection:bg-utfpr-500/40 selection:text-zinc-950 min-h-screen dark:bg-zinc-950 dark:text-zinc-100 dark:selection:bg-utfpr-500/30 dark:selection:text-utfpr-400;
+  /* Números de largura fixa em todo lugar: horas, CR, percentuais e contagens
+     não "dançam" quando mudam, e colunas de valores alinham sem esforço. */
+  font-variant-numeric: tabular-nums;
 }
 
 h1, h2, h3, h4, h5, h6, .font-display {
   font-family: var(--font-display);
 }
 
-/* Melhorias profundas de contraste e vivacidade para o Modo Claro (Oásis / UTFPR) */
-html:not(.dark) {
-  --tw-border-opacity: 1;
+/* Títulos quebram em linhas de tamanho parecido, parágrafos evitam a última
+   palavra sozinha. Navegador sem suporte ignora e segue como antes. */
+h1, h2, h3, h4 {
+  text-wrap: balance;
+}
+p, li {
+  text-wrap: pretty;
 }
 
-/* Bordas de cards e painéis bem definidas e nítidas no modo claro */
-html:not(.dark) .border-zinc-200\/80,
-html:not(.dark) .border-zinc-200 {
-  border-color: rgba(203, 213, 225, 0.95) !important; /* slate-300 de alto contraste */
+/* Foco visível e consistente para quem navega por teclado. O anel só aparece
+   com :focus-visible, então o clique de mouse não deixa contorno. */
+:focus-visible {
+  outline: 2px solid var(--color-utfpr-500);
+  outline-offset: 2px;
 }
 
-/* Textos secundários fortes para perfeita legibilidade */
+/* Quem pede menos movimento ao sistema operacional recebe a interface parada:
+   transições e animações viram instantâneas, inclusive as de terceiros. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Contraste do modo claro. Os cinzas médios do zinc ficam fracos sobre o
+   branco; estes três tons sobem um degrau para manter AA nos textos de apoio. */
 html:not(.dark) .text-zinc-500 {
-  color: #475569 !important; /* slate-600 forte */
+  color: #52525b; /* zinc-600 */
 }
 
 html:not(.dark) .text-zinc-600 {
-  color: #334155 !important; /* slate-700 nítido */
+  color: #3f3f46; /* zinc-700 */
 }
-
-html:not(.dark) .text-zinc-700 {
-  color: #1e293b !important; /* slate-800 denso */
-}
-
-/* Superfícies brancas com sombra premium levemente aquecida/azulada e borda límpida */
-html:not(.dark) .bg-white\/80,
-html:not(.dark) .bg-white\/90,
-html:not(.dark) .bg-white {
-  background-color: rgba(255, 255, 255, 0.97) !important;
-  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.07), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
-}
-
-/* Superfícies secundárias cinzas mais limpas com contraste elegante */
-html:not(.dark) .bg-zinc-100\/70,
-html:not(.dark) .bg-zinc-100\/80,
-html:not(.dark) .bg-zinc-100 {
-  background-color: rgba(241, 245, 249, 0.95) !important; /* slate-100/200 nítido */
-  border-color: rgba(203, 213, 225, 0.85);
-}
-

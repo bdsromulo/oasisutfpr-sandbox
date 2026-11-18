@@ -2,11 +2,12 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Oásis UTFPR — Planejamento acadêmico</title>
     <meta name="description" content="Planeje sua trajetória na UTFPR com histórico, progresso curricular, turmas e grade horária. Seus dados ficam no seu navegador." />
     <meta name="application-name" content="Oásis UTFPR" />
-    <meta name="theme-color" content="#18181b" />
+    <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#09090b" media="(prefers-color-scheme: dark)" />
     <link rel="canonical" href="https://oasisutfpr.com.br/" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="pt_BR" />
@@ -58,9 +59,36 @@
     </script>
     <script data-goatcounter="https://oasisutfpr.goatcounter.com/count"
             async src="//gc.zgo.at/count.js"></script>
+    <!-- Esqueleto mostrado enquanto o JavaScript carrega. Nos PCs dos
+         laboratórios o bundle leva alguns segundos para ser lido, e a página
+         ficava em branco. O React substitui tudo dentro de #root no primeiro
+         render; nada aqui depende de script. -->
+    <style>
+      .esq { max-width: 72rem; margin: 0 auto; padding: 1.5rem 1rem; font-family: system-ui, sans-serif; }
+      .esq-topo { display: flex; align-items: center; gap: .75rem; padding-bottom: 1.5rem; border-bottom: 1px solid #e4e4e7; }
+      .esq-logo { width: 2.25rem; height: 2.25rem; border-radius: .5rem; background: #18181b; }
+      .esq-nome { font-weight: 700; font-size: 1.375rem; color: #09090b; }
+      .esq-nome b { color: #d9ae00; }
+      .esq-bloco { margin-top: 1.25rem; border-radius: 1rem; background: #f4f4f5; }
+      html.dark body { background: #09090b; }
+      html.dark .esq-topo { border-color: #27272a; }
+      html.dark .esq-nome { color: #f4f4f5; }
+      html.dark .esq-nome b { color: #fecd0f; }
+      html.dark .esq-bloco { background: #18181b; }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div class="esq" aria-busy="true" aria-label="Carregando o Oásis UTFPR">
+        <div class="esq-topo">
+          <div class="esq-logo"></div>
+          <div class="esq-nome"><b>Oásis</b> UTFPR</div>
+        </div>
+        <div class="esq-bloco" style="height: 2.75rem"></div>
+        <div class="esq-bloco" style="height: 9rem"></div>
+        <div class="esq-bloco" style="height: 14rem"></div>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

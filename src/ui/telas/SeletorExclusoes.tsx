@@ -66,7 +66,7 @@ function BlocoExclusao<T>(props: {
       <div className="flex items-center justify-between gap-2">
         <label
           title={props.dica}
-          className="flex cursor-help items-center gap-1.5 font-display text-xs font-bold uppercase tracking-wider text-zinc-600 dark:text-zinc-300"
+          className="flex cursor-help items-center gap-1.5 font-display text-xs font-medium text-zinc-600 dark:text-zinc-300"
         >
           {props.titulo} {props.quantidade > 0 ? `(${props.quantidade})` : ""}
           <IconInfo className="h-4 w-4 shrink-0" />

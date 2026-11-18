@@ -56,7 +56,7 @@ function CardProgresso(props: {
   return (
     <Card
       titulo={props.titulo}
-      classe="flex flex-col justify-between transition-all hover:border-utfpr-500/40 hover:shadow-md cursor-pointer group"
+      classe="flex flex-col justify-between transition-colors hover:border-utfpr-500/40 hover:shadow-md cursor-pointer group"
     >
       <div
         onClick={() => {
@@ -87,7 +87,7 @@ function CardProgresso(props: {
             e.stopPropagation();
             if (props.onAbrirCatalogo) props.onAbrirCatalogo(props.categoria);
           }}
-          className="inline-flex min-h-11 cursor-pointer items-center gap-1.5 px-1 font-display text-xs font-black text-utfpr-500 transition-colors hover:text-utfpr-400"
+          className="inline-flex min-h-11 cursor-pointer items-center gap-1.5 px-1 font-display text-xs font-bold text-utfpr-500 transition-colors hover:text-utfpr-400"
         >
           <span>Exibir Lista</span>
           <span>→</span>
@@ -217,7 +217,7 @@ export function TelaSituacao(props: {
         </p>
         <button
           onClick={props.onAbrirConfiguracoes}
-          className="inline-flex items-center gap-2 rounded-xl bg-utfpr-500 px-4 py-2.5 font-display text-xs font-bold text-zinc-950 shadow-xs transition-all hover:bg-utfpr-400 active:scale-[0.98]"
+          className="inline-flex items-center gap-2 rounded-xl bg-utfpr-500 px-4 py-2.5 font-display text-xs font-bold text-zinc-950 shadow-xs transition-colors hover:bg-utfpr-400"
         >
           <span>Abrir Configurações e Importar Histórico (PDF)</span>
         </button>
@@ -259,10 +259,10 @@ export function TelaSituacao(props: {
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 rounded-2xl border border-zinc-200/90 bg-white p-5 shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
         <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-4 sm:gap-10">
           <div className="col-span-2 sm:col-span-1">
-            <span className="block text-[11px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+            <span className="block text-xs font-medium text-zinc-400 dark:text-zinc-500">
               Período de Referência
             </span>
-            <div className="mt-0.5 font-display text-lg font-black text-zinc-900 dark:text-zinc-100">
+            <div className="mt-0.5 font-display text-lg font-bold text-zinc-900 dark:text-zinc-100">
               {perfil.periodo ? `${perfil.periodo}º Período` : "Em Curso"}
               <span className="ml-2 font-sans text-xs font-semibold text-zinc-500 dark:text-zinc-400">
                 ({perfil.ingresso ? `Ingresso: ${perfil.ingresso}` : `Matriz ${matriz.matriz}`})
@@ -274,10 +274,10 @@ export function TelaSituacao(props: {
 
           <div className="col-span-2 flex flex-row items-center justify-around gap-4 sm:gap-6 rounded-xl border border-zinc-200/80 bg-zinc-50/50 px-4 py-2 dark:border-zinc-800/80 dark:bg-zinc-800/30 sm:col-span-1 sm:justify-start flex-nowrap whitespace-nowrap overflow-hidden">
             <div>
-              <span className="block text-[11px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+              <span className="block text-xs font-medium text-zinc-400 dark:text-zinc-500">
                 CR Absoluto
               </span>
-              <div className="mt-0.5 font-display text-lg font-black text-utfpr-500">
+              <div className="mt-0.5 font-display text-lg font-bold text-utfpr-500">
                 {perfil.coefAbsoluto?.toFixed(4) ?? "—"}
               </div>
             </div>
@@ -285,10 +285,10 @@ export function TelaSituacao(props: {
             <div className="h-8 w-px bg-zinc-200 dark:bg-zinc-700" />
 
             <div>
-              <span className="block text-[11px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+              <span className="block text-xs font-medium text-zinc-400 dark:text-zinc-500">
                 CR Normalizado
               </span>
-              <div className="mt-0.5 font-display text-lg font-black text-zinc-900 dark:text-zinc-100">
+              <div className="mt-0.5 font-display text-lg font-bold text-zinc-900 dark:text-zinc-100">
                 {perfil.coefNormalizado?.toFixed(4) ?? "—"}
               </div>
             </div>
@@ -304,10 +304,10 @@ export function TelaSituacao(props: {
             rotuloCentro="do curso"
             legenda={
               <div>
-                <span className="block text-[11px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+                <span className="block text-xs font-medium text-zinc-400 dark:text-zinc-500">
                   Progresso Geral do Curso
                 </span>
-                <div className="mt-1 font-display text-lg font-black text-zinc-900 dark:text-zinc-100">
+                <div className="mt-1 font-display text-lg font-bold text-zinc-900 dark:text-zinc-100">
                   {horasAprovadasGlobal}
                   <span className="font-sans text-xs font-semibold text-zinc-400"> / {horasTotalPPC}h</span>
                 </div>
@@ -427,7 +427,7 @@ export function TelaSituacao(props: {
         )}
         <Card
           titulo="Estágio Curricular"
-          classe="flex flex-col justify-between transition-all hover:border-utfpr-500/40 hover:shadow-md cursor-pointer group"
+          classe="flex flex-col justify-between transition-colors hover:border-utfpr-500/40 hover:shadow-md cursor-pointer group"
         >
           <div
             onClick={() => {
@@ -453,11 +453,11 @@ export function TelaSituacao(props: {
                   <div
                     className={`h-3.5 rounded-full transition-colors ${
                       e.feito
-                        ? "bg-gradient-to-r from-utfpr-500 to-amber-500 shadow-xs"
+                        ? " bg-utfpr-500 shadow-xs"
                         : "bg-zinc-200/80 dark:bg-zinc-800"
                     }`}
                   />
-                  <span className="block text-[10px] font-bold text-center uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                  <span className="block text-xs font-medium text-center text-zinc-500 dark:text-zinc-400">
                     {e.rotulo} ({e.ch}h)
                   </span>
                 </div>
@@ -475,7 +475,7 @@ export function TelaSituacao(props: {
                 e.stopPropagation();
                 if (onAbrirCatalogo) onAbrirCatalogo("todas");
               }}
-              className="inline-flex min-h-11 cursor-pointer items-center gap-1.5 px-1 font-display text-xs font-black text-utfpr-500 transition-colors hover:text-utfpr-400"
+              className="inline-flex min-h-11 cursor-pointer items-center gap-1.5 px-1 font-display text-xs font-bold text-utfpr-500 transition-colors hover:text-utfpr-400"
             >
               <span>Exibir Lista</span>
               <span>→</span>
@@ -489,7 +489,7 @@ export function TelaSituacao(props: {
           trilhas validáveis; nesse curso o card correto é o de Opções acima. */}
       {exibeBlocoTrilhas && <section>
         <Card
-          classe="p-6 transition-all hover:border-utfpr-500/40 hover:shadow-md cursor-pointer group bg-gradient-to-r from-white via-white to-utfpr-500/5 dark:from-zinc-900 dark:via-zinc-900 dark:to-utfpr-500/10"
+          classe="p-6 transition-colors hover:border-utfpr-500/40 hover:shadow-md cursor-pointer group bg-white dark:bg-zinc-900 "
         >
           <div
             onClick={() => {
@@ -558,7 +558,7 @@ export function TelaSituacao(props: {
               </div>
 
               <div className="flex flex-col justify-between rounded-xl bg-zinc-50 p-3 border border-zinc-200/60 dark:bg-zinc-800/50 dark:border-zinc-700/60">
-                <span className="text-[11px] font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+                <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
                   Horas Excedentes / Saldo Extra:
                 </span>
                 <div className="font-display text-lg font-bold text-emerald-600 dark:text-emerald-400">
@@ -573,7 +573,7 @@ export function TelaSituacao(props: {
                   e.stopPropagation();
                   if (onAbrirCatalogo) onAbrirCatalogo("trilhas");
                 }}
-                className="inline-flex min-h-11 cursor-pointer items-center gap-1.5 px-1 font-display text-xs font-black text-utfpr-500 transition-colors hover:text-utfpr-400"
+                className="inline-flex min-h-11 cursor-pointer items-center gap-1.5 px-1 font-display text-xs font-bold text-utfpr-500 transition-colors hover:text-utfpr-400"
               >
                 <span>Exibir Lista</span>
                 <span>→</span>

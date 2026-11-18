@@ -57,10 +57,10 @@ export function MenuSecoes(props: {
   return (
     <nav
       aria-label={props.rotulo ?? "Seções desta página"}
-      className="sticky top-2 z-20 rounded-2xl border border-zinc-200/90 bg-white/85 p-2 shadow-xs backdrop-blur-md dark:border-zinc-800/90 dark:bg-zinc-900/85"
+      className="sticky top-2 z-20 rounded-2xl border border-zinc-200/90 bg-white/85 p-2 shadow-xs dark:border-zinc-800/90 dark:bg-zinc-900/85"
     >
       <ul className="flex flex-wrap items-center gap-1.5">
-        <li className="hidden px-2 font-display text-[11px] font-black uppercase tracking-wider text-zinc-400 sm:block">
+        <li className="hidden px-2 font-display text-xs font-medium text-zinc-400 sm:block">
           Ir para
         </li>
         {props.acao && <li className="order-last ml-auto">{props.acao}</li>}

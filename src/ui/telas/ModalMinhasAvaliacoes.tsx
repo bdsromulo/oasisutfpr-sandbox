@@ -83,20 +83,20 @@ export function ModalMinhasAvaliacoes(props: {
   return (
     <>
       <div
-        className="fixed inset-0 z-40 flex animate-in items-center justify-center bg-black/60 p-4 fade-in backdrop-blur-xs duration-150"
+        className="fixed inset-0 z-40 flex animate-in items-center justify-center bg-black/60 p-4 fade-in duration-150"
         role="dialog"
         aria-modal="true"
         aria-labelledby="titulo-minhas-avaliacoes"
         onClick={onFechar}
       >
         <div
-          className="flex max-h-[85vh] w-full max-w-lg animate-in flex-col overflow-hidden rounded-3xl border border-zinc-200/80 bg-white shadow-2xl zoom-in-95 duration-150 dark:border-zinc-800/80 dark:bg-zinc-900"
+          className="flex max-h-[85vh] w-full max-w-lg animate-in flex-col overflow-hidden rounded-2xl border border-zinc-200/80 bg-white shadow-2xl zoom-in-95 duration-150 dark:border-zinc-800/80 dark:bg-zinc-900"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="border-b border-zinc-200/80 p-5 dark:border-zinc-800/80">
             <h3
               id="titulo-minhas-avaliacoes"
-              className="font-display text-lg font-black tracking-tight text-zinc-900 dark:text-white"
+              className="font-display text-lg font-bold tracking-tight text-zinc-900 dark:text-white"
             >
               Avaliar uma disciplina
             </h3>
@@ -136,7 +136,7 @@ export function ModalMinhasAvaliacoes(props: {
               <div className="space-y-4">
                 {porSemestre.map((grupo) => (
                   <div key={grupo.semestre}>
-                    <div className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+                    <div className="mb-1.5 text-xs font-medium text-zinc-400 dark:text-zinc-500">
                       {grupo.semestre}
                     </div>
                     <div className="space-y-1.5">

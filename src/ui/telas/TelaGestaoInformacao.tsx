@@ -37,7 +37,7 @@ function Tabela(props: { colunas: Coluna[]; linhas: Record<string, ReactNode>[] 
                 <th
                   key={c.chave}
                   scope="col"
-                  className="border-b border-zinc-200/90 px-4 py-3 font-display text-[11px] font-black uppercase tracking-wider text-zinc-500 dark:border-zinc-800 dark:text-zinc-400"
+                  className="border-b border-zinc-200/90 px-4 py-3 font-display text-xs font-medium text-zinc-500 dark:border-zinc-800 dark:text-zinc-400"
                 >
                   {c.rotulo}
                 </th>
@@ -77,10 +77,10 @@ function Bloco(props: { numero: string; titulo: string; descricao: string; child
     <section className="space-y-6">
       <div className="border-b-2 border-utfpr-500/40 pb-3">
         <div className="flex items-baseline gap-3">
-          <span className="font-display text-3xl font-black leading-none text-utfpr-500">
+          <span className="font-display text-3xl font-bold leading-none text-utfpr-500">
             {props.numero}
           </span>
-          <h3 className="font-display text-xl font-black tracking-tight text-zinc-900 dark:text-white">
+          <h3 className="font-display text-xl font-bold tracking-tight text-zinc-900 dark:text-white">
             {props.titulo}
           </h3>
         </div>
@@ -98,10 +98,10 @@ function Secao(props: { numero: string; titulo: string; descricao?: string; chil
     <section className="space-y-3.5">
       <div>
         <div className="flex items-baseline gap-2.5">
-          <span className="rounded-lg bg-utfpr-500/20 px-2 py-0.5 font-mono text-xs font-black text-utfpr-700 dark:text-utfpr-400">
+          <span className="rounded-lg bg-utfpr-500/20 px-2 py-0.5 font-mono text-xs font-bold text-utfpr-700 dark:text-utfpr-400">
             {props.numero}
           </span>
-          <h4 className="font-display text-lg font-black tracking-tight text-zinc-900 dark:text-white">
+          <h4 className="font-display text-lg font-bold tracking-tight text-zinc-900 dark:text-white">
             {props.titulo}
           </h4>
         </div>
@@ -739,7 +739,7 @@ function ListaTopicos(props: { itens: { rotulo: string; texto: string }[] }) {
           key={it.rotulo}
           className="rounded-2xl border border-zinc-200/90 bg-white p-4 shadow-xs dark:border-zinc-800 dark:bg-zinc-900"
         >
-          <div className="font-display text-xs font-black uppercase tracking-wider text-utfpr-700 dark:text-utfpr-400">
+          <div className="font-display text-xs font-medium text-utfpr-700 dark:text-utfpr-400">
             {it.rotulo}
           </div>
           <p className="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">{it.texto}</p>
@@ -763,13 +763,13 @@ function QuadranteSwot() {
         >
           <div className="flex items-center gap-2">
             <span
-              className={`flex h-6 w-6 items-center justify-center rounded-md font-display text-xs font-black text-white ${
+              className={`flex h-6 w-6 items-center justify-center rounded-md font-display text-xs font-bold text-white ${
                 q.tom === "bom" ? "bg-emerald-600" : "bg-red-600"
               }`}
             >
               {q.sigla}
             </span>
-            <span className="font-display text-sm font-black uppercase tracking-wider text-zinc-900 dark:text-zinc-100">
+            <span className="font-display text-sm font-medium text-zinc-900 dark:text-zinc-100">
               {q.titulo}
             </span>
           </div>
@@ -810,11 +810,11 @@ function ListaSimples(props: { itens: string[] }) {
 export function TelaGestaoInformacao() {
   return (
     <div className="space-y-12">
-      <header className="rounded-3xl border-2 border-zinc-200/90 bg-white/95 p-6 shadow-md dark:border-zinc-800/90 dark:bg-zinc-900/95">
+      <header className="rounded-2xl border-2 border-zinc-200/90 bg-white/95 p-6 shadow-md dark:border-zinc-800/90 dark:bg-zinc-900/95">
         <div className="flex items-start gap-4">
           <IconFolders className="h-4 w-4 shrink-0" />
           <div>
-            <h2 className="font-display text-2xl font-black tracking-tight text-zinc-900 dark:text-white">
+            <h2 className="font-display text-2xl font-bold tracking-tight text-zinc-900 dark:text-white">
               Gestão da Informação
             </h2>
             <p className="mt-1.5 max-w-3xl text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
@@ -932,7 +932,7 @@ export function TelaGestaoInformacao() {
         >
           <div className="space-y-6">
             <div className="space-y-2.5">
-              <div className="font-display text-sm font-black uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+              <div className="font-display text-sm font-medium text-zinc-500 dark:text-zinc-400">
                 3.2.1 Fontes e responsáveis
               </div>
               <Tabela
@@ -946,7 +946,7 @@ export function TelaGestaoInformacao() {
               />
             </div>
             <div className="space-y-2.5">
-              <div className="font-display text-sm font-black uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+              <div className="font-display text-sm font-medium text-zinc-500 dark:text-zinc-400">
                 3.2.2 Plano de aquisição de dados
               </div>
               <Tabela

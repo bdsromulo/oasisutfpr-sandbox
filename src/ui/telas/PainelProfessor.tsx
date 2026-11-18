@@ -87,7 +87,7 @@ export function PainelProfessor(props: {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex animate-in justify-end bg-black/50 fade-in backdrop-blur-xs duration-150"
+      className="fixed inset-0 z-50 flex animate-in justify-end bg-black/50 fade-in duration-150"
       role="dialog"
       aria-modal="true"
       aria-labelledby="titulo-painel-professor"
@@ -101,7 +101,7 @@ export function PainelProfessor(props: {
           <div className="min-w-0">
             <h3
               id="titulo-painel-professor"
-              className="font-display text-lg font-black leading-tight tracking-tight text-zinc-900 dark:text-white"
+              className="font-display text-lg font-bold leading-tight tracking-tight text-zinc-900 dark:text-white"
             >
               {dados.nomeCanonico}
             </h3>

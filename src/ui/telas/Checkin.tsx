@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { SavefileOasis } from "../../domain/savefile";
-import { Card, Botao, Badge } from "../componentes";
+import { Card, Botao, Badge, CarregadorPontos } from "../componentes";
 import { ModalComoGerarHistorico } from "./ModalComoGerarHistorico";
 import {
   IconBookOpen,
@@ -177,7 +177,7 @@ export function TelaCheckin(props: Props) {
         <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-utfpr-500/15 text-utfpr-600 dark:bg-utfpr-500/10 dark:text-utfpr-400 mb-1">
           <LogoUTFPR className="w-12 h-12" />
         </div>
-        <h1 className="font-display text-3xl font-black tracking-tight text-zinc-900 dark:text-zinc-100">
+        <h1 className="font-display text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
           Bem-vindo ao <span className="text-utfpr-600 dark:text-utfpr-500">Oásis</span> UTFPR
         </h1>
         <p className="max-w-xl mx-auto text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
@@ -188,7 +188,7 @@ export function TelaCheckin(props: Props) {
 
       {/* Seção 1: Com Histórico (Recomendado) */}
       <Card titulo="1. Com meu Histórico (Recomendado)" classe="p-6 sm:p-8">
-        <div className="flex flex-col justify-between rounded-2xl border-2 border-utfpr-500/60 bg-utfpr-500/5 p-6 transition-all hover:border-utfpr-500 dark:bg-utfpr-500/5">
+        <div className="flex flex-col justify-between rounded-2xl border-2 border-utfpr-500/60 bg-utfpr-500/5 p-6 transition-colors hover:border-utfpr-500 dark:bg-utfpr-500/5">
           <div className="space-y-3">
             <p className="text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
               Importe seu PDF emitido pelo Portal do Aluno. A plataforma identifica <strong>automaticamente seu curso e matriz</strong>, calcula as horas cumpridas, valida pré-requisitos e alerta sobre pendências.
@@ -198,9 +198,13 @@ export function TelaCheckin(props: Props) {
             </div>
           </div>
 
-          <label className="mt-6 flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-utfpr-500 py-3 font-display text-sm font-bold text-zinc-950 shadow-xs transition-all hover:bg-utfpr-400 active:scale-[0.98]">
-            <IconUpload className="w-5 h-5 shrink-0" />
-            <span>{props.carregando ? "Processando..." : "Selecionar arquivo PDF"}</span>
+          <label className="mt-6 flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-utfpr-500 py-3 font-display text-sm font-bold text-zinc-950 shadow-xs transition-colors hover:bg-utfpr-400">
+            {props.carregando ? (
+              <CarregadorPontos rotulo="Lendo o histórico" />
+            ) : (
+              <IconUpload className="w-5 h-5 shrink-0" />
+            )}
+            <span>{props.carregando ? "Lendo o histórico" : "Selecionar arquivo PDF"}</span>
             <input
               type="file"
               accept="application/pdf"
@@ -222,7 +226,7 @@ export function TelaCheckin(props: Props) {
 
           <div className="my-4 flex items-center gap-3" aria-hidden="true">
             <span className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800" />
-            <span className="text-[10px] font-bold uppercase tracking-[0.16em] text-zinc-400">ou</span>
+            <span className="text-xs font-medium text-zinc-400">ou</span>
             <span className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800" />
           </div>
 
@@ -521,7 +525,7 @@ export function TelaCheckin(props: Props) {
                         {selecionada ? (
                           <Badge tom="ok">Disponível</Badge>
                         ) : !opcao.disponivel ? (
-                          <span className="text-[10px] font-bold uppercase tracking-wide">
+                          <span className="text-xs font-medium">
                             Próxima
                           </span>
                         ) : null}

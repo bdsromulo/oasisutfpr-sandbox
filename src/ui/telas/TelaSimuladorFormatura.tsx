@@ -206,7 +206,7 @@ function CardRequisito(props: { req: Requisito }) {
       }`}
     >
       <div className="flex items-baseline justify-between gap-2">
-        <span className="font-display text-xs font-black text-zinc-700 dark:text-zinc-200">
+        <span className="font-display text-xs font-bold text-zinc-700 dark:text-zinc-200">
           {req.nome}
         </span>
         {req.atendido ? (
@@ -504,17 +504,17 @@ export function TelaSimuladorFormatura(props: {
 
   return (
     <div className="space-y-6">
-      <header className="rounded-3xl border-2 border-zinc-200/90 bg-white/95 p-6 shadow-md dark:border-zinc-800/90 dark:bg-zinc-900/95">
+      <header className="rounded-2xl border-2 border-zinc-200/90 bg-white/95 p-6 shadow-md dark:border-zinc-800/90 dark:bg-zinc-900/95">
         <div className="flex flex-wrap items-start justify-between gap-6">
           <div className="flex items-start gap-4">
             <IconGraduationCap className="h-4 w-4 shrink-0" />
             <div>
-              <h2 className="font-display text-2xl font-black tracking-tight text-zinc-900 dark:text-white flex items-center gap-2">
+              <h2 className="font-display text-2xl font-bold tracking-tight text-zinc-900 dark:text-white flex items-center gap-2">
                 Simulador de Formatura
                 <button
                   type="button"
                   onClick={() => setExplicacaoAberta(true)}
-                  className="ml-2 inline-flex items-center gap-1 rounded-full border border-zinc-200 bg-zinc-50 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-zinc-500 hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700 transition-colors cursor-help"
+                  className="ml-2 inline-flex items-center gap-1 rounded-full border border-zinc-200 bg-zinc-50 px-2 py-0.5 text-xs font-medium text-zinc-500 hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700 transition-colors cursor-help"
                 >
                   <IconInfo className="h-3 w-3 shrink-0" /> Como funciona?
                 </button>
@@ -528,10 +528,10 @@ export function TelaSimuladorFormatura(props: {
           </div>
 
           <div className="min-w-[180px]">
-            <span className="block font-display text-[11px] font-black uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+            <span className="block font-display text-xs font-medium text-zinc-400 dark:text-zinc-500">
               Já concluído
             </span>
-            <div className="mt-1 font-display text-2xl font-black text-zinc-900 dark:text-zinc-100">
+            <div className="mt-1 font-display text-2xl font-bold text-zinc-900 dark:text-zinc-100">
               {global.percentual}
               <span className="text-sm text-zinc-400">%</span>
               <span className="ml-2 font-sans text-xs font-semibold text-zinc-400">
@@ -585,7 +585,7 @@ export function TelaSimuladorFormatura(props: {
                 ? "1 aviso desta projeção"
                 : `${totalDeAvisos} avisos desta projeção`}
             </span>
-            <span className="ml-auto text-[10px] font-black tracking-wider uppercase opacity-70">
+            <span className="ml-auto text-xs font-medium opacity-70">
               <span className="group-open:hidden">ver</span>
               <span className="hidden group-open:inline">ocultar</span>
             </span>
@@ -617,10 +617,10 @@ export function TelaSimuladorFormatura(props: {
                     className="rounded-xl border border-red-300/70 bg-white/80 p-3 text-xs dark:border-red-900/60 dark:bg-zinc-900/70"
                   >
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="rounded-md bg-red-500/15 px-1.5 py-0.5 font-display text-[10px] font-black tracking-wide uppercase text-red-700 dark:text-red-300">
+                      <span className="rounded-md bg-red-500/15 px-1.5 py-0.5 font-display text-xs font-medium text-red-700 dark:text-red-300">
                         {ROTULO_PEDIDO[x.tipo]}
                       </span>
-                      <span className="font-display font-black text-zinc-900 dark:text-zinc-100">
+                      <span className="font-display font-bold text-zinc-900 dark:text-zinc-100">
                         {x.rotulo}
                       </span>
                     </div>
@@ -639,11 +639,11 @@ export function TelaSimuladorFormatura(props: {
       )}
 
       {gradeFixada && (
-        <div className="flex flex-wrap items-start justify-between gap-3 rounded-2xl border-2 border-utfpr-500/50 bg-gradient-to-r from-utfpr-500/10 via-amber-500/5 to-transparent p-4 dark:border-utfpr-500/40">
+        <div className="flex flex-wrap items-start justify-between gap-3 rounded-2xl border-2 border-utfpr-500/50 bg-utfpr-500/10 p-4 dark:border-utfpr-500/40">
           <div className="flex items-start gap-2.5">
             <IconDownload className="mt-0.5 h-4 w-4 shrink-0 text-utfpr-600 dark:text-utfpr-400" />
             <div className="text-sm text-zinc-700 dark:text-zinc-200">
-              <span className="font-display font-black text-zinc-900 dark:text-white">
+              <span className="font-display font-bold text-zinc-900 dark:text-white">
                 Projeção partindo da sua {gradeFixada.origem} de{" "}
                 {formatarSemestre(gradeFixada.semestre)}
               </span>
@@ -672,7 +672,7 @@ export function TelaSimuladorFormatura(props: {
         <div className="rounded-2xl border border-zinc-200/90 bg-white p-4 shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h3 className="font-display text-sm font-black text-zinc-900 dark:text-zinc-100">
+              <h3 className="font-display text-sm font-bold text-zinc-900 dark:text-zinc-100">
                 Já montou a grade deste semestre?
               </h3>
               <p className="mt-1 text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
@@ -683,7 +683,7 @@ export function TelaSimuladorFormatura(props: {
               type="button"
               onClick={() => setSeletorGradePlanejamentoAberto((aberto) => !aberto)}
               disabled={gradesPlanejamentoDisponiveis.length === 0}
-              className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-xl border border-utfpr-500/50 bg-utfpr-500/15 px-3.5 py-2 font-display text-xs font-black text-zinc-900 transition-colors hover:bg-utfpr-500/25 disabled:cursor-not-allowed disabled:border-zinc-200 disabled:bg-zinc-100 disabled:text-zinc-400 dark:text-utfpr-300 dark:disabled:border-zinc-700 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500"
+              className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-xl border border-utfpr-500/50 bg-utfpr-500/15 px-3.5 py-2 font-display text-xs font-bold text-zinc-900 transition-colors hover:bg-utfpr-500/25 disabled:cursor-not-allowed disabled:border-zinc-200 disabled:bg-zinc-100 disabled:text-zinc-400 dark:text-utfpr-300 dark:disabled:border-zinc-700 dark:disabled:bg-zinc-800 dark:disabled:text-zinc-500"
               title={gradesPlanejamentoDisponiveis.length === 0 ? "Monte uma grade no Planejamento de Matrícula primeiro" : undefined}
             >
               <IconDownload className="h-4 w-4 shrink-0" />
@@ -709,7 +709,7 @@ export function TelaSimuladorFormatura(props: {
                   }}
                   className="min-h-11 cursor-pointer rounded-xl border border-zinc-200 bg-zinc-50 p-3 text-left transition-colors hover:border-utfpr-500/60 hover:bg-utfpr-500/10 dark:border-zinc-700 dark:bg-zinc-800 dark:hover:border-utfpr-500/50"
                 >
-                  <span className="block font-display text-sm font-black text-zinc-900 dark:text-white">
+                  <span className="block font-display text-sm font-bold text-zinc-900 dark:text-white">
                     Grade {item.grade}
                   </span>
                   <span className="mt-1 block text-[11px] font-semibold text-zinc-500 dark:text-zinc-400">
@@ -725,7 +725,7 @@ export function TelaSimuladorFormatura(props: {
       {/* Controles */}
       <div className="flex flex-wrap items-end gap-6 rounded-2xl border border-zinc-200/90 bg-white p-4 shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
         <div>
-          <label className="block font-display text-[11px] font-black uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+          <label className="block font-display text-xs font-medium text-zinc-400 dark:text-zinc-500">
             Matérias por semestre
           </label>
           <div className="mt-2 flex gap-1.5">
@@ -734,7 +734,7 @@ export function TelaSimuladorFormatura(props: {
                 key={n}
                 type="button"
                 onClick={() => setRitmo(n)}
-                className={`h-11 w-11 cursor-pointer rounded-xl font-mono text-sm font-black transition-all ${
+                className={`h-11 w-11 cursor-pointer rounded-xl font-mono text-sm font-bold transition-colors ${
                   ritmo === n
                     ? "bg-utfpr-500 text-zinc-950 shadow-md"
                     : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300"
@@ -747,7 +747,7 @@ export function TelaSimuladorFormatura(props: {
         </div>
 
         <div>
-          <label className="block font-display text-[11px] font-black uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+          <label className="block font-display text-xs font-medium text-zinc-400 dark:text-zinc-500">
             Começando em
           </label>
           <select
@@ -774,10 +774,10 @@ export function TelaSimuladorFormatura(props: {
         />
 
         <div className="ml-auto text-right">
-          <span className="block font-display text-[11px] font-black uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+          <span className="block font-display text-xs font-medium text-zinc-400 dark:text-zinc-500">
             Formatura estimada
           </span>
-          <div className="mt-1 font-display text-2xl font-black text-utfpr-600 dark:text-utfpr-400">
+          <div className="mt-1 font-display text-2xl font-bold text-utfpr-600 dark:text-utfpr-400">
             {resultado.semestreFormatura ? formatarSemestre(resultado.semestreFormatura) : "—"}
           </div>
           {resultado.semestreFormatura && (
@@ -800,7 +800,7 @@ export function TelaSimuladorFormatura(props: {
           <span className="flex items-center gap-2.5">
             <IconBan className="h-4 w-4 shrink-0 text-zinc-500" />
             <span>
-              <span className="block font-display text-sm font-black text-zinc-900 dark:text-zinc-100">
+              <span className="block font-display text-sm font-bold text-zinc-900 dark:text-zinc-100">
                 Filtros de exclusão
               </span>
               <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
@@ -810,7 +810,7 @@ export function TelaSimuladorFormatura(props: {
           </span>
           <span className="flex items-center gap-2">
             {totalExclusoes(exclusoes) > 0 && (
-              <span className="rounded-lg bg-red-500/15 px-2 py-0.5 font-mono text-xs font-black text-red-700 dark:text-red-300">
+              <span className="rounded-lg bg-red-500/15 px-2 py-0.5 font-mono text-xs font-bold text-red-700 dark:text-red-300">
                 {totalExclusoes(exclusoes)}
               </span>
             )}
@@ -850,7 +850,7 @@ export function TelaSimuladorFormatura(props: {
           className="flex w-full cursor-pointer items-center justify-between gap-3 p-4 text-left transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/50"
         >
           <span>
-            <span className="block font-display text-sm font-black text-zinc-900 dark:text-zinc-100">
+            <span className="block font-display text-sm font-bold text-zinc-900 dark:text-zinc-100">
               Ajustes avançados
             </span>
             <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
@@ -859,7 +859,7 @@ export function TelaSimuladorFormatura(props: {
           </span>
           <span className="flex items-center gap-2">
             {totalModelagem(modelagem) > 0 && (
-              <span className="rounded-lg bg-utfpr-500/20 px-2 py-0.5 font-mono text-xs font-black text-utfpr-800 dark:text-utfpr-300">
+              <span className="rounded-lg bg-utfpr-500/20 px-2 py-0.5 font-mono text-xs font-bold text-utfpr-800 dark:text-utfpr-300">
                 {totalModelagem(modelagem)}
               </span>
             )}
@@ -893,7 +893,7 @@ export function TelaSimuladorFormatura(props: {
 
       {/* Requisitos por categoria */}
       <section>
-        <h3 className="mb-3 font-display text-sm font-black uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+        <h3 className="mb-3 font-display text-sm font-medium text-zinc-500 dark:text-zinc-400">
           Mínimos por categoria
         </h3>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
@@ -906,7 +906,7 @@ export function TelaSimuladorFormatura(props: {
       {/* Linha do tempo */}
       <section>
         <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
-          <h3 className="font-display text-sm font-black uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+          <h3 className="font-display text-sm font-medium text-zinc-500 dark:text-zinc-400">
             Linha do tempo projetada
           </h3>
           <span className="font-mono text-xs font-bold text-zinc-500 dark:text-zinc-400">
@@ -925,7 +925,7 @@ export function TelaSimuladorFormatura(props: {
                 // Zona de soltura do arrasto (TASK-50): o gesto localiza o
                 // destino por este atributo, via elementFromPoint.
                 data-semestre={s.semestre}
-                classe={`transition-all ${
+                classe={`transition-colors ${
                   alvoArrasto === s.semestre && arrasto?.origem !== s.semestre
                     ? "!border-utfpr-500 !border-2 !border-dashed bg-utfpr-500/5"
                     : ultimo && resultado.semestreFormatura
@@ -935,11 +935,11 @@ export function TelaSimuladorFormatura(props: {
               >
                 <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-zinc-100 pb-2.5 dark:border-zinc-800">
                   <div className="flex items-center gap-2.5">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-zinc-900 font-mono text-[11px] font-black text-utfpr-400 dark:bg-zinc-800">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-zinc-900 font-mono text-[11px] font-bold text-utfpr-400 dark:bg-zinc-800">
                       {i + 1}
                     </span>
                     <div>
-                      <span className="font-display text-base font-black text-zinc-900 dark:text-white">
+                      <span className="font-display text-base font-bold text-zinc-900 dark:text-white">
                         {formatarSemestre(s.semestre)}
                       </span>
                       <span className="ml-2 text-[11px] font-semibold text-zinc-400">
@@ -947,12 +947,12 @@ export function TelaSimuladorFormatura(props: {
                       </span>
                     </div>
                     {s.fixadoPeloPlanejamento && (
-                      <span className="rounded-full border border-utfpr-500/50 bg-utfpr-500/15 px-2.5 py-0.5 font-display text-[10px] font-black text-amber-900 dark:text-utfpr-300">
+                      <span className="rounded-full border border-utfpr-500/50 bg-utfpr-500/15 px-2.5 py-0.5 font-display text-[10px] font-bold text-amber-900 dark:text-utfpr-300">
                         DO PLANEJAMENTO
                       </span>
                     )}
                     {ultimo && resultado.semestreFormatura && (
-                      <span className="rounded-full bg-utfpr-500 px-2.5 py-0.5 font-display text-[10px] font-black text-zinc-950">
+                      <span className="rounded-full bg-utfpr-500 px-2.5 py-0.5 font-display text-[10px] font-bold text-zinc-950">
                         FORMATURA
                       </span>
                     )}
@@ -1030,7 +1030,7 @@ export function TelaSimuladorFormatura(props: {
                                 moverParaSemestre(d.codigo, resultado.semestres[i - 1].semestre)
                               }
                               title={`Mover para ${formatarSemestre(resultado.semestres[i - 1].semestre)}`}
-                              className="cursor-pointer rounded-lg border border-zinc-200 px-1.5 font-mono text-xs font-black text-zinc-500 transition-colors hover:border-utfpr-500 hover:text-zinc-900 dark:border-zinc-700 dark:hover:text-white"
+                              className="cursor-pointer rounded-lg border border-zinc-200 px-1.5 font-mono text-xs font-bold text-zinc-500 transition-colors hover:border-utfpr-500 hover:text-zinc-900 dark:border-zinc-700 dark:hover:text-white"
                             >
                               ‹
                             </button>
@@ -1044,7 +1044,7 @@ export function TelaSimuladorFormatura(props: {
                               )
                             }
                             title="Mover para o semestre seguinte"
-                            className="cursor-pointer rounded-lg border border-zinc-200 px-1.5 font-mono text-xs font-black text-zinc-500 transition-colors hover:border-utfpr-500 hover:text-zinc-900 dark:border-zinc-700 dark:hover:text-white"
+                            className="cursor-pointer rounded-lg border border-zinc-200 px-1.5 font-mono text-xs font-bold text-zinc-500 transition-colors hover:border-utfpr-500 hover:text-zinc-900 dark:border-zinc-700 dark:hover:text-white"
                           >
                             ›
                           </button>
@@ -1053,7 +1053,7 @@ export function TelaSimuladorFormatura(props: {
                               type="button"
                               onClick={() => removerDoPlano(d.codigo, d.nome)}
                               title="Não quero cursar esta matéria"
-                              className="cursor-pointer rounded-lg border border-zinc-200 px-1.5 font-mono text-xs font-black text-zinc-500 transition-colors hover:border-red-400 hover:text-red-600 dark:border-zinc-700 dark:hover:text-red-400"
+                              className="cursor-pointer rounded-lg border border-zinc-200 px-1.5 font-mono text-xs font-bold text-zinc-500 transition-colors hover:border-red-400 hover:text-red-600 dark:border-zinc-700 dark:hover:text-red-400"
                             >
                               ✕
                             </button>
@@ -1078,7 +1078,7 @@ export function TelaSimuladorFormatura(props: {
                             <button
                               type="button"
                               onClick={() => setTrocando(aberta ? null : d.codigo)}
-                              className="cursor-pointer rounded-lg border border-zinc-200 bg-zinc-50 px-1.5 py-0.5 font-display text-[10px] font-black text-zinc-600 transition-colors hover:border-utfpr-500 hover:bg-utfpr-500/15 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:text-white"
+                              className="cursor-pointer rounded-lg border border-zinc-200 bg-zinc-50 px-1.5 py-0.5 font-display text-[10px] font-bold text-zinc-600 transition-colors hover:border-utfpr-500 hover:bg-utfpr-500/15 hover:text-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:text-white"
                               title="Cursar outra matéria desta categoria no lugar desta"
                             >
                               trocar
@@ -1111,7 +1111,7 @@ export function TelaSimuladorFormatura(props: {
                       />
                       <span className="font-medium text-zinc-800 dark:text-zinc-200">{d.nome}</span>
                       <span
-                        className={`rounded-md border px-1.5 py-0.5 font-display text-[10px] font-black ${CORES_CATEGORIA[d.categoria].chip}`}
+                        className={`rounded-md border px-1.5 py-0.5 font-display text-[10px] font-bold ${CORES_CATEGORIA[d.categoria].chip}`}
                       >
                         {d.categoria === "trilhas" &&
                         !ehTrilha(curso, d.conjunto)
@@ -1135,7 +1135,7 @@ export function TelaSimuladorFormatura(props: {
                       )}
                       {d.exclusaoIgnorada && (
                         <span
-                          className="inline-flex items-center gap-1 rounded border border-red-400/60 bg-red-500/15 px-1.5 font-display text-[10px] font-black text-red-700 dark:text-red-300"
+                          className="inline-flex items-center gap-1 rounded border border-red-400/60 bg-red-500/15 px-1.5 font-display text-[10px] font-bold text-red-700 dark:text-red-300"
                           title={`Você pediu para excluir, mas ${d.exclusaoIgnorada.motivo}`}
                         >
                           <IconBan className="h-3 w-3 shrink-0" />
@@ -1169,7 +1169,7 @@ export function TelaSimuladorFormatura(props: {
                       ) : (
                         faltantesPorCategoria.map(([cat, lista]) => (
                           <div key={cat} className="mb-1.5">
-                            <p className="px-1.5 py-1 font-display text-[10px] font-black uppercase tracking-wider text-zinc-400">
+                            <p className="px-1.5 py-1 font-display text-xs font-medium text-zinc-400">
                               {ROTULO_CURTO[cat]} · faltam {lista.horasFaltantes}h
                             </p>
                             {lista.disciplinas.slice(0, 40).map((alt) => (
@@ -1202,19 +1202,19 @@ export function TelaSimuladorFormatura(props: {
                       <button
                         type="button"
                         onClick={() => setMenuImportacaoSemestre(s.semestre)}
-                        className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-utfpr-500/15 via-amber-500/15 to-utfpr-500/15 border border-utfpr-500/40 px-3.5 py-2 font-display text-xs font-black text-zinc-900 shadow-2xs transition-all hover:bg-utfpr-500/25 hover:scale-[1.01] active:scale-95 dark:from-utfpr-500/10 dark:via-amber-500/10 dark:to-utfpr-500/10 dark:text-amber-300 cursor-pointer"
+                        className="inline-flex items-center gap-2 rounded-xl bg-utfpr-500/15 border border-utfpr-500/40 px-3.5 py-2 font-display text-xs font-bold text-zinc-900 shadow-2xs transition-colors hover:bg-utfpr-500/25 dark:bg-utfpr-500/10 dark:text-amber-300 cursor-pointer"
                       >
                         <IconDownload className="h-4 w-4 text-utfpr-600 dark:text-utfpr-400 shrink-0" />
                         <span>Importar para Planejamento de Matrícula ({s.semestre.replace("-", "/")})</span>
                       </button>
                     ) : (
-                      <div className="rounded-2xl border-2 border-utfpr-500/40 bg-gradient-to-r from-zinc-50 via-white to-zinc-50 p-3.5 shadow-md dark:border-utfpr-500/40 dark:from-zinc-900 dark:via-zinc-900/90 dark:to-zinc-900 animate-in fade-in zoom-in-95 duration-200">
+                      <div className="rounded-2xl border-2 border-utfpr-500/40 bg-white p-3.5 shadow-md dark:border-utfpr-500/40 dark:bg-zinc-900 animate-in fade-in zoom-in-95 duration-200">
                         <div className="flex items-center justify-between gap-2 border-b border-zinc-200/80 pb-2.5 mb-3 dark:border-zinc-800">
                           <div className="flex items-center gap-2">
-                            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-utfpr-500/20 font-display text-xs font-black text-utfpr-600 dark:text-utfpr-400">
+                            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-utfpr-500/20 font-display text-xs font-bold text-utfpr-600 dark:text-utfpr-400">
                               ⚡
                             </span>
-                            <span className="font-display text-xs sm:text-sm font-black text-zinc-900 dark:text-zinc-100">
+                            <span className="font-display text-xs sm:text-sm font-bold text-zinc-900 dark:text-zinc-100">
                               Selecione para qual Grade de {s.semestre.replace("-", "/")} deseja importar:
                             </span>
                           </div>
@@ -1242,14 +1242,14 @@ export function TelaSimuladorFormatura(props: {
                                   props.onImportarGrade?.(s.semestre, g, novaSelecao);
                                   setMenuImportacaoSemestre(null);
                                 }}
-                                className={`group flex flex-col items-start justify-between rounded-xl border p-3 text-left transition-all duration-200 cursor-pointer ${
+                                className={`group flex flex-col items-start justify-between rounded-xl border p-3 text-left transition-colors duration-200 cursor-pointer ${
                                   temMatrias
                                     ? "border-amber-500/50 bg-amber-500/10 hover:bg-amber-500/20 hover:border-amber-500 dark:border-amber-500/40 dark:bg-amber-950/40 dark:hover:bg-amber-900/60"
                                     : "border-zinc-200/90 bg-white hover:border-emerald-500/60 hover:bg-emerald-500/10 dark:border-zinc-800 dark:bg-zinc-800/60 dark:hover:border-emerald-500/50 dark:hover:bg-emerald-950/40"
                                 }`}
                               >
                                 <div className="flex w-full items-center justify-between gap-2">
-                                  <span className="font-display text-sm font-black text-zinc-900 dark:text-white group-hover:text-utfpr-600 dark:group-hover:text-utfpr-400 transition-colors">
+                                  <span className="font-display text-sm font-bold text-zinc-900 dark:text-white group-hover:text-utfpr-600 dark:group-hover:text-utfpr-400 transition-colors">
                                     Grade {g}
                                   </span>
                                   <span className={`rounded-md px-1.5 py-0.5 font-mono text-[10px] font-bold ${
@@ -1290,11 +1290,11 @@ export function TelaSimuladorFormatura(props: {
       {resultado.trilhasFechadas.length > 0 && (
         <section className="rounded-2xl border border-indigo-300/60 bg-indigo-50/60 p-4 dark:border-indigo-800/60 dark:bg-indigo-950/30">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <h3 className="font-display text-xs font-black uppercase tracking-wider text-indigo-700 dark:text-indigo-300">
+            <h3 className="font-display text-xs font-medium text-indigo-700 dark:text-indigo-300">
               Trilhas validadas ao fim da projeção
             </h3>
             <span
-              className={`rounded-lg px-2 py-0.5 font-mono text-xs font-black ${
+              className={`rounded-lg px-2 py-0.5 font-mono text-xs font-bold ${
                 resultado.trilhasFechadas.length >= resultado.trilhasExigidas
                   ? "bg-emerald-500/20 text-emerald-800 dark:text-emerald-300"
                   : "bg-red-500/20 text-red-800 dark:text-red-300"
@@ -1342,7 +1342,7 @@ export function TelaSimuladorFormatura(props: {
           é essencial — do contrário ela mesma seria o alvo de elementFromPoint. */}
       {arrasto && (
         <div
-          className="pointer-events-none fixed z-50 max-w-[70vw] truncate rounded-xl border-2 border-utfpr-500 bg-white px-2.5 py-1 font-display text-xs font-black text-zinc-900 shadow-lg dark:bg-zinc-900 dark:text-white"
+          className="pointer-events-none fixed z-50 max-w-[70vw] truncate rounded-xl border-2 border-utfpr-500 bg-white px-2.5 py-1 font-display text-xs font-bold text-zinc-900 shadow-lg dark:bg-zinc-900 dark:text-white"
           style={{ left: arrasto.x + 12, top: arrasto.y + 12 }}
         >
           {arrasto.nome}

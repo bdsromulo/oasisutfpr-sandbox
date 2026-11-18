@@ -123,10 +123,10 @@ export function Nota(props: { vertical: DescricaoVertical; valor: number | null 
       title={dicaDaVertical(vertical)}
       className="cursor-help rounded-xl border border-zinc-200/70 px-3 py-2 dark:border-zinc-800/70"
     >
-      <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+      <div className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
         {vertical.rotulo}
       </div>
-      <div className="font-display text-lg font-black text-zinc-900 dark:text-zinc-100">
+      <div className="font-display text-lg font-bold text-zinc-900 dark:text-zinc-100">
         {valor === null ? "—" : valor.toFixed(1).replace(".", ",")}
         <span className="ml-1 font-sans text-[10px] font-normal text-zinc-400">/ 5</span>
       </div>
@@ -166,7 +166,7 @@ export function Distribuicao(props: {
           {vertical.rotulo}
           <span className="ml-1 font-normal text-zinc-400">ⓘ</span>
         </h5>
-        <span className="font-display text-sm font-black text-zinc-900 dark:text-zinc-100">
+        <span className="font-display text-sm font-bold text-zinc-900 dark:text-zinc-100">
           {media.toFixed(1).replace(".", ",")}
           <span className="ml-0.5 font-sans text-[10px] font-normal text-zinc-400">/ 5</span>
         </span>
@@ -285,7 +285,7 @@ export function CartaoReview(props: { review: Review; mostrarCodigo?: boolean })
             <span className="truncate text-[10px] font-semibold text-zinc-500 dark:text-zinc-400">
               {v.rotulo}
             </span>
-            <span className="shrink-0 font-display text-xs font-black text-zinc-900 dark:text-zinc-100">
+            <span className="shrink-0 font-display text-xs font-bold text-zinc-900 dark:text-zinc-100">
               {r[v.chave]}
               <span className="font-sans text-[9px] font-normal text-zinc-400">/5</span>
             </span>
@@ -417,7 +417,7 @@ export function CascaPainel(props: {
   if (!props.aberto) return null;
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-end justify-center bg-black/50 backdrop-blur-xs sm:items-stretch sm:justify-end"
+      className="fixed inset-0 z-[60] flex items-end justify-center bg-black/50 sm:items-stretch sm:justify-end"
       role="dialog"
       aria-modal="true"
       onClick={props.onFechar}
@@ -525,7 +525,7 @@ export function BotaoReviews(props: {
       aria-label={vazio ? `Sem avaliações ${rotuloAlvo}` : `Ver ${n} avaliações ${rotuloAlvo}`}
       className={
         variante === "acao"
-          ? `inline-flex shrink-0 items-center gap-1 rounded-lg border px-2 py-0.5 text-[11px] font-bold shadow-2xs transition-all ${estiloAcao} ${props.classe ?? ""}`
+          ? `inline-flex shrink-0 items-center gap-1 rounded-lg border px-2 py-0.5 text-[11px] font-bold shadow-2xs transition-colors ${estiloAcao} ${props.classe ?? ""}`
           : `inline-flex shrink-0 items-center gap-0.5 rounded-lg px-1.5 py-0.5 text-[11px] font-bold transition ${
               vazio
                 ? "cursor-not-allowed text-zinc-300 dark:text-zinc-700"

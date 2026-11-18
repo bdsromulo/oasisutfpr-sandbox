@@ -34,6 +34,8 @@ export function SidebarNavegacao({
     subrotulo?: string;
     bloqueado: boolean;
     motivoBloqueio?: string;
+    /** rótulo da barra inferior do celular, onde cabem ~10 caracteres */
+    rotuloCurto: string;
     icone: React.ReactNode;
     badge?: string | number;
   };
@@ -42,6 +44,7 @@ export function SidebarNavegacao({
     {
       id: "situacao",
       rotulo: "Minha Situação",
+      rotuloCurto: "Situação",
       subrotulo: "Resumo, Catálogo e Trilhas",
       // O painel de progresso exige histórico, mas Catálogo e Fluxograma são
       // úteis no Modo Livre. A App abre diretamente o Catálogo nesse caso.
@@ -51,6 +54,7 @@ export function SidebarNavegacao({
     {
       id: "planejamento",
       rotulo: "Planejamento",
+      rotuloCurto: "Planejar",
       subrotulo: "Grade & Matérias Abertas",
       bloqueado: false,
       icone: <IconBookOpen className="h-5 w-5 shrink-0" />,
@@ -61,46 +65,33 @@ export function SidebarNavegacao({
       // reprojetaria o curso inteiro do zero, o que não informa nada
       id: "simulador",
       rotulo: "Simulador de Formatura",
+      rotuloCurto: "Formatura",
       subrotulo: "Previsão & Linha do Tempo",
       bloqueado: !temPerfil,
       motivoBloqueio: EXIGE_HISTORICO,
-      icone: !temPerfil ? <IconLock className="h-4 w-4 shrink-0" /> : <IconGraduationCap className="h-4 w-4 shrink-0" />,
+      icone: !temPerfil ? <IconLock className="h-5 w-5 shrink-0" /> : <IconGraduationCap className="h-5 w-5 shrink-0" />,
     },
     {
       id: "match",
       rotulo: "Oásis Match",
+      rotuloCurto: "Match",
       subrotulo: "Grade com Amigos",
       bloqueado: false,
-      icone: <IconHandshake className="h-4 w-4 shrink-0" />,
+      icone: <IconHandshake className="h-5 w-5 shrink-0" />,
       badge: "P2P",
     },
   ];
 
   return (
     <>
-      {/* Sidebar Desktop (visível em telas sm/lg em diante) */}
+      {/* Desktop: lista simples, sem cartão em volta. O item ativo se distingue
+          pelo fundo "levantado" e pelo ícone na cor de acento, e o resto fica
+          quieto para não competir com o conteúdo. */}
       <aside
-        className={`hidden lg:flex flex-col shrink-0 transition-all duration-300 rounded-3xl border-2 border-zinc-200/90 bg-white/95 shadow-md backdrop-blur-md dark:border-zinc-800/90 dark:bg-zinc-900/95 sticky top-6 self-start ${
-          colapsado ? "w-20 p-2.5" : "w-64 p-4"
-        }`}
+        aria-label="Navegação principal"
+        className={`sticky top-6 hidden shrink-0 self-start lg:block ${colapsado ? "w-14" : "w-56"}`}
       >
-        <div className="flex items-center justify-between gap-2 pb-4 mb-4 border-b border-zinc-200/80 dark:border-zinc-800/80">
-          {!colapsado && (
-            <span className="font-display text-xs font-black uppercase tracking-wider text-zinc-400 dark:text-zinc-500 pl-2">
-              Navegação
-            </span>
-          )}
-          <button
-            type="button"
-            onClick={() => setColapsado(!colapsado)}
-            className="flex h-8 w-8 items-center justify-center rounded-xl bg-zinc-100 text-zinc-600 hover:bg-utfpr-500 hover:text-zinc-950 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-utfpr-400 dark:hover:text-zinc-950 transition-colors ml-auto cursor-pointer"
-            title={colapsado ? "Expandir Menu" : "Colapsar Menu"}
-          >
-            {colapsado ? "▶" : "◀"}
-          </button>
-        </div>
-
-        <nav className="flex flex-col gap-2">
+        <nav className="flex flex-col gap-0.5">
           {itens.map((item) => {
             const ativo = abaAtiva === item.id;
             return (
@@ -108,6 +99,7 @@ export function SidebarNavegacao({
                 key={item.id}
                 type="button"
                 disabled={item.bloqueado}
+                aria-current={ativo ? "page" : undefined}
                 onClick={() => {
                   if (!item.bloqueado) onSelecionarAba(item.id);
                 }}
@@ -119,96 +111,100 @@ export function SidebarNavegacao({
                       ? item.rotulo
                       : undefined
                 }
-                className={`flex items-center gap-3.5 rounded-2xl p-3 text-left font-display transition-all duration-200 cursor-pointer ${
+                className={`relative flex min-h-11 items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors ${
                   item.bloqueado
-                    ? "opacity-50 cursor-not-allowed bg-transparent text-zinc-400 dark:text-zinc-600"
+                    ? "cursor-not-allowed text-zinc-400 dark:text-zinc-600"
                     : ativo
-                      ? // Amarelo cheio, com texto quase preto: o mesmo par do
-                        // seletor de tema e do "Novidades". Sobre #fecd0f, o
-                        // zinc-950 dá ~13:1 de contraste, folgado para AA e AAA.
-                        // O amarelo é idêntico nos dois temas — ele já é o acento,
-                        // e escurecê-lo no escuro só enfraqueceria a marcação.
-                        "bg-utfpr-500 text-zinc-950 shadow-lg ring-2 ring-utfpr-600/50 dark:bg-utfpr-500 dark:text-zinc-950 scale-[1.02]"
-                      : "bg-zinc-100/60 text-zinc-700 hover:bg-utfpr-50 hover:text-zinc-950 hover:border-utfpr-300 dark:bg-zinc-800/40 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white border border-transparent"
-                } ${colapsado ? "justify-center !p-3.5" : ""}`}
+                      ? "cursor-pointer bg-white text-zinc-950 shadow-xs ring-1 ring-zinc-200 dark:bg-zinc-900 dark:text-white dark:ring-zinc-800"
+                      : "cursor-pointer text-zinc-600 hover:bg-zinc-200/50 hover:text-zinc-950 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-white"
+                } ${colapsado ? "justify-center !px-0" : ""}`}
               >
-                <div className={`shrink-0 flex items-center justify-center text-xl ${ativo ? "text-zinc-950" : ""}`}>
+                <span className={`shrink-0 ${ativo ? "text-utfpr-600 dark:text-utfpr-400" : ""}`}>
                   {item.icone}
-                </div>
+                </span>
                 {!colapsado && (
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center justify-between gap-1">
-                      <span className="truncate font-black text-sm">{item.rotulo}</span>
+                  <span className="min-w-0 flex-1">
+                    <span className="flex items-center justify-between gap-1">
+                      <span className="truncate text-sm font-semibold">{item.rotulo}</span>
                       {item.badge !== undefined && (
-                        <span
-                          // invertido no item ativo: amarelo sobre amarelo sumiria
-                          className={`shrink-0 rounded-md px-1.5 py-0.5 font-mono text-[10px] font-bold ${
-                            ativo
-                              ? "bg-zinc-900 text-utfpr-400"
-                              : "bg-zinc-200 text-zinc-700 dark:bg-zinc-700 dark:text-zinc-300"
-                          }`}
-                        >
+                        <span className="shrink-0 rounded px-1.5 py-0.5 text-[10px] font-semibold text-zinc-500 ring-1 ring-zinc-200 dark:text-zinc-400 dark:ring-zinc-700">
                           {item.badge}
                         </span>
                       )}
-                    </div>
+                    </span>
                     {item.subrotulo && (
-                      // o cinza claro do estado normal cairia para ~2:1 sobre o
-                      // amarelo; no item ativo o subrótulo escurece junto
-                      <p
-                        className={`truncate text-[11px] font-medium mt-0.5 ${
-                          ativo
-                            ? "text-zinc-800"
-                            : "text-zinc-500 dark:text-zinc-400"
-                        }`}
-                      >
+                      <span className="mt-0.5 block truncate text-xs text-zinc-500 dark:text-zinc-400">
                         {item.subrotulo}
-                      </p>
+                      </span>
                     )}
-                  </div>
+                  </span>
                 )}
               </button>
             );
           })}
         </nav>
+        <button
+          type="button"
+          onClick={() => setColapsado(!colapsado)}
+          className={`mt-3 flex h-8 cursor-pointer items-center gap-2 rounded-lg px-3 text-xs text-zinc-500 transition-colors hover:bg-zinc-200/50 hover:text-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-200 ${
+            colapsado ? "w-full justify-center !px-0" : ""
+          }`}
+          title={colapsado ? "Expandir menu" : "Recolher menu"}
+          aria-label={colapsado ? "Expandir menu" : "Recolher menu"}
+        >
+          <span aria-hidden="true">{colapsado ? "»" : "«"}</span>
+          {!colapsado && <span>Recolher</span>}
+        </button>
       </aside>
 
-      {/* Navegação Mobile (Barra Superior / Bottom Drawer nas Telas < lg) */}
-      <nav className="flex lg:hidden flex-wrap items-center justify-between gap-2 rounded-2xl border-2 border-zinc-200/90 bg-white/95 p-2 shadow-md backdrop-blur-md dark:border-zinc-800/90 dark:bg-zinc-900/95 mb-6">
-        {itens.map((item) => {
-          const ativo = abaAtiva === item.id;
-          return (
-            <button
-              key={item.id}
-              type="button"
-              disabled={item.bloqueado}
-              onClick={() => {
-                if (!item.bloqueado) onSelecionarAba(item.id);
-              }}
-              className={`flex min-h-12 flex-1 min-w-[140px] cursor-pointer items-center justify-center gap-2 rounded-xl p-2.5 font-display text-xs font-black transition-all ${
-                item.bloqueado
-                  ? "opacity-50 cursor-not-allowed text-zinc-400 dark:text-zinc-600"
-                  : ativo
-                    ? "bg-utfpr-500 text-zinc-950 shadow-md ring-2 ring-utfpr-600/50 dark:bg-utfpr-500 dark:text-zinc-950"
-                    : "bg-zinc-100/80 text-zinc-700 hover:bg-utfpr-50 dark:bg-zinc-800/50 dark:text-zinc-300"
-              }`}
-            >
-              <span className="text-base">{item.icone}</span>
-              <span className="truncate">{item.rotulo}</span>
-              {item.badge !== undefined && (
+      {/* Celular: barra de abas fixa no rodapé, onde o polegar alcança e onde
+          todo aplicativo de celular coloca a navegação principal. Antes era uma
+          grade 2x2 no topo da página, que empurrava o conteúdo meia tela para
+          baixo e sumia ao rolar. */}
+      <nav
+        aria-label="Navegação principal"
+        className="fixed inset-x-0 bottom-0 z-40 border-t border-zinc-200 bg-white pb-[env(safe-area-inset-bottom)] lg:hidden dark:border-zinc-800 dark:bg-zinc-950"
+      >
+        <div className="mx-auto grid max-w-lg grid-cols-4">
+          {itens.map((item) => {
+            const ativo = abaAtiva === item.id;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                disabled={item.bloqueado}
+                aria-current={ativo ? "page" : undefined}
+                title={item.bloqueado ? item.motivoBloqueio : item.rotulo}
+                onClick={() => {
+                  if (!item.bloqueado) onSelecionarAba(item.id);
+                }}
+                className={`relative flex min-h-14 flex-col items-center justify-center gap-0.5 px-1 pt-1.5 pb-1 text-[11px] font-medium ${
+                  item.bloqueado
+                    ? "cursor-not-allowed text-zinc-300 dark:text-zinc-700"
+                    : ativo
+                      ? "cursor-pointer text-zinc-950 dark:text-white"
+                      : "cursor-pointer text-zinc-500 dark:text-zinc-400"
+                }`}
+              >
+                {/* Ativo: pílula atrás do ícone, como nas barras de aba nativas
+                    do Android. Marca o lugar sem faixa colorida nem brilho. */}
                 <span
-                  className={`rounded px-1 py-0.2 font-mono text-[9px] font-bold ${
-                    ativo
-                      ? "bg-zinc-900 text-utfpr-400"
-                      : "bg-utfpr-500/20 text-utfpr-700 dark:text-utfpr-300"
+                  className={`relative flex h-7 w-12 items-center justify-center rounded-full transition-colors ${
+                    ativo ? "bg-utfpr-500/25 text-zinc-950 dark:bg-utfpr-500/20 dark:text-utfpr-300" : ""
                   }`}
                 >
-                  {item.badge}
+                  {item.icone}
+                  {typeof item.badge === "number" && (
+                    <span className="absolute -right-0.5 -top-1 min-w-4 rounded-full bg-zinc-900 px-1 text-center text-[10px] font-semibold leading-4 text-white dark:bg-zinc-100 dark:text-zinc-900">
+                      {item.badge}
+                    </span>
+                  )}
                 </span>
-              )}
-            </button>
-          );
-        })}
+                <span className="truncate">{item.rotuloCurto}</span>
+              </button>
+            );
+          })}
+        </div>
       </nav>
     </>
   );
