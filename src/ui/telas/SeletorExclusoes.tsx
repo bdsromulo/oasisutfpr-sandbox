@@ -16,6 +16,7 @@ import { IconBan, IconInfo } from "../icons";
 // é o que permite o App guardar o estado sem arrastar esta tela para o bundle
 // inicial. Reexportados aqui porque metade do simulador já os importa daqui.
 import type { ValorExclusoes } from "./valoresSimulador";
+import { nomeLegivel } from "../textos";
 export { EXCLUSOES_VAZIAS, type ValorExclusoes } from "./valoresSimulador";
 
 export function totalExclusoes(v: ValorExclusoes): number {
@@ -210,8 +211,8 @@ export function SeletorExclusoes(props: {
             rotulo={
               <>
                 <span className="font-mono font-bold">{item.codigo}</span>
-                <span className="max-w-[180px] truncate" title={item.nome}>
-                  {item.nome}
+                <span className="max-w-[180px] truncate" title={nomeLegivel(item.nome)}>
+                  {nomeLegivel(item.nome)}
                 </span>
               </>
             }
@@ -226,14 +227,14 @@ export function SeletorExclusoes(props: {
         sugestoes={filtrar(
           discDisponiveis,
           buscaDisc,
-          (d) => `${d.codigo} ${d.nome}`,
+          (d) => `${d.codigo} ${nomeLegivel(d.nome)}`,
           (d) => valor.disciplinas.some((x) => x.codigo === d.codigo),
         )}
         chaveDe={(d) => d.codigo}
         renderSugestao={(d) => (
           <div>
             <span className="mr-2 font-mono font-bold text-zinc-900 dark:text-zinc-100">{d.codigo}</span>
-            <span className="text-zinc-600 dark:text-zinc-300">{d.nome}</span>
+            <span className="text-zinc-600 dark:text-zinc-300">{nomeLegivel(d.nome)}</span>
           </div>
         )}
         onAdicionar={(d) => onChange({ ...valor, disciplinas: [...valor.disciplinas, d] })}
@@ -287,10 +288,10 @@ export function SeletorExclusoes(props: {
           chips={valor.trilhas.map((t) => (
             <Chip
               key={t.conjunto}
-              titulo={t.nome}
+              titulo={nomeLegivel(t.nome)}
               rotulo={
-                <span className="max-w-[220px] truncate" title={t.nome}>
-                  {t.nome}
+                <span className="max-w-[220px] truncate" title={nomeLegivel(t.nome)}>
+                  {nomeLegivel(t.nome)}
                 </span>
               }
               onRemover={() =>
@@ -301,12 +302,12 @@ export function SeletorExclusoes(props: {
           sugestoes={filtrar(
             trilhasDisponiveis,
             buscaTrilha,
-            (t) => `${t.nome} ${t.conjunto}`,
+            (t) => `${nomeLegivel(t.nome)} ${t.conjunto}`,
             (t) => valor.trilhas.some((x) => x.conjunto === t.conjunto),
           )}
           chaveDe={(t) => t.conjunto}
           renderSugestao={(t) => (
-            <span className="text-zinc-700 dark:text-zinc-200">{t.nome}</span>
+            <span className="text-zinc-700 dark:text-zinc-200">{nomeLegivel(t.nome)}</span>
           )}
           onAdicionar={(t) => onChange({ ...valor, trilhas: [...valor.trilhas, t] })}
         />

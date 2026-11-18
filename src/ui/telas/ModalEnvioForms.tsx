@@ -9,6 +9,7 @@ import { CURSOS } from "../../domain/dadosCurso";
 import { montarUrlDeAvaliacao, type AlvoAvaliacao } from "../../domain/reviews/forms";
 import { Botao } from "../componentes";
 import { IconWarning } from "../icons";
+import { nomeLegivel } from "../textos";
 
 /** Marca a rota "não está na lista" sem se confundir com "ainda não escolhi". */
 const FORA_DO_ELENCO = "__fora__";
@@ -149,7 +150,7 @@ export function ModalEnvioForms(props: {
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="font-display text-lg font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
-          Avaliar {alvo.nome}
+          Avaliar {nomeLegivel(alvo.nome)}
         </h2>
         <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-300">
           <span className="font-mono font-bold">{alvo.codigo}</span> · cursada em{" "}
@@ -182,7 +183,7 @@ export function ModalEnvioForms(props: {
           {filtrado.map((u) => (
             <OpcaoProfessor
               key={u.id}
-              rotulo={u.nome}
+              rotulo={nomeLegivel(u.nome)}
               marcada={escolhido === u.id}
               onEscolher={() => setEscolhido(u.id)}
             />

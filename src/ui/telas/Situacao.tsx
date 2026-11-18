@@ -22,6 +22,7 @@ import {
   ehGrupoOpcao,
   grupoOpcaoDe,
 } from "../../domain/cursos";
+import { nomeLegivel } from "../textos";
 
 export function renderizarTextoComCodigos(texto: string, matriz: Matriz) {
   const partes = texto.split(/([A-Z]{2,5}\d{1,4}[A-Z]?)/g);
@@ -31,7 +32,7 @@ export function renderizarTextoComCodigos(texto: string, matriz: Matriz) {
       return (
         <span
           key={idx}
-          title={`${d.codigo} — ${d.nome} (${d.periodo ? `${d.periodo}º período` : "Optativa"}) · ${d.horas.total}h`}
+          title={`${d.codigo} · ${nomeLegivel(d.nome)} (${d.periodo ? `${d.periodo}º período` : "Optativa"}) · ${d.horas.total}h`}
           className="cursor-help font-mono font-bold underline decoration-dotted decoration-utfpr-500 underline-offset-2 text-zinc-900 dark:text-zinc-100 hover:text-utfpr-600 dark:hover:text-utfpr-400 transition-colors"
         >
           {parte}
@@ -42,7 +43,13 @@ export function renderizarTextoComCodigos(texto: string, matriz: Matriz) {
   });
 }
 
-function CardProgresso(props: {
+/**
+ * Uma linha da lista de categorias. Antes eram seis cartões em grade, cada um
+ * com número grande, barra e um "Exibir Lista". Numa lista só as barras ficam
+ * alinhadas e dá para comparar as categorias de relance. A linha inteira abre
+ * o catálogo da categoria, então o alvo de toque é a linha, não um link de 16px.
+ */
+function LinhaProgresso(props: {
   titulo: string;
   cumprido: number;
   exigido: number;
@@ -50,50 +57,52 @@ function CardProgresso(props: {
   concluidas?: { codigo: string; nome: string; cht?: number | null }[];
   categoria: CategoriaCatalogo;
   onAbrirCatalogo?: (cat: CategoriaCatalogo) => void;
+  /** substitui a barra contínua (o estágio usa um bloco por etapa) */
+  barra?: ReactNode;
+  /** substitui o "345 / 2005h" */
+  valor?: ReactNode;
+  /** substitui o "faltam Xh" */
+  situacao?: string;
 }) {
   const completo = props.cumprido >= props.exigido && props.exigido > 0;
+  const falta = Math.max(0, props.exigido - props.cumprido);
 
   return (
-    <Card
-      titulo={props.titulo}
-      classe="flex flex-col justify-between transition-colors hover:border-utfpr-500/40 hover:shadow-md cursor-pointer group"
-    >
-      <div
-        onClick={() => {
-          if (props.onAbrirCatalogo) props.onAbrirCatalogo(props.categoria);
-        }}
+    <li>
+      <button
+        type="button"
+        onClick={() => props.onAbrirCatalogo?.(props.categoria)}
+        className="grid w-full cursor-pointer grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-2.5 px-5 py-4 text-left transition-colors hover:bg-zinc-50 focus-visible:bg-zinc-50 md:grid-cols-[minmax(0,15rem)_minmax(0,1fr)_7.5rem] dark:hover:bg-zinc-800/40 dark:focus-visible:bg-zinc-800/40"
       >
-        <div className="mb-2 flex items-baseline justify-between">
-          <span className="font-display text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
-            {props.cumprido}
-            <span className="font-sans text-sm font-normal text-zinc-400"> / {props.exigido}h</span>
-          </span>
-          {completo && (
-            <Badge tom="ok" icon={<IconCheck className="h-3.5 w-3.5" />}>
-              concluído
-            </Badge>
+        <span className="min-w-0">
+          <span className="block text-sm font-semibold text-zinc-900 dark:text-zinc-100">{props.titulo}</span>
+          {props.rodape && (
+            <span className="mt-0.5 block text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">{props.rodape}</span>
           )}
-        </div>
-        <Barra valor={props.cumprido} max={props.exigido} />
-        {props.rodape && <div className="mt-2.5 text-xs font-medium text-zinc-500 dark:text-zinc-400">{props.rodape}</div>}
-      </div>
-
-      <div className="mt-3.5 flex items-center justify-end border-t border-zinc-100 pt-1 dark:border-zinc-800">
-        {/* min-h-11: no celular este link tinha 16px de altura, metade do
-            mínimo confortável de toque */}
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            if (props.onAbrirCatalogo) props.onAbrirCatalogo(props.categoria);
-          }}
-          className="inline-flex min-h-11 cursor-pointer items-center gap-1.5 px-1 font-display text-xs font-bold text-utfpr-500 transition-colors hover:text-utfpr-400"
-        >
-          <span>Exibir Lista</span>
-          <span>→</span>
-        </button>
-      </div>
-    </Card>
+        </span>
+        <span className="col-span-2 row-start-2 md:col-span-1 md:row-start-auto">
+          {props.barra ?? <Barra valor={props.cumprido} max={props.exigido} classe="h-2" />}
+        </span>
+        <span className="col-start-2 row-start-1 text-right md:col-start-auto md:row-start-auto">
+          <span className="block text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+            {props.valor ?? (
+              <>
+                {props.cumprido}
+                <span className="font-normal text-zinc-400"> / {props.exigido}h</span>
+              </>
+            )}
+          </span>
+          <span
+            className={`mt-0.5 flex items-center justify-end gap-1 text-xs ${
+              completo ? "font-medium text-emerald-700 dark:text-emerald-400" : "text-zinc-500 dark:text-zinc-400"
+            }`}
+          >
+            {completo && <IconCheck className="h-3.5 w-3.5" />}
+            {completo ? "concluído" : (props.situacao ?? `faltam ${falta}h`)}
+          </span>
+        </span>
+      </button>
+    </li>
   );
 }
 
@@ -210,7 +219,7 @@ export function TelaSituacao(props: {
 
   if (!perfil) {
     return (
-      <Card titulo="Modo Livre — Sem Histórico Escolar Importado" classe="p-6 sm:p-8 text-center max-w-2xl mx-auto my-8">
+      <Card titulo="Modo livre, sem histórico importado" classe="p-6 sm:p-8 text-center max-w-2xl mx-auto my-8">
         <p className="text-sm text-zinc-600 dark:text-zinc-300 leading-relaxed mb-6">
           Você está navegando no portal no modo <strong>Grade na Hora (Modo Livre)</strong> sem um histórico escolar do Portal do Aluno atrelado à sua sessão.
           Para visualizar o progresso de horas nos estratos (1º, 2º e 3º), trilhas cumpridas e checagem automática de pré-requisitos, importe seu PDF.
@@ -259,7 +268,7 @@ export function TelaSituacao(props: {
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 rounded-2xl border border-zinc-200/90 bg-white p-5 shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
         <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-4 sm:gap-10">
           <div className="col-span-2 sm:col-span-1">
-            <span className="block text-xs font-medium text-zinc-400 dark:text-zinc-500">
+            <span className="block text-xs font-medium text-zinc-500 dark:text-zinc-400">
               Período de Referência
             </span>
             <div className="mt-0.5 font-display text-lg font-bold text-zinc-900 dark:text-zinc-100">
@@ -274,10 +283,10 @@ export function TelaSituacao(props: {
 
           <div className="col-span-2 flex flex-row items-center justify-around gap-4 sm:gap-6 rounded-xl border border-zinc-200/80 bg-zinc-50/50 px-4 py-2 dark:border-zinc-800/80 dark:bg-zinc-800/30 sm:col-span-1 sm:justify-start flex-nowrap whitespace-nowrap overflow-hidden">
             <div>
-              <span className="block text-xs font-medium text-zinc-400 dark:text-zinc-500">
+              <span className="block text-xs font-medium text-zinc-500 dark:text-zinc-400">
                 CR Absoluto
               </span>
-              <div className="mt-0.5 font-display text-lg font-bold text-utfpr-500">
+              <div className="mt-0.5 font-display text-lg font-bold text-zinc-900 dark:text-utfpr-400">
                 {perfil.coefAbsoluto?.toFixed(4) ?? "—"}
               </div>
             </div>
@@ -285,7 +294,7 @@ export function TelaSituacao(props: {
             <div className="h-8 w-px bg-zinc-200 dark:bg-zinc-700" />
 
             <div>
-              <span className="block text-xs font-medium text-zinc-400 dark:text-zinc-500">
+              <span className="block text-xs font-medium text-zinc-500 dark:text-zinc-400">
                 CR Normalizado
               </span>
               <div className="mt-0.5 font-display text-lg font-bold text-zinc-900 dark:text-zinc-100">
@@ -304,7 +313,7 @@ export function TelaSituacao(props: {
             rotuloCentro="do curso"
             legenda={
               <div>
-                <span className="block text-xs font-medium text-zinc-400 dark:text-zinc-500">
+                <span className="block text-xs font-medium text-zinc-500 dark:text-zinc-400">
                   Progresso Geral do Curso
                 </span>
                 <div className="mt-1 font-display text-lg font-bold text-zinc-900 dark:text-zinc-100">
@@ -320,9 +329,19 @@ export function TelaSituacao(props: {
         </div>
       </div>
 
-      <section className={`grid gap-4 ${[obr, painel.segundoEstrato, painel.humanidades, painel.eletivas, painel.extensao, true].filter(Boolean).length === 4 ? "sm:grid-cols-2" : "sm:grid-cols-2 lg:grid-cols-3"}`}>
+      <section
+        aria-labelledby="titulo-categorias"
+        className="overflow-hidden rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900"
+      >
+        <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 px-5 pt-4 pb-2">
+          <h2 id="titulo-categorias" className="font-display text-base font-semibold text-zinc-900 dark:text-zinc-100">
+            Progresso por categoria
+          </h2>
+          <span className="text-xs text-zinc-500 dark:text-zinc-400">Cada linha abre a lista de matérias</span>
+        </div>
+        <ul className="divide-y divide-zinc-100 border-t border-zinc-100 dark:divide-zinc-800 dark:border-zinc-800">
         {obr && (
-          <CardProgresso
+          <LinhaProgresso
             titulo={descricaoDoCurso(matriz).matriz === 981 ? "Obrigatórias (1º estrato)" : "Obrigatórias"}
             cumprido={obr.aprovada}
             exigido={obr.total}
@@ -331,12 +350,12 @@ export function TelaSituacao(props: {
             onAbrirCatalogo={onAbrirCatalogo}
             rodape={
               perfil.obrigatoriasFaltantes.length ? (
-                <div className="flex flex-wrap items-center gap-1.5 leading-relaxed">
-                  <span className="font-bold text-zinc-700 dark:text-zinc-300">
+                <span>
+                  <span className="font-medium text-zinc-700 dark:text-zinc-300">
                     {perfil.obrigatoriasFaltantes.length === 1
                       ? "1 pendente:"
                       : `${perfil.obrigatoriasFaltantes.length} pendentes:`}
-                  </span>
+                  </span>{" "}
                   {renderizarTextoComCodigos(
                     perfil.obrigatoriasFaltantes
                       .slice(0, 3)
@@ -345,11 +364,11 @@ export function TelaSituacao(props: {
                     matriz
                   )}
                   {perfil.obrigatoriasFaltantes.length > 3 && (
-                    <span className="font-semibold text-zinc-500 dark:text-zinc-400">
+                    <span>
                       … e mais {perfil.obrigatoriasFaltantes.length - 3}
                     </span>
                   )}
-                </div>
+                </span>
               ) : (
                 "Todas as obrigatórias foram concluídas"
               )
@@ -357,7 +376,7 @@ export function TelaSituacao(props: {
           />
         )}
         {painel.segundoEstrato && (
-          <CardProgresso
+          <LinhaProgresso
             titulo="2º Estrato"
             cumprido={painel.segundoEstrato.cumprido}
             exigido={painel.segundoEstrato.exigido}
@@ -367,7 +386,7 @@ export function TelaSituacao(props: {
           />
         )}
         {painel.humanidades && (
-          <CardProgresso
+          <LinhaProgresso
             titulo="Ciclo de Humanidades"
             cumprido={painel.humanidades.cumprido}
             exigido={painel.humanidades.exigido}
@@ -377,7 +396,7 @@ export function TelaSituacao(props: {
           />
         )}
         {painel.opcoes && (
-          <CardProgresso
+          <LinhaProgresso
             titulo={cursoDesc.rotuloOpcoes ?? "Opções do Curso"}
             cumprido={painel.opcoes.cumprido}
             exigido={painel.opcoes.exigido}
@@ -390,22 +409,22 @@ export function TelaSituacao(props: {
                 : (() => {
                     const abertos = painel.opcoes!.grupos.filter((g) => g.cumprido < g.exigido);
                     return (
-                      <div className="flex flex-wrap items-center gap-1.5 leading-relaxed">
-                        <span className="font-bold text-zinc-700 dark:text-zinc-300">
+                      <span>
+                        <span className="font-medium text-zinc-700 dark:text-zinc-300">
                           {painel.opcoes!.gruposCumpridos} de {painel.opcoes!.grupos.length} grupos cumpridos.
-                        </span>
-                        <span className="font-semibold text-zinc-500 dark:text-zinc-400">
-                          Em aberto: {abertos.slice(0, 2).map((g) => g.nome).join(", ")}
+                        </span>{" "}
+                        <span>
+                          Em aberto {abertos.slice(0, 2).map((g) => nomeLegivel(g.nome)).join(", ")}
                           {abertos.length > 2 && ` … e mais ${abertos.length - 2}`}
                         </span>
-                      </div>
+                      </span>
                     );
                   })()
             }
           />
         )}
         {painel.eletivas && (
-          <CardProgresso
+          <LinhaProgresso
             titulo="Eletivas"
             cumprido={painel.eletivas.cumprido}
             exigido={painel.eletivas.exigido}
@@ -415,7 +434,7 @@ export function TelaSituacao(props: {
           />
         )}
         {painel.extensao && (
-          <CardProgresso
+          <LinhaProgresso
             titulo="Extensão Universitária"
             cumprido={painel.extensao.cumprido}
             exigido={painel.extensao.exigido}
@@ -425,63 +444,33 @@ export function TelaSituacao(props: {
             rodape="Atividades extensionistas registradas no histórico"
           />
         )}
-        <Card
+        <LinhaProgresso
           titulo="Estágio Curricular"
-          classe="flex flex-col justify-between transition-colors hover:border-utfpr-500/40 hover:shadow-md cursor-pointer group"
-        >
-          <div
-            onClick={() => {
-              if (onAbrirCatalogo) onAbrirCatalogo("todas");
-            }}
-          >
-            <div className="mb-2 flex items-baseline justify-between">
-              <span className="font-display text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
-                Estágio {qtdEstagio}
-                <span className="font-sans text-sm font-normal text-zinc-400"> / {estagios.length}</span>
-              </span>
-              {qtdEstagio === estagios.length && estagios.length > 0 && (
-                <Badge tom="ok" icon={<IconCheck className="h-3.5 w-3.5" />}>
-                  concluído
-                </Badge>
-              )}
-            </div>
-
-            {/* um bloco por estágio exigido pelo curso */}
-            <div className="flex items-center gap-2 pt-1">
+          cumprido={qtdEstagio}
+          exigido={estagios.length}
+          categoria="todas"
+          onAbrirCatalogo={onAbrirCatalogo}
+          rodape={estagios.map((e) => `${e.rotulo} (${e.ch}h)`).join(" e ") + ", obrigatórios para concluir o curso"}
+          valor={
+            <>
+              {qtdEstagio}
+              <span className="font-normal text-zinc-400"> de {estagios.length}</span>
+            </>
+          }
+          situacao={`${estagios.length - qtdEstagio} a fazer`}
+          barra={
+            <span className="flex gap-1.5">
               {estagios.map((e) => (
-                <div key={e.codigo} className="flex-1 space-y-1">
-                  <div
-                    className={`h-3.5 rounded-full transition-colors ${
-                      e.feito
-                        ? " bg-utfpr-500 shadow-xs"
-                        : "bg-zinc-200/80 dark:bg-zinc-800"
-                    }`}
-                  />
-                  <span className="block text-xs font-medium text-center text-zinc-500 dark:text-zinc-400">
-                    {e.rotulo} ({e.ch}h)
-                  </span>
-                </div>
+                <span
+                  key={e.codigo}
+                  title={`${e.rotulo} (${e.ch}h)${e.feito ? ", feito" : ""}`}
+                  className={`h-2 flex-1 rounded-full ${e.feito ? "bg-utfpr-500" : "bg-zinc-200/80 dark:bg-zinc-800/80"}`}
+                />
               ))}
-            </div>
-            <div className="mt-3 text-xs font-medium text-zinc-500 dark:text-zinc-400">
-              Estágio supervisionado obrigatório para a conclusão do curso
-            </div>
-          </div>
-
-          <div className="mt-3.5 flex items-center justify-end border-t border-zinc-100 pt-2.5 dark:border-zinc-800">
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                if (onAbrirCatalogo) onAbrirCatalogo("todas");
-              }}
-              className="inline-flex min-h-11 cursor-pointer items-center gap-1.5 px-1 font-display text-xs font-bold text-utfpr-500 transition-colors hover:text-utfpr-400"
-            >
-              <span>Exibir Lista</span>
-              <span>→</span>
-            </button>
-          </div>
-        </Card>
+            </span>
+          }
+        />
+        </ul>
       </section>
 
       {/* BLOCO ÚNICO DE TRILHAS NO MENU PRINCIPAL (ITEM 4). A 978 distribui
@@ -549,7 +538,7 @@ export function TelaSituacao(props: {
                   <div className="mt-2 space-y-1">
                     {painel.trilhas.filter(t => t.validado).map(t => (
                       <div key={t.conjunto} className="flex items-center justify-between text-[11px] font-medium text-emerald-700 dark:text-emerald-400 bg-emerald-50/50 dark:bg-emerald-950/30 rounded px-1.5 py-0.5">
-                        <span className="truncate pr-2" title={t.nome}>✓ {t.nome}</span>
+                        <span className="truncate pr-2" title={nomeLegivel(t.nome)}><IconCheck className="mr-1 inline h-3.5 w-3.5 align-[-0.15em]" />{nomeLegivel(t.nome)}</span>
                         <span className="shrink-0 font-mono">({t.cumprido}/{t.exigido}h)</span>
                       </div>
                     ))}
@@ -573,10 +562,9 @@ export function TelaSituacao(props: {
                   e.stopPropagation();
                   if (onAbrirCatalogo) onAbrirCatalogo("trilhas");
                 }}
-                className="inline-flex min-h-11 cursor-pointer items-center gap-1.5 px-1 font-display text-xs font-bold text-utfpr-500 transition-colors hover:text-utfpr-400"
+                className="inline-flex min-h-11 cursor-pointer items-center px-1 text-sm font-medium text-zinc-700 underline decoration-utfpr-500 decoration-2 underline-offset-4 transition-colors hover:text-zinc-950 dark:text-zinc-300 dark:hover:text-white"
               >
-                <span>Exibir Lista</span>
-                <span>→</span>
+                Ver matérias das trilhas
               </button>
             </div>
           </div>
@@ -615,7 +603,7 @@ export function TelaSituacao(props: {
                       </span>
                     </span>
                     <span className="block truncate text-sm text-zinc-700 dark:text-zinc-200">
-                      {d.nome}
+                      {nomeLegivel(d.nome)}
                     </span>
                   </span>
                   {jaAvaliadas.has(d.codigoCanonico) ? (
@@ -623,7 +611,7 @@ export function TelaSituacao(props: {
                       title="Você já avaliou esta disciplina. Para mudar, edite sua resposta no formulário."
                       className="shrink-0 cursor-help rounded-lg bg-emerald-500/10 px-2 py-1 text-[11px] font-bold text-emerald-700 dark:text-emerald-400"
                     >
-                      ✓ avaliada
+                      <IconCheck className="inline h-3.5 w-3.5 align-[-0.15em]" /> avaliada
                     </span>
                   ) : (
                     <Botao onClick={() => setAvaliando(d)} variante="sutil" classe="shrink-0 !px-3 !py-1.5 !text-xs">
@@ -651,10 +639,10 @@ export function TelaSituacao(props: {
           <div className="flex flex-wrap gap-2">
             {perfil.dependencias.map((d) => (
               <Badge key={d.codigo} tom="alerta" icon={<IconWarning className="h-3.5 w-3.5" />}>
-                <span className="font-mono font-bold cursor-help" title={`${d.codigo} — ${d.nome}`}>
+                <span className="font-mono font-bold cursor-help" title={`${d.codigo} · ${nomeLegivel(d.nome)}`}>
                   {d.codigo}
                 </span>{" "}
-                — {d.nome}
+                {nomeLegivel(d.nome)}
               </Badge>
             ))}
           </div>

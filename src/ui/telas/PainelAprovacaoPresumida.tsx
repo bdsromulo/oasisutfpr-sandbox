@@ -110,8 +110,8 @@ export function PainelAprovacaoPresumida(props: {
       <IconWarning className="mt-0.5 h-4 w-4 shrink-0" />
       <span>
         Este histórico é de {formatarSemestre(semestreDoPdf!)}, e o semestre corrente é{" "}
-        {formatarSemestre(SEMESTRE_CORRENTE)}. As matérias abaixo já devem ter nota lançada —
-        reimporte o PDF do Portal para o planejamento partir do quadro real.
+        {formatarSemestre(SEMESTRE_CORRENTE)}. As matérias abaixo já devem ter nota lançada.
+        Reimporte o PDF do Portal para o planejamento partir do quadro real.
       </span>
     </div>
   );
@@ -119,7 +119,7 @@ export function PainelAprovacaoPresumida(props: {
   const rodape = (
     <p className="text-[11px] leading-relaxed text-zinc-500 dark:text-zinc-500">
       Esta é uma suposição sua, não um dado do Portal. O histórico guardado continua exatamente
-      como o PDF o descreve — desmarcar tudo devolve a plataforma ao quadro real.
+      como o PDF o descreve. Desmarcar tudo devolve a plataforma ao quadro real.
     </p>
   );
 
@@ -169,7 +169,7 @@ export function PainelAprovacaoPresumida(props: {
             {semestreDoPdf ? ` · ${formatarSemestre(semestreDoPdf)}` : ""}
           </h3>
           <p className="mt-1 text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
-            Elas ainda não têm nota. Marcadas, entram no planejamento como aprovadas — liberam
+            Elas ainda não têm nota. Marcadas, entram no planejamento como aprovadas. Liberam
             pré-requisitos, somam carga horária e saem da projeção de formatura. Desmarque as que
             você acha que não vai passar.
           </p>

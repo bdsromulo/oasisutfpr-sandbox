@@ -21,8 +21,9 @@ import {
 } from "../domain/motor/grade";
 import { faixaDoSlot } from "../domain/horarios";
 import type { SelecaoTurma } from "./App";
-import { Badge } from "./componentes";
+import { Badge, Chevron } from "./componentes";
 import { disciplinaCanonicaDaOferta } from "../domain/motor/identidade";
+import { nomeLegivel } from "./textos";
 
 const DIAS: [number, string][] = [
   [2, "S"],
@@ -210,9 +211,7 @@ export function MiniGrade(props: {
             className="flex h-7 w-7 items-center justify-center rounded-lg bg-zinc-100 text-zinc-500 hover:bg-zinc-200 hover:text-zinc-900 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700 dark:hover:text-white transition-colors cursor-pointer"
             title={minimizada ? "Expandir bloco da prévia" : "Minimizar bloco da prévia"}
           >
-            <span className={`transition-transform duration-200 text-xs font-bold ${minimizada ? "rotate-180" : ""}`}>
-              ▲
-            </span>
+            <Chevron aberto={!minimizada} />
           </button>
         </div>
       </div>
@@ -426,7 +425,7 @@ export function MiniGrade(props: {
                 {props.exclusoesSugestao.disciplinas && props.exclusoesSugestao.disciplinas.length > 0 && (
                   <div
                     className="truncate"
-                    title={props.exclusoesSugestao.disciplinas.map((d) => `${d.codigo} (${d.nome})`).join("; ")}
+                    title={props.exclusoesSugestao.disciplinas.map((d) => `${d.codigo} (${nomeLegivel(d.nome)})`).join("; ")}
                   >
                     <strong>Matérias:</strong> {props.exclusoesSugestao.disciplinas.map((d) => d.codigo).join(", ")}
                   </div>
@@ -470,7 +469,7 @@ export function MiniGrade(props: {
                     key={item.selecaoOriginal ? `${item.selecaoOriginal.codDisciplina}-${item.selecaoOriginal.codTurma}` : item.disciplina.codigo}
                     onMouseEnter={() => iniciarHover(codIdentificador)}
                     onMouseLeave={cancelarHover}
-                    title={`${item.disciplina.nome}${codigoCurricular !== item.disciplina.codigo ? ` · oferta ${item.disciplina.codigo}` : ""}`}
+                    title={`${nomeLegivel(item.disciplina.nome)}${codigoCurricular !== item.disciplina.codigo ? ` · oferta ${item.disciplina.codigo}` : ""}`}
                     className={`group relative flex items-center justify-between gap-1.5 text-xs rounded-md px-1.5 py-1 transition-colors ${
                       isHovered ? "bg-zinc-100 dark:bg-zinc-800 ring-1 ring-zinc-300 dark:ring-zinc-700 scale-[1.01] z-40 overflow-visible" : ""
                     }`}
@@ -480,7 +479,7 @@ export function MiniGrade(props: {
                         className={`h-2 w-2 shrink-0 rounded-full ${CORES_GRADE[i % CORES_GRADE.length]}`}
                       />
                       <span className="truncate text-zinc-600 dark:text-zinc-300">
-                        <span className="font-mono font-bold">{codigoCurricular}</span> {item.turma.codigo} — <span className="font-semibold text-zinc-800 dark:text-zinc-200">{item.disciplina.nome}</span>
+                        <span className="font-mono font-bold">{codigoCurricular}</span> {item.turma.codigo} · <span className="font-semibold text-zinc-800 dark:text-zinc-200">{nomeLegivel(item.disciplina.nome)}</span>
                       </span>
                     </div>
                     {onRemoverTurma && (
@@ -581,7 +580,7 @@ export function MiniGrade(props: {
                                         <span className="opacity-80">{ocup.turma}</span>
                                       </div>
                                       <div className="font-display text-xs font-bold leading-tight mt-0.5 line-clamp-2">
-                                        {ocup.nome}
+                                        {nomeLegivel(ocup.nome)}
                                       </div>
                                       {ocup.sede && (
                                         <div className="mt-1 text-[10px] font-semibold opacity-90 flex items-center gap-0.5">

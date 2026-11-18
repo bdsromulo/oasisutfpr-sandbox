@@ -45,6 +45,7 @@ import {
   ehTrilha,
   categoriaSimples,
 } from "../../domain/cursos";
+import { nomeLegivel } from "../textos";
 
 type Grupo = "todas" | "obrigatorias" | "estrato2" | "opcoes" | "trilhas" | "humanidades";
 
@@ -188,12 +189,12 @@ function CardDisciplinaPossoCursar({
         <div className="flex items-start justify-between gap-3">
           <div className="font-display text-base font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-utfpr-600 dark:group-hover:text-utfpr-400 transition-colors">
             <span
-              title={`${e.disciplina.codigo} — ${e.disciplina.nome}`}
+              title={`${e.disciplina.codigo} · ${nomeLegivel(e.disciplina.nome)}`}
               className="font-mono text-xs font-semibold text-zinc-400 mr-1.5 cursor-help underline decoration-dotted decoration-zinc-400"
             >
               {e.disciplina.codigo}
             </span>
-            {e.disciplina.nome}
+            {nomeLegivel(e.disciplina.nome)}
           </div>
           {e.oferta && e.oferta.turmas.length > 0 && (
             <div
@@ -377,7 +378,7 @@ function CardDisciplinaPossoCursar({
                               {statusHoverTurma === t.codigo && (
                                 <BalaoProgressoHover
                                   codigoDisciplina={e.disciplina.codigo}
-                                  nomeDisciplina={e.disciplina.nome}
+                                  nomeDisciplina={nomeLegivel(e.disciplina.nome)}
                                   cargaHoraria={obterCargaHoraria(e.disciplina, matriz)}
                                   perfil={perfil}
                                   matriz={matriz}
@@ -616,22 +617,25 @@ export function TelaPossoCursar(props: {
       {/* Busca e filtros no MESMO bloco: abrir os filtros expande este cartão
           para baixo, em vez de fazer nascer um segundo cartão solto. Eram duas
           caixas falando da mesma coisa. */}
-      <div className="rounded-2xl border border-zinc-200/80 bg-white/80 text-sm shadow-2xs dark:border-zinc-800/80 dark:bg-zinc-900/80">
-      <div className="flex flex-wrap items-center justify-between gap-4 p-3.5">
-        <div className="flex flex-wrap items-center gap-3 flex-1">
+      <div className="rounded-2xl border border-zinc-200 bg-white text-sm dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="flex flex-wrap items-center gap-2 p-3">
+        <div className="contents">
           <input
             type="search"
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
             placeholder="Buscar matéria, código ou professor…"
-            className="min-h-11 flex-1 min-w-[240px] rounded-xl border border-zinc-300 bg-zinc-50 px-3.5 py-2 text-sm font-medium focus:border-utfpr-500 focus:bg-white focus:outline-none sm:min-w-[320px] dark:border-zinc-700 dark:bg-zinc-800 dark:focus:border-amber-400 dark:focus:bg-zinc-900"
+            aria-label="Buscar matéria, código ou professor"
+            className="min-h-11 min-w-0 flex-1 basis-60 rounded-lg border border-zinc-300 bg-white px-3.5 py-2 text-sm focus:border-zinc-900 focus:outline-none dark:border-zinc-700 dark:bg-zinc-950 dark:focus:border-zinc-300"
           />
           <button
+            type="button"
             onClick={() => setFiltrosAbertos(!filtrosAbertos)}
-            className={`inline-flex cursor-pointer items-center gap-2 rounded-xl px-4 py-2 font-display text-sm font-bold transition-colors max-sm:min-h-11 ${
+            aria-expanded={filtrosAbertos}
+            className={`inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border px-4 text-sm font-medium transition-colors ${
               filtrosAbertos || grupo !== "todas" || !soOfertadas || !soLiberadas || horarioFiltrado
-                ? "bg-utfpr-500 text-zinc-950 shadow-xs border-2 border-zinc-900 dark:border-amber-400"
-                : "border border-zinc-300 bg-zinc-100 text-zinc-800 hover:border-zinc-900 hover:bg-zinc-200 dark:border-amber-400/70 dark:bg-zinc-800 dark:text-zinc-100 dark:hover:border-amber-400 dark:hover:bg-zinc-700"
+                ? "border-zinc-900 bg-zinc-900 text-white dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-900"
+                : "border-zinc-300 bg-white text-zinc-800 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:bg-zinc-800"
             }`}
           >
             <IconFilter className="h-4 w-4" />
@@ -645,9 +649,10 @@ export function TelaPossoCursar(props: {
             <button
               onClick={() => perfil && onAbrirGradeMagica()}
               disabled={!perfil}
-              className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 font-display text-sm font-bold transition-colors max-sm:min-h-11 ${
+              type="button"
+              className={`inline-flex min-h-11 items-center gap-1.5 rounded-lg px-4 text-sm font-semibold transition-colors ${
                 perfil
-                  ? " bg-utfpr-500 text-zinc-950 shadow-md hover:brightness-105 cursor-pointer"
+                  ? "bg-utfpr-500 text-zinc-950 hover:bg-utfpr-400 cursor-pointer"
                   : "border border-zinc-200 bg-zinc-100 text-zinc-400 cursor-not-allowed dark:border-zinc-800 dark:bg-zinc-800/60 dark:text-zinc-500"
               }`}
               title={perfil ? "Preenchimento com Sugestão de Grade" : EXIGE_HISTORICO}
@@ -659,7 +664,7 @@ export function TelaPossoCursar(props: {
           )}
         </div>
 
-        <div className="font-mono text-xs font-bold text-zinc-500">
+        <div className="ml-auto whitespace-nowrap px-1 text-xs text-zinc-500 dark:text-zinc-400" aria-live="polite">
           {filtrados.length} {filtrados.length === 1 ? "disciplina" : "disciplinas"}
         </div>
       </div>
@@ -710,7 +715,7 @@ export function TelaPossoCursar(props: {
                   return (
                     <option key={conjunto} value={conjunto}>
                       {nome}
-                      {h ? ` — ${Math.min(h.cursada, h.exigida)}/${h.exigida}h` : ""}
+                      {h ? ` · ${Math.min(h.cursada, h.exigida)}/${h.exigida}h` : ""}
                     </option>
                   );
                 })}
@@ -821,7 +826,7 @@ export function TelaPossoCursar(props: {
             </div>
             {janelaInvertida && (
               <p className="text-[11px] font-bold text-red-600 dark:text-red-400">
-                A aula final vem antes da inicial — a janela está sendo ignorada.
+                A aula final vem antes da inicial, então a janela está sendo ignorada.
               </p>
             )}
           </div>

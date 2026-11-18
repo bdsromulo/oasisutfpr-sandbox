@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import type { Matriz, OfertaSemestre, PerfilAluno, SelecaoTurma } from "../../domain/tipos";
 import { gerarSugestaoGrade, type OpcoesSugestaoGrade } from "../../domain/motor/grade-magica";
-import { Botao } from "../componentes";
+import { Botao, Chevron } from "../componentes";
 import { ModalExplicacaoCalculos } from "../componentes/ModalExplicacaoCalculos";
 import {
   IconBan,
@@ -19,6 +19,7 @@ import {
   SLOTS_ORDENADOS,
   ULTIMO_SLOT,
 } from "../../domain/horarios";
+import { nomeLegivel } from "../textos";
 
 export interface ModalSugestaoGradeProps {
   aberto: boolean;
@@ -505,7 +506,7 @@ export function ModalSugestaoGrade({
             </div>
             {janelaInvertida && (
               <p className="text-[11px] font-semibold text-red-600 dark:text-red-400">
-                A aula final vem antes da inicial — inverta os dois para a janela
+                A aula final vem antes da inicial. Inverta os dois para a janela
                 fazer sentido.
               </p>
             )}
@@ -591,8 +592,8 @@ export function ModalSugestaoGrade({
                   {<IconInfo className="inline h-4 w-4 shrink-0 align-[-0.2em]" />}
                 </span>
               </div>
-              <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-zinc-200/80 text-sm font-bold text-zinc-700 transition-colors dark:bg-zinc-700 dark:text-zinc-200">
-                {definicoesAvanadasAbertas ? "▲" : "▼"}
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg text-zinc-500 dark:text-zinc-400">
+                <Chevron aberto={definicoesAvanadasAbertas} />
               </span>
             </button>
 
@@ -629,7 +630,7 @@ export function ModalSugestaoGrade({
                           className="inline-flex items-center gap-1.5 rounded-xl border border-red-200 bg-red-50/80 px-2.5 py-1 text-xs font-semibold text-red-800 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-200"
                         >
                           <span className="font-mono font-bold">{item.codigo}</span>
-                          <span className="truncate max-w-[180px]" title={item.nome}>{item.nome}</span>
+                          <span className="truncate max-w-[180px]" title={nomeLegivel(item.nome)}>{nomeLegivel(item.nome)}</span>
                           <button
                             type="button"
                             onClick={() => setDisciplinasExcluidas((prev) => prev.filter((d) => d.codigo !== item.codigo))}
@@ -680,7 +681,7 @@ export function ModalSugestaoGrade({
                             >
                               <div>
                                 <span className="font-mono font-bold text-zinc-900 dark:text-zinc-100 mr-2">{d.codigo}</span>
-                                <span className="text-zinc-600 dark:text-zinc-300">{d.nome}</span>
+                                <span className="text-zinc-600 dark:text-zinc-300">{nomeLegivel(d.nome)}</span>
                               </div>
                               <span className="shrink-0 rounded-lg bg-red-500/10 px-2 py-0.5 text-[10px] font-bold text-red-600 dark:text-red-400">
                                 + Excluir
@@ -815,12 +816,12 @@ export function ModalSugestaoGrade({
                           className="inline-flex items-center gap-1.5 rounded-xl border border-red-200 bg-red-50/80 px-2.5 py-1 text-xs font-semibold text-red-800 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-200"
                         >
                           <span className="font-mono font-bold">{t.conjunto}</span>
-                          <span className="truncate max-w-[180px]" title={t.nome}>{t.nome}</span>
+                          <span className="truncate max-w-[180px]" title={nomeLegivel(t.nome)}>{nomeLegivel(t.nome)}</span>
                           <button
                             type="button"
                             onClick={() => setTrilhasExcluidas((prev) => prev.filter((item) => item.conjunto !== t.conjunto))}
                             className="ml-0.5 rounded-full p-0.5 hover:bg-red-200 dark:hover:bg-red-900 text-red-600 dark:text-red-300 cursor-pointer"
-                            title={`Remover ${t.nome} da lista de exclusão`}
+                            title={`Remover ${nomeLegivel(t.nome)} da lista de exclusão`}
                           >
                             ×
                           </button>
@@ -866,7 +867,7 @@ export function ModalSugestaoGrade({
                             >
                               <div>
                                 <span className="font-mono font-bold text-zinc-900 dark:text-zinc-100 mr-2">{t.conjunto}</span>
-                                <span className="text-zinc-600 dark:text-zinc-300">{t.nome}</span>
+                                <span className="text-zinc-600 dark:text-zinc-300">{nomeLegivel(t.nome)}</span>
                               </div>
                               <span className="shrink-0 rounded-lg bg-red-500/10 px-2 py-0.5 text-[10px] font-bold text-red-600 dark:text-red-400">
                                 + Excluir

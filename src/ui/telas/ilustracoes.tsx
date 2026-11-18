@@ -151,7 +151,7 @@ export function IlustracaoFontes() {
     <svg
       viewBox="0 0 720 260"
       role="img"
-      aria-label="Quatro fontes públicas — vivências da comunidade, projetos pedagógicos, matrizes curriculares e turmas abertas — ficam no repositório e alimentam o Oásis. O seu histórico entra por fora, direto no seu navegador, e não é enviado a lugar nenhum."
+      aria-label="Quatro fontes públicas (vivências da comunidade, projetos pedagógicos, matrizes curriculares e turmas abertas) ficam no repositório e alimentam o Oásis. O seu histórico entra por fora, direto no seu navegador, e não é enviado a lugar nenhum."
       className="h-auto w-full"
       preserveAspectRatio="xMidYMid meet"
     >

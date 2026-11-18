@@ -77,7 +77,7 @@ function Bloco(props: { numero: string; titulo: string; descricao: string; child
     <section className="space-y-6">
       <div className="border-b-2 border-utfpr-500/40 pb-3">
         <div className="flex items-baseline gap-3">
-          <span className="font-display text-3xl font-bold leading-none text-utfpr-500">
+          <span className="font-display text-3xl font-bold leading-none text-utfpr-700 dark:text-utfpr-400">
             {props.numero}
           </span>
           <h3 className="font-display text-xl font-bold tracking-tight text-zinc-900 dark:text-white">
@@ -831,7 +831,7 @@ export function TelaGestaoInformacao() {
 
       <Bloco
         numero="1"
-        titulo="PEN — Planejamento Estratégico de Negócios"
+        titulo="Planejamento Estratégico de Negócios (PEN)"
         descricao="Onde estamos, para onde queremos ir e qual estratégia adotamos."
       >
         <Secao numero="1.1" titulo="Análise do cenário atendido" descricao="Onde estamos hoje.">
@@ -877,7 +877,7 @@ export function TelaGestaoInformacao() {
 
       <Bloco
         numero="2"
-        titulo="PETI — Planejamento Estratégico de TI"
+        titulo="Planejamento Estratégico de TI (PETI)"
         descricao="Como a estratégia de negócio vira infraestrutura, tecnologia, pessoas e métrica."
       >
         <Secao numero="2.1" titulo="Estratégia de TI">

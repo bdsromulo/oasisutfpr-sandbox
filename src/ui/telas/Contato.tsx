@@ -12,7 +12,7 @@ import { IconCheck, IconCopy, IconMail } from "../icons";
 
 export const EMAIL_CONTATO = "oasisutfpr@gmail.com";
 
-const ASSUNTO = encodeURIComponent("Oásis UTFPR — contato");
+const ASSUNTO = encodeURIComponent("Contato pelo Oásis UTFPR");
 export const LINK_MAILTO = `mailto:${EMAIL_CONTATO}?subject=${ASSUNTO}`;
 
 function useCopiarEmail() {
@@ -90,7 +90,7 @@ export function PilulaFaleConosco(props: {
         type="button"
         onClick={() => setAberta((v) => !v)}
         aria-expanded={aberta}
-        title={`Fale conosco — ${EMAIL_CONTATO}`}
+        title={`Fale conosco pelo ${EMAIL_CONTATO}`}
         aria-label="Fale conosco"
         className="flex min-h-11 min-w-11 cursor-pointer items-center justify-center gap-2 rounded-full border border-zinc-300/80 bg-white px-4 py-2 max-sm:px-0 font-display text-xs font-bold text-zinc-800 shadow-sm transition-colors hover:border-utfpr-500 hover:text-zinc-950 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:border-utfpr-500"
       >
@@ -108,7 +108,7 @@ export function BotaoFaleConosco(props: { compacto?: boolean }) {
     return (
       <a
         href={LINK_MAILTO}
-        title={`Fale conosco — ${EMAIL_CONTATO}`}
+        title={`Fale conosco pelo ${EMAIL_CONTATO}`}
         className="flex min-h-11 shrink-0 items-center gap-1.5 rounded-xl border border-utfpr-500/50 bg-utfpr-500/10 px-2.5 py-2 font-display text-xs font-bold text-amber-900 transition-colors hover:bg-utfpr-500/25 dark:text-utfpr-300"
       >
         <IconMail className="h-4 w-4 shrink-0" />

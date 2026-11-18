@@ -293,9 +293,9 @@ export function TelaConfiguracoes(props: {
               <div className="mt-4 rounded-2xl border-2 border-utfpr-500 bg-utfpr-500/10 p-4 space-y-3 dark:bg-utfpr-500/5 animate-in fade-in duration-200">
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <Badge tom="acento">{<IconFileText className="inline h-4 w-4 shrink-0 align-[-0.2em]" />} Pré-visualização — Confirmação Dupla</Badge>
+                    <Badge tom="acento">{<IconFileText className="inline h-4 w-4 shrink-0 align-[-0.2em]" />} Confira antes de salvar</Badge>
                     <h4 className="font-display font-bold text-base text-zinc-900 dark:text-zinc-100 mt-2">
-                      {perfilPreview.nome} — {perfilPreview.curso}
+                      {perfilPreview.nome} · {perfilPreview.curso}
                     </h4>
                     <div className="text-xs text-zinc-700 dark:text-zinc-300 mt-1.5 space-y-1">
                       <p><strong>Período Letivo mais Recente:</strong> {perfilPreview.periodoDocumento || `${perfilPreview.periodo}º Período`}</p>

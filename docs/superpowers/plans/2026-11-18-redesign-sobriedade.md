@@ -81,15 +81,15 @@ Base visual e estrutura global. Tudo com testes passando (680) e build dentro do
 | 3 | Fundo branco puro | Página branca com degradê | Feito. Página em `zinc-50`, cartões brancos. |
 | 4 | Cores de arco-íris | Paleta de 8 cores das matérias na grade | Fase 2. Paleta própria com menos matizes e tons mais baixos. A cor por matéria tem função, então fica, mas harmonizada. |
 | 5 | Sombras | 114 usos | Parcial. Saíram dos cartões. Ficam só em camadas que flutuam (modais, menus, avisos). Fase 2 termina a limpeza. |
-| 6 | Três cartões lado a lado | Os seis cartões de categoria em Minha Situação | Fase 2. Virar uma lista compacta (categoria, barra, horas), mais fácil de comparar. |
-| 7 | Emojis | ⚡ e ◈ como ícones, ✓, ★, ▲ ▼ em texto | Parcial. ⚡ e ◈ trocados por ícones. Os demais na fase 2. |
+| 6 | Três cartões lado a lado | Os seis cartões de categoria em Minha Situação | Feito. Viraram uma lista só, com barras alinhadas e "faltam Xh" em cada linha. O Resumo do Impacto, na aba da grade, ainda tem a grade de cartões. |
+| 7 | Emojis | ⚡ e ◈ como ícones, ✓, ★, ▲ ▼ em texto | Feito. ▲ ▼ viraram um único `Chevron`, ✓ virou ícone e a seta de voltar também. As estrelas das avaliações ficam, porque ali são a própria nota. |
 | 8 | Vidro líquido | `backdrop-blur` em 36 lugares | Feito. |
-| 9 | Travessões | 68 linhas de texto visível com "—" | Fase 2. Revisão de texto da interface inteira. |
+| 9 | Travessões | Feito nos textos visíveis e nas mensagens do simulador. Sobram travessões só em comentários de código e como marca de valor vazio. Os textos antigos de Novidades ficaram como foram publicados. |
 | 10 | Inter, Geist, Space Grotesk | Outfit e Plus Jakarta Sans | Decisão sua. A Plus Jakarta é muito comum em landing pages geradas. Sugestão abaixo. |
 | 11 | Faixa colorida à esquerda | Avisos e citação do Sobre | Feito nos avisos e na navegação. A citação do Sobre fica para a fase 2. |
 | 12 | Depoimentos falsos | Não tem | Nada a fazer. |
 | 13 | Grade "bento" | Não tem | Nada a fazer. |
-| 14 | Janela de terminal | Fonte mono em contagens e chips ("35 disciplinas", "Grade A") | Fase 2. Mono só para códigos de disciplina e horários. |
+| 14 | Janela de terminal | Parcial. Contagem de disciplinas, cenários de grade e "Importar matérias" saíram do mono. Faltam o Resumo do Impacto e o simulador. |
 | 15 | "Não é X, é Y" | Não encontrado | Conferir na revisão de texto. |
 | 16 | Marcadores de check | Novidades e listas de "Como usar" | Fase 2. Listas simples ou numeradas. |
 | 17 | Três planos de preço | Não tem | Nada a fazer. |
@@ -100,7 +100,7 @@ Base visual e estrutura global. Tudo com testes passando (680) e build dentro do
 | 22 | Orbes radiais | Não tem | Nada a fazer. |
 | 23 | Grade de pontos | Fundo do canvas do fluxograma | Mantido. Ali tem função (referência ao arrastar e dar zoom). |
 | 24 | Ícone de brilho | 10 usos | Feito. Sino, quadro de grade, check, aperto de mão e mais. |
-| 25 | Setas animadas | "Exibir lista →" | Fase 2. Seta sai, o texto do link basta. |
+| 25 | Setas animadas | Feito. "Exibir Lista →" virou "Ver matérias das trilhas", e nas categorias a linha inteira é o link. |
 | 26 | Sem termos de uso | Não tem | Fase 4. Página curta, texto seu. |
 | 27 | Sem política de privacidade | Existe só como menção solta | Fase 4. Página própria. O Oásis tem uma história boa aqui (histórico lido só no navegador, GoatCounter sem cookies). |
 | 28 | Animação no hover | Escalas e sombras | Feito. Só mudança de cor. |
@@ -142,16 +142,16 @@ Base visual e estrutura global. Tudo com testes passando (680) e build dentro do
 | Hick | Cabeçalho com menos escolhas (tema num botão, perfil e configurações juntos). |
 | Fitts | Navegação no rodapé do celular, alvos de 44px, ação principal grande e perto do conteúdo. |
 | Jakob | Barra de abas no rodapé e controle segmentado, padrões que todo mundo já conhece. |
-| Miller | Fase 2 agrupa os seis cartões de categoria numa lista só. |
+| Miller | Os seis cartões de categoria viraram uma lista só. |
 | Doherty (400ms) | Esqueleto imediato, menos efeitos caros, e na fase 3 dados carregados por curso. |
 | Proximidade e região comum | Fim do cartão dentro de cartão. Perfil e configurações no mesmo botão. |
 | Similaridade | Um padrão de aba, um de botão de ícone, um de aviso. |
 | Hierarquia visual | Um peso forte por tela, não 184. |
 | Revelação progressiva | Faixa de semestre com "Entenda". |
 | Reconhecer em vez de lembrar | Fase 2, menu de comandos com busca por nome e código. |
-| Von Restorff | Amarelo reservado à ação principal da tela. Fase 2 tira o segundo botão amarelo da grade. |
+| Von Restorff | Amarelo reservado à ação principal da tela. Na grade montada só "Copiar relatório para a matrícula" é amarelo, e "Filtros" ativo ficou preto em vez de amarelo. |
 | Pico e fim | Fase 4, momento de conclusão quando a grade fica sem conflitos ou o simulador fecha a formatura. |
-| Gradiente de meta | As barras e o "faltam X h" já fazem isso. Fase 2 dá mais destaque ao que falta. |
+| Gradiente de meta | Cada linha de categoria mostra quanto falta. |
 | Posição serial | Configurações no início do cabeçalho, ajuda e sobre no fim. |
 | Tesler | O Oásis já absorve a complexidade (detecta curso e matriz sozinho). Manter. |
 | Postel | Busca tolerante a acento e caixa já existe. Fase 2 estende ao menu de comandos. |
@@ -194,3 +194,14 @@ Base visual e estrutura global. Tudo com testes passando (680) e build dentro do
 - Conferir no sandbox em três situações. Um celular real, um PC dos laboratórios da UTFPR, e o Chrome com a CPU limitada a 6x (DevTools, Performance).
 - Testar com teclado (Tab e Enter) a navegação, as sub-abas e as disciplinas do Planejamento.
 - Testar com "reduzir movimento" ligado no sistema.
+
+## Fase 2, primeira leva (feito)
+
+- Travessões fora dos textos visíveis.
+- `nomeLegivel()` em `src/ui/textos.ts` mostra "Análise e Projeto de Sistemas" sem mexer no dado. Primeira e última palavra ficam como vieram ("Física A"). A matriz 981 escreve "Arquitetura Em Organização De Computadores", com "Em" no lugar de "E". Isso é da fonte e aparece como "em", então vale registrar na camada de anotações se incomodar.
+- Lista de categorias em Minha Situação.
+- Um `Chevron` no lugar de ▲ ▼, ícone no lugar de ✓ e ←.
+- Contraste do tema claro. O amarelo deixou de ser cor de texto sobre branco (dava 1,6:1) e o `text-zinc-400` sobe para zinc-500. As correções de contraste agora ficam na camada de utilitários, para não anular os `hover:text-*`.
+- Barra de busca de Matérias abertas numa linha, "Filtros" ativo em preto, um amarelo só na grade montada, cenários de grade sem fonte mono.
+
+Fica para a próxima leva o Resumo do Impacto da grade (outra grade de cartões e chips mono), o filtro de turno amarelo acima da grade, a paleta das matérias na grade, os avisos em tons pastel, a citação do Sobre e o menu de comandos.

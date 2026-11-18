@@ -10,6 +10,7 @@ import {
 } from "./icons";
 import { calcularProgressoMateria, type StatusIcone } from "../domain/motor/progressoGrade";
 import type { Matriz, PerfilAluno } from "../domain/tipos";
+import { nomeLegivel } from "./textos";
 
 /**
  * Carregador de pontos 3x3, que acende em diagonal. Inspirado nos loaders de
@@ -32,6 +33,27 @@ export function CarregadorPontos(props: { classe?: string; rotulo?: string }) {
         />
       ))}
     </span>
+  );
+}
+
+/**
+ * Seta de abrir e fechar. Substitui os triângulos de texto (▲ ▼), que mudavam
+ * de tamanho conforme a fonte e liam como emoji em alguns celulares.
+ */
+export function Chevron(props: { aberto: boolean; classe?: string }) {
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className={`h-3.5 w-3.5 shrink-0 transition-transform duration-150 ${props.aberto ? "rotate-180" : ""} ${props.classe ?? ""}`}
+    >
+      <path d="M4 6l4 4 4-4" />
+    </svg>
   );
 }
 
@@ -320,8 +342,8 @@ export const OPCOES_ORDENACAO_PADRAO: OpcaoOrdenacao[] = [
   { id: "za", rotulo: "Ordem Alfabética (Z-A)" },
   { id: "ch_desc", rotulo: "Mais Horas (90h, 75h, 60h...)" },
   { id: "ch_asc", rotulo: "Menos Horas (30h, 45h, 60h...)" },
-  { id: "per_asc", rotulo: "Período (Mais Anterior 1º→8º)" },
-  { id: "per_desc", rotulo: "Período (Mais Posterior 8º→1º)" },
+  { id: "per_asc", rotulo: "Período, do 1º ao 8º" },
+  { id: "per_desc", rotulo: "Período, do 8º ao 1º" },
 ];
 
 export function MenuOrdenacao(props: {
@@ -355,8 +377,8 @@ export function MenuOrdenacao(props: {
     <div ref={ref} className={`relative inline-block text-left ${props.classe ?? ""}`}>
       <button
         onClick={() => setAberto(!aberto)}
-        title={`Ordenação atual: ${opAtual?.rotulo ?? "Padrão"} — Clique para alterar`}
-        className="flex h-11 w-11 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-600 shadow-xs transition-colors hover:border-zinc-900 hover:bg-zinc-50 hover:text-zinc-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-amber-400 dark:hover:bg-zinc-800/80 dark:hover:text-amber-400 cursor-pointer"
+        title={`Ordenação atual: ${opAtual?.rotulo ?? "Padrão"}. Clique para alterar`}
+        className="flex h-11 w-11 items-center justify-center rounded-lg border border-zinc-300 bg-white text-zinc-700 transition-colors hover:bg-zinc-50 hover:text-zinc-950 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-white cursor-pointer"
       >
         <IconSortUpDown className="h-4.5 w-4.5" />
       </button>
@@ -458,7 +480,7 @@ export function CardPreviewHoverMateria(props: {
             <span className="inline-flex items-center gap-1.5">{props.tituloCustom ?? "Preview do Hover · Impacto na Categoria"}</span>
           </div>
           <div className="mt-0.5 font-display text-sm font-bold text-zinc-900 dark:text-zinc-100 leading-tight truncate">
-            {props.codigoDisciplina} — {props.nomeDisciplina ?? dados.categoriaNome}
+            {props.codigoDisciplina} · {nomeLegivel(props.nomeDisciplina ?? dados.categoriaNome)}
           </div>
           <div className="mt-0.5 font-mono text-xs font-semibold text-zinc-500 dark:text-zinc-400">
             {dados.categoriaNome}
@@ -566,7 +588,7 @@ export function BalaoProgressoHover(props: {
             {props.codigoDisciplina}
           </span>
           <div className="font-display text-xs font-bold text-zinc-900 dark:text-zinc-100 leading-snug">
-            {props.nomeDisciplina ?? props.codigoDisciplina}
+            {nomeLegivel(props.nomeDisciplina) || props.codigoDisciplina}
           </div>
         </div>
       </div>
@@ -608,7 +630,7 @@ export function BalaoProgressoHover(props: {
           </div>
           <div className="min-w-0 flex-1">
             <div className="font-display text-xs font-bold text-zinc-900 dark:text-zinc-100 leading-snug truncate">
-              {props.nomeDisciplina ?? props.codigoDisciplina}
+              {nomeLegivel(props.nomeDisciplina) || props.codigoDisciplina}
             </div>
             <div className="text-[10px] font-medium text-zinc-500 dark:text-zinc-400 truncate mt-0.5">
               Carregando progresso (1s)...
@@ -644,7 +666,7 @@ export function BalaoProgressoHover(props: {
 
       <div className="flex flex-col gap-1 text-left">
         <div className="font-display text-xs font-bold text-zinc-900 dark:text-zinc-100 leading-snug truncate">
-          {props.nomeDisciplina ?? props.codigoDisciplina}
+          {nomeLegivel(props.nomeDisciplina) || props.codigoDisciplina}
         </div>
         <div className="font-mono text-[11px] font-semibold text-utfpr-600 dark:text-utfpr-400 truncate">
           {dados.categoriaNome}

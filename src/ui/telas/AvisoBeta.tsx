@@ -27,7 +27,7 @@ export function AvisoBeta() {
         <div className="flex items-center gap-3 border-b-2 border-amber-500/50 bg-amber-500 px-5 py-3 dark:bg-amber-500/90">
           <IconWarning className="h-6 w-6 shrink-0 text-zinc-950" />
           <span className="font-display text-lg font-medium text-zinc-950 sm:text-xl">
-            Ambiente de testes — não é o Oásis oficial
+            Ambiente de testes, não é o Oásis oficial
           </span>
         </div>
 

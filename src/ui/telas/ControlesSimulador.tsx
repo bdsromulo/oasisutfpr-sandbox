@@ -19,6 +19,7 @@ import { formatarSemestre } from "../../domain/motor/simuladorFormatura";
 // Mesmo motivo do SeletorExclusoes: o valor puro mora em `valoresSimulador`
 // para o App poder guardá-lo sem carregar os controles.
 import type { ValorModelagem } from "./valoresSimulador";
+import { nomeLegivel } from "../textos";
 export { MODELAGEM_VAZIA, type ValorModelagem } from "./valoresSimulador";
 
 /**
@@ -107,7 +108,7 @@ export function SeletorTrilhasAlvo(props: {
         {valor.length === 0
           ? `Nenhuma marcada: o Oásis escolhe as ${exigidas} mais baratas de fechar.`
           : `${valor.length} de ${exigidas} escolhida(s)${
-              valor.length < exigidas ? " — o Oásis completa o resto." : "."
+              valor.length < exigidas ? ". O Oásis completa o resto." : "."
             }`}
       </p>
       <div className="mt-2 flex flex-wrap gap-1.5">
@@ -119,14 +120,14 @@ export function SeletorTrilhasAlvo(props: {
               key={t.conjunto}
               type="button"
               onClick={() => alternar(t.conjunto)}
-              title={`${t.nome} — ${t.cursada}h de ${t.exigida}h`}
+              title={`${nomeLegivel(t.nome)}, ${t.cursada}h de ${t.exigida}h`}
               className={`cursor-pointer rounded-xl border px-3 py-2 text-left text-xs font-bold transition-colors ${
                 marcada
                   ? "border-utfpr-500 bg-utfpr-500/15 text-utfpr-900 dark:text-utfpr-200"
                   : "border-zinc-200 bg-zinc-50 text-zinc-700 hover:border-zinc-300 dark:border-zinc-800 dark:bg-zinc-800/50 dark:text-zinc-300"
               }`}
             >
-              <span className="block max-w-[16rem] truncate">{t.nome}</span>
+              <span className="block max-w-[16rem] truncate">{nomeLegivel(t.nome)}</span>
               <span
                 className={`mt-0.5 block font-mono text-[10px] ${
                   completa ? "text-emerald-600 dark:text-emerald-400" : "text-zinc-500"
@@ -212,7 +213,7 @@ export function ControlesAvancados(props: {
         </label>
         <p className="mt-1 text-[11px] font-semibold text-zinc-500 dark:text-zinc-400">
           A projeção prefere turmas dentro da janela. Obrigatória sem alternativa
-          entra assim mesmo — sem ela não há formatura.
+          entra assim mesmo, porque sem ela não há formatura.
         </p>
         <div className="mt-2 grid grid-cols-2 gap-2">
           <select
@@ -240,7 +241,7 @@ export function ControlesAvancados(props: {
         </div>
         {janelaInvertida && (
           <p className="mt-1.5 text-[11px] font-bold text-red-600 dark:text-red-400">
-            A aula final vem antes da inicial — a janela está sendo ignorada.
+            A aula final vem antes da inicial, então a janela está sendo ignorada.
           </p>
         )}
       </div>

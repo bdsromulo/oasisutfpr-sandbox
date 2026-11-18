@@ -17,25 +17,7 @@ import { categoriaDe } from "../../domain/motor/elegiveis";
 import { disciplinaCanonicaDaOferta } from "../../domain/motor/identidade";
 import { calcularResumoProgressoGrade, obterCargaHoraria, type ResumoCategoriaGrade } from "../../domain/motor/progressoGrade";
 import { Badge, BalaoProgressoHover, BarraProgressoComPreview, Botao, Card, IconeStatusProgresso } from "../componentes";
-import {
-  IconCalendar,
-  IconCheck,
-  IconCopy,
-  IconDownload,
-  IconGraduationCap,
-  IconHourglass,
-  IconImage,
-  IconInfo,
-  IconLock,
-  IconPin,
-  IconStar,
-  IconTarget,
-  IconTrash,
-  IconTrendUp,
-  IconUser,
-  IconWarning,
-  IconGrade,
-} from "../icons";
+import { IconCalendar, IconCheck, IconCopy, IconDownload, IconGraduationCap, IconHourglass, IconImage, IconInfo, IconLock, IconPin, IconStar, IconTarget, IconTrash, IconTrendUp, IconUser, IconWarning, IconGrade } from "../icons";
 import { ModalGradeMagica } from "./ModalGradeMagica";
 import { useToasts } from "../toasts/contexto";
 import { avisarRemocao } from "../toasts/avisos";
@@ -44,6 +26,7 @@ import { reviewsHabilitadasPara } from "../../domain/reviews/config";
 import { PainelDisciplina, type AlvoPainelDisciplina } from "./PainelDisciplina";
 import { useContagemPorTurma } from "./reviewsComuns";
 import { descricaoDoCurso, ehTrilha } from "../../domain/cursos";
+import { nomeLegivel } from "../textos";
 
 const DIAS: [number, string][] = [
   [2, "Segunda"],
@@ -144,7 +127,7 @@ function CardResumoCategoria({ r, isSubTrilha }: { r: ResumoCategoriaGrade; isSu
                 <span
                   key={disc.codigo}
                   className="inline-flex items-center gap-1 rounded bg-white/90 px-1.5 py-0.5 font-mono text-[11px] font-semibold text-zinc-700 shadow-2xs border border-zinc-200/80 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700/80"
-                  title={`${disc.nome} (${disc.carga}h)`}
+                  title={`${nomeLegivel(disc.nome)} (${disc.carga}h)`}
                 >
                   {disc.codigo}
                   <span className="text-[10px] font-bold text-utfpr-600 dark:text-utfpr-400">
@@ -336,7 +319,7 @@ function SecaoResumoImpactoGrade(props: {
                           <span
                             key={disc.codigo}
                             className="inline-flex items-center gap-1 rounded bg-white/90 px-1.5 py-0.5 font-mono text-[11px] font-semibold text-zinc-700 shadow-2xs border border-zinc-200/80 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700/80"
-                            title={`${disc.nome} (${disc.carga}h)`}
+                            title={`${nomeLegivel(disc.nome)} (${disc.carga}h)`}
                           >
                             {disc.codigo}
                             <span className="text-[10px] font-bold text-utfpr-600 dark:text-utfpr-400">
@@ -625,9 +608,9 @@ export function TelaGrade(props: {
     Boolean(props.onEnviarParaSimulador) && estadoDaGrade !== "passado";
   const chavesGrades = props.cestaGrades ? Object.keys(props.cestaGrades).sort() : ["A"];
   const barraAbas = props.cestaGrades && props.onMudarGradeAtiva && (
-    <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-zinc-200/80 bg-white/80 p-3 shadow-2xs dark:border-zinc-800/80 dark:bg-zinc-900/80">
+    <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900">
       <div className="flex flex-wrap items-center gap-2">
-        <span className="font-display text-xs font-bold text-zinc-500 dark:text-zinc-400 mr-1">Cenários de Grade:</span>
+        <span className="mr-1 text-xs text-zinc-500 dark:text-zinc-400">Cenários</span>
         {chavesGrades.map((g) => {
           const ativa = g === (props.gradeAtiva ?? "A");
           const count = (props.cestaGrades![g] ?? []).length;
@@ -635,15 +618,16 @@ export function TelaGrade(props: {
             <div key={g} className="group relative flex items-center">
               <button
                 onClick={() => props.onMudarGradeAtiva!(g)}
-                className={`flex min-h-11 items-center gap-1.5 rounded-xl px-3 py-1.5 font-mono text-xs font-bold transition-colors sm:min-h-8 ${
+                aria-pressed={ativa}
+                className={`flex min-h-11 cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors sm:min-h-9 ${
                   ativa
-                    ? "bg-zinc-900 text-utfpr-500 shadow-xs dark:bg-zinc-800 dark:text-utfpr-400 border border-utfpr-500/40"
-                    : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800/60 dark:text-zinc-400 dark:hover:bg-zinc-800"
+                    ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
+                    : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
                 }`}
                 title={`Simulação Grade ${g}`}
               >
                 <span>Grade {g}</span>
-                <span className={`rounded-md px-1.5 py-0.5 text-[10px] font-bold ${ativa ? "bg-utfpr-500/20 text-utfpr-400" : "bg-zinc-200/80 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-400"}`}>
+                <span className={`rounded-md px-1.5 py-0.5 text-[10px] font-bold ${ativa ? "bg-white/15 text-white dark:bg-zinc-900/10 dark:text-zinc-900" : "bg-zinc-200 text-zinc-600 dark:bg-zinc-700 dark:text-zinc-300"}`}>
                   {count}
                 </span>
               </button>
@@ -666,7 +650,7 @@ export function TelaGrade(props: {
         {props.onNovaGrade && chavesGrades.length < 3 && (
           <button
             onClick={props.onNovaGrade}
-            className="flex h-11 items-center gap-1 rounded-xl border border-dashed border-zinc-300 bg-zinc-50 px-2.5 font-mono text-xs font-bold text-zinc-500 transition-colors hover:border-utfpr-500 hover:bg-utfpr-500/10 hover:text-zinc-900 sm:h-8 dark:border-zinc-700 dark:bg-zinc-800/40 dark:text-zinc-400 dark:hover:text-white"
+            className="flex h-11 cursor-pointer items-center gap-1 rounded-lg border border-dashed border-zinc-300 px-3 text-sm font-medium text-zinc-600 transition-colors hover:border-zinc-400 hover:text-zinc-900 sm:h-9 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-500 dark:hover:text-white"
             title="Criar nova Grade alternativa B ou C (+)"
           >
             <span>+ Nova Grade</span>
@@ -686,10 +670,11 @@ export function TelaGrade(props: {
               setConfirmacaoSobreescreverImportacao(false);
               setModalImportarAberto(true);
             }}
-            className="flex h-11 items-center gap-1.5 rounded-xl border border-zinc-300 bg-white px-3 font-mono text-xs font-bold shadow-2xs transition-colors hover:border-utfpr-500 hover:bg-utfpr-50 hover:text-utfpr-700 sm:h-8 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700 cursor-pointer"
+            className="flex h-11 items-center gap-1.5 rounded-lg border border-zinc-300 bg-white px-3 text-sm font-medium transition-colors hover:bg-zinc-50 sm:h-9 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800 cursor-pointer"
             title="Importar matérias cadastradas em outros semestres"
           >
-            <span>{<IconDownload className="inline h-4 w-4 shrink-0 align-[-0.2em]" />} Importar Matérias</span>
+            <IconDownload className="h-4 w-4 shrink-0" />
+            <span>Importar matérias</span>
           </button>
           <span
             className="flex h-5 w-5 items-center justify-center rounded-full bg-zinc-200 text-[11px] font-bold text-zinc-600 cursor-help dark:bg-zinc-700 dark:text-zinc-300"
@@ -874,7 +859,7 @@ export function TelaGrade(props: {
                           <div className="shrink-0 flex items-center">
                             {item.compativel ? (
                               <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 px-2.5 py-1 text-[11px] font-bold text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300">
-                                <span>✓ Compatível</span>
+                                <span className="inline-flex items-center gap-1"><IconCheck className="h-3.5 w-3.5" />Compatível</span>
                               </span>
                             ) : item.existeNoAlvo ? (
                               <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/15 px-2.5 py-1 text-[11px] font-bold text-amber-700 dark:bg-amber-500/20 dark:text-amber-300" title={`Esta turma ou matéria mudou de horário/professor no semestre ${props.semestreAtivo || SEMESTRE_CORRENTE}`}>
@@ -962,7 +947,6 @@ export function TelaGrade(props: {
           <Botao
             variante="primario"
             onClick={props.onAbrirGradeMagica || (() => setModalGradeMagica(true))}
-            classe=" !bg-utfpr-500 !text-zinc-950 !border-amber-600/30 hover:!brightness-105 transition-colors shadow-md font-bold cursor-pointer"
           >
             <IconGrade className="inline h-4 w-4 shrink-0 align-[-0.2em]" /> Sugestão de Grade
           </Botao>
@@ -973,7 +957,7 @@ export function TelaGrade(props: {
               <IconCalendar className="h-6 w-6" />
             </div>
             <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
-              Sua grade horária está vazia no momento — selecione e adicione turmas na aba{" "}
+              Sua grade está vazia. Adicione turmas pela aba{" "}
               <strong className="text-zinc-800 dark:text-zinc-200">Matérias Abertas</strong>.
             </p>
           </div>
@@ -1017,7 +1001,27 @@ export function TelaGrade(props: {
             arrastavam a página inteira de lado; agora quebram em linhas */}
         <div className="flex w-full flex-wrap items-center gap-2.5 sm:w-auto">
           <Botao
-            variante="neutro"
+            variante="primario"
+            onClick={() => {
+              navigator.clipboard.writeText(relatorioTexto(itens));
+              setCopiado(true);
+              setTimeout(() => setCopiado(false), 2000);
+            }}
+          >
+            {copiado ? (
+              <>
+                <IconCheck className="h-4 w-4" />
+                <span>Copiado</span>
+              </>
+            ) : (
+              <>
+                <IconCopy className="h-4 w-4" />
+                <span>Copiar relatório para a matrícula</span>
+              </>
+            )}
+          </Botao>
+          <Botao
+            variante="sutil"
             onClick={async () => {
               if (!gradeTableRef.current) return;
               try {
@@ -1041,27 +1045,21 @@ export function TelaGrade(props: {
                 setBaixandoImagem(false);
               }
             }}
-            classe="hover:!border-utfpr-500/80 transition-colors font-semibold cursor-pointer text-xs"
             title="Baixar imagem PNG da sua grade horária montada"
           >
-            <span className="inline-flex items-center gap-1.5">{baixandoImagem ? <IconHourglass className="h-4 w-4 shrink-0" /> : <IconImage className="h-4 w-4 shrink-0" />}<span>{baixandoImagem ? "Gerando PNG..." : "Baixar Imagem (PNG)"}</span></span>
+            <span className="inline-flex items-center gap-1.5">{baixandoImagem ? <IconHourglass className="h-4 w-4 shrink-0" /> : <IconImage className="h-4 w-4 shrink-0" />}<span>{baixandoImagem ? "Gerando imagem" : "Baixar imagem"}</span></span>
           </Botao>
           <Botao
-            variante="primario"
+            variante="sutil"
             onClick={props.onAbrirGradeMagica || (() => setModalGradeMagica(true))}
-            classe=" !bg-utfpr-500 !text-zinc-950 !border-amber-600/30 hover:!brightness-105 transition-colors shadow-md font-bold cursor-pointer"
           >
-            <IconGrade className="inline h-4 w-4 shrink-0 align-[-0.2em]" /> Sugestão de Grade
+            <IconGrade className="h-4 w-4 shrink-0" />
+            <span>Sugestão de Grade</span>
           </Botao>
           {podeEnviarAoSimulador && (
             <Botao
-              variante="neutro"
+              variante="sutil"
               onClick={props.onEnviarParaSimulador}
-              classe={`transition-colors font-semibold cursor-pointer text-xs ${
-                props.gradeNoSimulador
-                  ? "!border-utfpr-500 !text-utfpr-700 dark:!text-utfpr-300"
-                  : "hover:!border-utfpr-500/80"
-              }`}
               title="Usar esta grade como o semestre de partida do Simulador de Formatura: os semestres seguintes são projetados a partir dela"
             >
               <span className="inline-flex items-center gap-1.5">
@@ -1074,26 +1072,6 @@ export function TelaGrade(props: {
               </span>
             </Botao>
           )}
-          <Botao
-            variante="primario"
-            onClick={() => {
-              navigator.clipboard.writeText(relatorioTexto(itens));
-              setCopiado(true);
-              setTimeout(() => setCopiado(false), 2000);
-            }}
-          >
-            {copiado ? (
-              <>
-                <IconCheck className="h-4 w-4" />
-                <span>Copiado</span>
-              </>
-            ) : (
-              <>
-                <IconCopy className="h-4 w-4" />
-                <span>Copiar relatório p/ matrícula</span>
-              </>
-            )}
-          </Botao>
           <Botao
             variante="perigo"
             onClick={limparGrade}
@@ -1212,7 +1190,7 @@ export function TelaGrade(props: {
                                     ? "ring-2 ring-zinc-950 dark:ring-white scale-[1.03] shadow-md z-40 brightness-105 overflow-visible"
                                     : ""
                                 }`}
-                                title={`${o.item.disciplina.nome} — ${o.item.turma.codigo}${o.sala ? ` (${o.sala})` : ""}`}
+                                title={`${nomeLegivel(o.item.disciplina.nome)} · ${o.item.turma.codigo}${o.sala ? ` (${o.sala})` : ""}`}
                               >
                                 <div className="truncate min-w-0">
                                   <span className="font-mono font-bold">{codigoCurricular}</span>
@@ -1267,7 +1245,7 @@ export function TelaGrade(props: {
             {props.exclusoesSugestao.disciplinas && props.exclusoesSugestao.disciplinas.length > 0 && (
               <div className="leading-relaxed">
                 <strong className="font-semibold text-amber-950 dark:text-amber-100">Matérias excluídas: </strong>
-                {props.exclusoesSugestao.disciplinas.map((d) => `${d.codigo} (${d.nome})`).join("; ")}
+                {props.exclusoesSugestao.disciplinas.map((d) => `${d.codigo} (${nomeLegivel(d.nome)})`).join("; ")}
               </div>
             )}
             {props.exclusoesSugestao.professores && props.exclusoesSugestao.professores.length > 0 && (
@@ -1360,7 +1338,7 @@ export function TelaGrade(props: {
                 {isEsteElemento && (
                   <BalaoProgressoHover
                     codigoDisciplina={codigoCurricular}
-                    nomeDisciplina={item.disciplina.nome}
+                    nomeDisciplina={nomeLegivel(item.disciplina.nome)}
                     cargaHoraria={obterCargaHoraria(item.disciplina, props.matriz)}
                     perfil={props.perfil}
                     matriz={props.matriz}
@@ -1373,7 +1351,7 @@ export function TelaGrade(props: {
                     <span className={`mt-1 h-3 w-3 shrink-0 rounded-full ${CORES[i % CORES.length].split(" ")[0]}`} />
                     <div className="min-w-0">
                       <div className="font-display text-sm font-bold text-zinc-900 dark:text-zinc-100 leading-snug">
-                        {item.disciplina.nome}
+                        {nomeLegivel(item.disciplina.nome)}
                       </div>
                       <div className="mt-1 flex flex-wrap items-center gap-1.5 font-mono text-xs font-semibold text-zinc-500 dark:text-zinc-400">
                         <span className="rounded bg-zinc-100 px-1.5 py-0.5 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">

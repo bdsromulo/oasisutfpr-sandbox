@@ -44,7 +44,7 @@ import {
 import { useToasts } from "../toasts/contexto";
 import { PainelAprovacaoPresumida } from "./PainelAprovacaoPresumida";
 import { avisarProjecao } from "../toasts/avisos";
-import { Barra, Card } from "../componentes";
+import { Barra, Card, Chevron } from "../componentes";
 import {
   IconBan,
   IconCheck,
@@ -61,6 +61,7 @@ import {
   totalExclusoes,
   type ValorExclusoes,
 } from "./SeletorExclusoes";
+import { nomeLegivel } from "../textos";
 
 function converterParaSelecao(
   disciplinasPlanejadas: DisciplinaPlanejada[],
@@ -207,7 +208,7 @@ function CardRequisito(props: { req: Requisito }) {
     >
       <div className="flex items-baseline justify-between gap-2">
         <span className="font-display text-xs font-bold text-zinc-700 dark:text-zinc-200">
-          {req.nome}
+          {nomeLegivel(req.nome)}
         </span>
         {req.atendido ? (
           <IconCheck className="h-3.5 w-3.5 shrink-0 text-emerald-600 dark:text-emerald-400" />
@@ -650,7 +651,7 @@ export function TelaSimuladorFormatura(props: {
               <p className="mt-1 max-w-2xl text-xs leading-relaxed text-zinc-600 dark:text-zinc-400">
                 O semestre de {formatarSemestre(gradeFixada.semestre)} entra exatamente como você
                 montou no Planejamento de Matrícula ({gradeFixada.itens.length}{" "}
-                {gradeFixada.itens.length === 1 ? "matéria" : "matérias"}) — o motor não escolhe
+                {gradeFixada.itens.length === 1 ? "matéria" : "matérias"}). O motor não escolhe
                 nada nele. Os semestres seguintes são calculados a partir dessa grade.
               </p>
             </div>
@@ -814,9 +815,7 @@ export function TelaSimuladorFormatura(props: {
                 {totalExclusoes(exclusoes)}
               </span>
             )}
-            <span className="font-mono text-xs font-bold text-zinc-400">
-              {painelExclusoesAberto ? "▲" : "▼"}
-            </span>
+            <Chevron aberto={painelExclusoesAberto} classe="text-zinc-400" />
           </span>
         </button>
         {painelExclusoesAberto && (
@@ -863,9 +862,7 @@ export function TelaSimuladorFormatura(props: {
                 {totalModelagem(modelagem)}
               </span>
             )}
-            <span className="font-mono text-xs font-bold text-zinc-400">
-              {painelAvancadoAberto ? "▲" : "▼"}
-            </span>
+            <Chevron aberto={painelAvancadoAberto} classe="text-zinc-400" />
           </span>
         </button>
         {painelAvancadoAberto && (
@@ -1086,7 +1083,7 @@ export function TelaSimuladorFormatura(props: {
                             {aberta && (
                               <div className="absolute left-0 top-full z-20 mt-1 max-h-72 w-80 overflow-y-auto rounded-2xl border-2 border-utfpr-500/40 bg-white p-2 shadow-lg dark:bg-zinc-900">
                                 <p className="px-1.5 pb-1.5 text-[11px] font-bold text-zinc-500 dark:text-zinc-400">
-                                  Cursar no lugar de <strong>{d.nome}</strong>:
+                                  Cursar no lugar de <strong>{nomeLegivel(d.nome)}</strong>:
                                 </p>
                                 {opcoes.map((alt) => (
                                   <button
@@ -1095,7 +1092,7 @@ export function TelaSimuladorFormatura(props: {
                                     onClick={() => trocarDisciplina(d.codigo, alt.codigo)}
                                     className="block w-full cursor-pointer rounded-xl px-2 py-1.5 text-left text-xs font-semibold text-zinc-700 hover:bg-utfpr-500/15 dark:text-zinc-200"
                                   >
-                                    {alt.nome}
+                                    {nomeLegivel(alt.nome)}
                                     <span className="ml-1.5 font-mono text-[10px] text-zinc-400">
                                       {alt.codigo} · {alt.horas.total}h
                                     </span>
@@ -1109,7 +1106,7 @@ export function TelaSimuladorFormatura(props: {
                       <span
                         className={`h-2 w-2 shrink-0 rounded-full ${CORES_CATEGORIA[d.categoria].ponto}`}
                       />
-                      <span className="font-medium text-zinc-800 dark:text-zinc-200">{d.nome}</span>
+                      <span className="font-medium text-zinc-800 dark:text-zinc-200">{nomeLegivel(d.nome)}</span>
                       <span
                         className={`rounded-md border px-1.5 py-0.5 font-display text-[10px] font-bold ${CORES_CATEGORIA[d.categoria].chip}`}
                       >
@@ -1182,7 +1179,7 @@ export function TelaSimuladorFormatura(props: {
                                 }}
                                 className="block w-full cursor-pointer rounded-xl px-2 py-1.5 text-left text-xs font-semibold text-zinc-700 hover:bg-utfpr-500/15 dark:text-zinc-200"
                               >
-                                {alt.nome}
+                                {nomeLegivel(alt.nome)}
                                 <span className="ml-1.5 font-mono text-[10px] text-zinc-400">
                                   {alt.codigo} · {alt.horas.total}h
                                 </span>
@@ -1314,7 +1311,7 @@ export function TelaSimuladorFormatura(props: {
                 key={t.conjunto}
                 className="rounded-lg border border-indigo-300/60 bg-white px-2.5 py-1 font-display text-xs font-bold text-indigo-900 dark:border-indigo-800/60 dark:bg-zinc-900 dark:text-indigo-200"
               >
-                {t.nome}
+                {nomeLegivel(t.nome)}
               </li>
             ))}
           </ul>
@@ -1345,7 +1342,7 @@ export function TelaSimuladorFormatura(props: {
           className="pointer-events-none fixed z-50 max-w-[70vw] truncate rounded-xl border-2 border-utfpr-500 bg-white px-2.5 py-1 font-display text-xs font-bold text-zinc-900 shadow-lg dark:bg-zinc-900 dark:text-white"
           style={{ left: arrasto.x + 12, top: arrasto.y + 12 }}
         >
-          {arrasto.nome}
+          {nomeLegivel(arrasto.nome)}
         </div>
       )}
     </div>

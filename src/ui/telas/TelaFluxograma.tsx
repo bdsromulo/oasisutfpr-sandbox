@@ -4,6 +4,7 @@ import {
   IconSearch,
   IconFolders,
   IconTarget,
+  IconCheck,
 } from "../icons";
 import type { Matriz, OfertaSemestre, PerfilAluno } from "../../domain/tipos";
 import {
@@ -18,6 +19,7 @@ import {
   type NoFluxo,
 } from "../../domain/motor/fluxograma";
 import { descricaoDoCurso } from "../../domain/cursos";
+import { nomeLegivel } from "../textos";
 
 type AbaBoard = "obrigatorias" | "opcoes" | "trilhas";
 
@@ -309,7 +311,7 @@ export function TelaFluxograma(props: {
 
       {abaBoard === "trilhas" && temOferta && (
         <p className="rounded-2xl border border-indigo-300/70 bg-indigo-50/70 px-4 py-3 text-xs font-medium leading-relaxed text-indigo-900 dark:border-indigo-800/70 dark:bg-indigo-950/40 dark:text-indigo-200">
-          Este board mostra apenas disciplinas de trilha que <strong>efetivamente abriram</strong> em {ofertas.map((o) => o.semestre.replace("-", ".")).join(" ou ")} — trilhas sem oferta conhecida não aparecem. Blocos tracejados são
+          Este board mostra apenas disciplinas de trilha que <strong>efetivamente abriram</strong> em {ofertas.map((o) => o.semestre.replace("-", ".")).join(" ou ")}. Trilhas sem oferta conhecida não aparecem. Blocos tracejados são
           pré-requisitos que vivem fora da trilha.
         </p>
       )}
@@ -398,7 +400,7 @@ export function TelaFluxograma(props: {
               }}
               className="rounded-lg border border-zinc-200 bg-white px-2.5 py-1 font-display text-xs font-bold text-zinc-700 transition-colors hover:border-utfpr-500 hover:text-zinc-950 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:text-white cursor-pointer"
             >
-              {n.nome}
+              {nomeLegivel(n.nome)}
             </button>
           ))}
         </div>
@@ -509,7 +511,7 @@ export function TelaFluxograma(props: {
                 data-no={n.id}
                 type="button"
                 onClick={() => setSelecionado(selecionado === n.id ? null : n.id)}
-                title={`${n.codigo} — ${n.nome}${n.horas ? ` · ${n.horas}h` : ""}${
+                title={`${n.codigo} · ${nomeLegivel(n.nome)}${n.horas ? ` · ${n.horas}h` : ""}${
                   n.exigePeriodo ? ` · exige ${n.exigePeriodo}º período` : ""
                 }`}
                 className={`absolute flex flex-col justify-center overflow-hidden rounded-xl border-2 px-3 text-left shadow-xs transition-colors hover:z-10 hover:shadow-lg cursor-pointer ${cor.no} ${
@@ -531,14 +533,14 @@ export function TelaFluxograma(props: {
                       : "text-zinc-900 dark:text-zinc-100"
                   }`}
                 >
-                  {n.nome}
+                  {nomeLegivel(n.nome)}
                 </span>
                 {concluida && (
                   <span
-                    className="absolute right-1.5 top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500 text-[9px] font-bold text-white"
+                    className="absolute right-1.5 top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-600 text-white"
                     title="Concluída no seu histórico"
                   >
-                    ✓
+                    <IconCheck className="h-3 w-3" />
                   </span>
                 )}
                 {n.exigePeriodo && (
@@ -567,8 +569,8 @@ export function TelaFluxograma(props: {
         ))}
         {perfil && (
           <span className="flex items-center gap-2 text-xs font-semibold text-zinc-600 dark:text-zinc-400">
-            <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-emerald-500 text-[8px] font-bold text-white">
-              ✓
+            <span className="flex h-3.5 w-3.5 items-center justify-center rounded-full bg-emerald-600 text-white">
+              <IconCheck className="h-2.5 w-2.5" />
             </span>
             Concluída no seu histórico
           </span>

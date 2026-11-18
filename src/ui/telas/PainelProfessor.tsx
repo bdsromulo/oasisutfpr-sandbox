@@ -112,7 +112,7 @@ export function PainelProfessor(props: {
             )}
             {dados.dupla && (
               <p className="mt-1 text-[11px] leading-relaxed text-zinc-500 dark:text-zinc-400">
-                Turma dividida entre os dois docentes — as avaliações são da dupla,
+                Turma dividida entre os dois docentes. As avaliações são da dupla,
                 não de cada um separadamente.
               </p>
             )}

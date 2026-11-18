@@ -22,6 +22,7 @@ import {
   exigeExtensao,
   grupoOpcaoDe,
 } from "../../domain/cursos";
+import { nomeLegivel } from "../textos";
 
 function normNome(nome: string): string {
   return nome
@@ -546,7 +547,7 @@ export function TelaCatalogo(props: {
                   <div>
                     <div className="mb-2 flex items-start justify-between gap-2">
                       <h4 className="font-display text-sm font-bold text-zinc-900 dark:text-zinc-100 leading-snug">
-                        {trilha.nome}
+                        {nomeLegivel(trilha.nome)}
                       </h4>
                       <div className="flex items-center gap-2">
                         <span className={`font-mono text-xs font-bold shrink-0 ${trilha.validado ? "text-emerald-600 dark:text-emerald-400" : "text-zinc-500 dark:text-zinc-400"}`}>
@@ -581,13 +582,13 @@ export function TelaCatalogo(props: {
                           >
                             <div className="min-w-0 flex items-center gap-1.5">
                               <span
-                                title={`${dt.disciplina.codigo} — ${dt.disciplina.nome}`}
+                                title={`${dt.disciplina.codigo} · ${nomeLegivel(dt.disciplina.nome)}`}
                                 className="font-mono font-bold text-zinc-900 dark:text-zinc-100 shrink-0 text-[11px] cursor-help underline decoration-dotted decoration-zinc-400"
                               >
                                 {dt.disciplina.codigo}
                               </span>
-                              <span className="truncate text-zinc-700 dark:text-zinc-300 text-[11px]" title={dt.disciplina.nome}>
-                                {dt.disciplina.nome}
+                              <span className="truncate text-zinc-700 dark:text-zinc-300 text-[11px]" title={nomeLegivel(dt.disciplina.nome)}>
+                                {nomeLegivel(dt.disciplina.nome)}
                               </span>
                             </div>
                             {dt.concluida ? (
@@ -623,7 +624,7 @@ export function TelaCatalogo(props: {
                   <div>
                     <div className="mb-2 flex items-start justify-between gap-2">
                       <h4 className="font-display text-sm font-bold text-zinc-900 dark:text-zinc-100 leading-snug">
-                        {isoladas.nome}
+                        {nomeLegivel(isoladas.nome)}
                       </h4>
                       <div className="flex items-center gap-2">
                         <span className="shrink-0 font-mono text-xs font-bold text-zinc-500 dark:text-zinc-400">
@@ -656,13 +657,13 @@ export function TelaCatalogo(props: {
                           >
                             <div className="min-w-0 flex items-center gap-1.5">
                               <span
-                                title={`${disciplina.disciplina.codigo} — ${disciplina.disciplina.nome}`}
+                                title={`${disciplina.disciplina.codigo} · ${nomeLegivel(disciplina.disciplina.nome)}`}
                                 className="shrink-0 cursor-help font-mono text-[11px] font-bold text-zinc-900 underline decoration-dotted decoration-zinc-400 dark:text-zinc-100"
                               >
                                 {disciplina.disciplina.codigo}
                               </span>
-                              <span className="truncate text-[11px] text-zinc-700 dark:text-zinc-300" title={disciplina.disciplina.nome}>
-                                {disciplina.disciplina.nome}
+                              <span className="truncate text-[11px] text-zinc-700 dark:text-zinc-300" title={nomeLegivel(disciplina.disciplina.nome)}>
+                                {nomeLegivel(disciplina.disciplina.nome)}
                               </span>
                             </div>
                             {disciplina.concluida ? (
@@ -785,7 +786,7 @@ export function TelaCatalogo(props: {
                   <div className="mb-2 flex items-start justify-between gap-2">
                     <div className="flex items-center gap-1.5">
                       <span
-                        title={`${d.codigo} — ${d.nome}`}
+                        title={`${d.codigo} · ${nomeLegivel(d.nome)}`}
                         className="font-mono text-sm font-bold text-zinc-900 dark:text-zinc-100 cursor-help underline decoration-dotted decoration-zinc-400"
                       >
                         {d.codigo}
@@ -812,7 +813,7 @@ export function TelaCatalogo(props: {
                   </div>
 
                   <h3 className="font-display text-base font-bold text-zinc-900 dark:text-zinc-100 leading-snug">
-                    {d.nome}
+                    {nomeLegivel(d.nome)}
                   </h3>
 
                   <div className="mt-2 flex flex-wrap gap-1.5">

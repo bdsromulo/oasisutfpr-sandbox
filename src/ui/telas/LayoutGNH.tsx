@@ -31,6 +31,7 @@ import { Badge, MenuOrdenacao, BalaoProgressoHover, useIsMobile } from "../compo
 import { obterCargaHoraria } from "../../domain/motor/progressoGrade";
 import { BotaoReviews, useContagemPorTurma } from "./reviewsComuns";
 import { PainelDisciplina, type AlvoPainelDisciplina } from "./PainelDisciplina";
+import { nomeLegivel } from "../textos";
 
 export function normalizarTextoBusca(str: string): string {
   return str
@@ -112,13 +113,13 @@ function DisciplinaGNHItem({
       <div className="p-3.5 flex flex-wrap items-center justify-between gap-2 border-b border-zinc-100 dark:border-zinc-800/60 bg-zinc-50/50 dark:bg-zinc-900/40">
         <div className="flex flex-wrap items-baseline gap-2">
           <span
-            title={`${d.codigo} — ${d.nome}`}
+            title={`${d.codigo} · ${nomeLegivel(d.nome)}`}
             className="font-mono text-sm font-bold text-utfpr-700 dark:text-utfpr-500 cursor-help underline decoration-dotted decoration-utfpr-500/50"
           >
             [{d.codigo}]
           </span>
           <span className="font-display text-sm font-bold text-zinc-900 dark:text-zinc-100">
-            {d.nome}
+            {nomeLegivel(d.nome)}
           </span>
           <span className="font-mono text-xs font-semibold text-zinc-500">
             ({obterCargaHoraria(d, matriz)}h)
@@ -242,7 +243,7 @@ function DisciplinaGNHItem({
                       {statusHoverTurma === t.codigo && (
                         <BalaoProgressoHover
                           codigoDisciplina={d.codigo}
-                          nomeDisciplina={d.nome}
+                          nomeDisciplina={nomeLegivel(d.nome)}
                           cargaHoraria={obterCargaHoraria(d, matriz)}
                           perfil={perfil}
                           matriz={matriz}

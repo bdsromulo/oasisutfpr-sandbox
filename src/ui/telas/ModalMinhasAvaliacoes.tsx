@@ -15,6 +15,8 @@ import { CURSOS } from "../../domain/dadosCurso";
 import type { AcervoReviews } from "../../domain/reviews/tipos";
 import acervoReviews from "../../../data/reviews.json";
 import type { Matriz, PerfilAluno } from "../../domain/tipos";
+import { nomeLegivel } from "../textos";
+import { IconCheck } from "../icons";
 
 export function ModalMinhasAvaliacoes(props: {
   aberto: boolean;
@@ -70,7 +72,7 @@ export function ModalMinhasAvaliacoes(props: {
       .map(([semestre, itens]) => ({
         semestre,
         itens: itens
-          .filter((i) => !termo || `${i.codigo} ${i.nome}`.toLowerCase().includes(termo))
+          .filter((i) => !termo || `${i.codigo} ${nomeLegivel(i.nome)}`.toLowerCase().includes(termo))
           .sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR")),
       }))
       .filter((g) => g.itens.length > 0);
@@ -158,7 +160,7 @@ export function ModalMinhasAvaliacoes(props: {
                               </span>
                             </span>
                             <span className="block truncate text-sm text-zinc-700 dark:text-zinc-200">
-                              {d.nome}
+                              {nomeLegivel(d.nome)}
                             </span>
                           </span>
                           {jaAvaliadas.has(d.codigoCanonico) ? (
@@ -166,7 +168,7 @@ export function ModalMinhasAvaliacoes(props: {
                               title="Você já avaliou esta disciplina. Para mudar, edite sua resposta no formulário."
                               className="shrink-0 cursor-help rounded-lg bg-emerald-500/10 px-2 py-1 text-[11px] font-bold text-emerald-700 dark:text-emerald-400"
                             >
-                              ✓ avaliada
+                              <IconCheck className="inline h-3.5 w-3.5 align-[-0.15em]" /> avaliada
                             </span>
                           ) : (
                           <Botao

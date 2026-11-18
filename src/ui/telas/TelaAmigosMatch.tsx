@@ -23,6 +23,7 @@ import {
 } from "../../domain/social/comparador";
 import { Badge, Botao, Card } from "../componentes";
 import { faixaDoSlot } from "../../domain/horarios";
+import { nomeLegivel } from "../textos";
 
 const DIAS_EXTENSOS: Record<number, string> = {
   2: "Segunda-Feira",
@@ -126,7 +127,7 @@ export function TelaAmigosMatch({
       {/* Cabeçalho */}
       <div>
         <h2 className="font-display text-2xl font-bold text-zinc-900 dark:text-white flex items-center gap-3">
-          <span>{<IconHandshake className="inline h-4 w-4 shrink-0 align-[-0.2em]" />} Oásis Match — Estudar Junto com Amigos</span>
+          <span>{<IconHandshake className="inline h-4 w-4 shrink-0 align-[-0.2em]" />} Oásis Match, para estudar junto com amigos</span>
           <Badge tom="ok">P2P Instantâneo</Badge>
         </h2>
         <p className="mt-1 text-sm font-medium text-zinc-600 dark:text-zinc-400">
@@ -293,7 +294,7 @@ export function TelaAmigosMatch({
                         </span>
                       </div>
                       <div className="mt-1 font-display text-sm font-bold text-emerald-950 dark:text-emerald-100">
-                        {item.disciplina.nome}
+                        {nomeLegivel(item.disciplina.nome)}
                       </div>
                       <div className="mt-2.5 space-y-1 font-mono text-xs text-emerald-900 dark:text-emerald-300">
                         {resumirHorariosPorDia(item.turma.horarios).map((h, i) => (
@@ -330,7 +331,7 @@ export function TelaAmigosMatch({
                       key={d.codigo}
                       className="rounded-lg bg-zinc-100 px-2.5 py-1 font-mono text-xs font-bold text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200"
                     >
-                      {d.codigo} - {d.nome}
+                      {d.codigo} - {nomeLegivel(d.nome)}
                     </span>
                   ))}
                   {resultado.comparativo.aPodeMentorarB.length === 0 && (
@@ -353,7 +354,7 @@ export function TelaAmigosMatch({
                       key={d.codigo}
                       className="rounded-lg bg-zinc-100 px-2.5 py-1 font-mono text-xs font-bold text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200"
                     >
-                      {d.codigo} - {d.nome}
+                      {d.codigo} - {nomeLegivel(d.nome)}
                     </span>
                   ))}
                   {resultado.comparativo.bPodeMentorarA.length === 0 && (
@@ -391,7 +392,7 @@ export function TelaAmigosMatch({
                           {op.disciplina.codigo}
                         </span>
                         <h4 className="font-display text-base font-bold text-zinc-900 dark:text-white">
-                          {op.disciplina.nome}
+                          {nomeLegivel(op.disciplina.nome)}
                         </h4>
                       </div>
                       <div className="flex items-center gap-2 text-xs font-semibold">

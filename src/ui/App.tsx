@@ -29,7 +29,7 @@ import { TelaCheckin, type DadosCheckin } from "./telas/Checkin";
 import { TelaConfiguracoes, type Preferencias } from "./telas/Configuracoes";
 import { MiniGrade, type PreviewTurma } from "./MiniGrade";
 import { ModalGradeMagica } from "./telas/ModalGradeMagica";
-import { AbasSegmentadas, Botao, BotaoIconeComDica, CarregadorPontos } from "./componentes";
+import { AbasSegmentadas, Botao, BotaoIconeComDica, CarregadorPontos, Chevron } from "./componentes";
 import { SidebarNavegacao, type AbaPrincipal } from "./SidebarNavegacao";
 /**
  * O Simulador de Formatura entra sob demanda. Ele carrega a tela, os controles
@@ -1101,7 +1101,7 @@ function Aplicacao() {
       {comoUsarAberta ? (
         <div className="space-y-5">
           <Botao variante="sutil" onClick={() => setComoUsarAberta(false)}>
-            <span>←</span>
+            <Chevron aberto={false} classe="rotate-90" />
             <span>Voltar</span>
           </Botao>
           <TelaComoUsar />
@@ -1109,7 +1109,7 @@ function Aplicacao() {
       ) : sobreAberta ? (
         <div className="space-y-5">
           <Botao variante="sutil" onClick={() => setSobreAberta(false)}>
-            <span>←</span>
+            <Chevron aberto={false} classe="rotate-90" />
             <span>Voltar</span>
           </Botao>
           <TelaSobre
@@ -1122,7 +1122,7 @@ function Aplicacao() {
       ) : giAberta ? (
         <div className="space-y-5">
           <Botao variante="sutil" onClick={() => setGiAberta(false)}>
-            <span>←</span>
+            <Chevron aberto={false} classe="rotate-90" />
             <span>Voltar ao início</span>
           </Botao>
           <TelaGestaoInformacao />
@@ -1616,7 +1616,7 @@ function Aplicacao() {
       )}
 
       <footer className="mt-20 border-t border-zinc-200/80 pt-6 pb-24 text-center text-xs text-zinc-400 dark:border-zinc-800/80 dark:text-zinc-500">
-        Projeto acadêmico independente desenvolvido por e para estudantes da UTFPR — não oficial. Sempre verifique e confirme seus dados no Portal do Aluno da UTFPR.
+        Projeto acadêmico independente, feito por e para estudantes da UTFPR. Não é um site oficial, então confira seus dados no Portal do Aluno.
       </footer>
 
       {/* contato sempre à mão, em qualquer tela da plataforma */}
