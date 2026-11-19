@@ -317,7 +317,7 @@ export function TelaFluxograma(props: {
       )}
 
       {!temOferta && abaBoard !== "obrigatorias" && (
-        <p className="rounded-2xl border border-amber-300/70 bg-amber-50/70 px-4 py-3 text-xs font-medium leading-relaxed text-amber-900 dark:border-amber-800/70 dark:bg-amber-950/40 dark:text-amber-200">
+        <p className="rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-xs font-medium leading-relaxed text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
           Como ainda não há Turmas Abertas importadas para este curso, este board mostra a lista curricular completa da matriz.
         </p>
       )}
@@ -350,7 +350,7 @@ export function TelaFluxograma(props: {
             onClick={() => setSelecionado(null)}
             className="rounded-xl bg-utfpr-500/20 px-3 py-1.5 font-display text-xs font-bold text-utfpr-700 transition-colors hover:bg-utfpr-500/30 dark:text-utfpr-400 cursor-pointer"
           >
-            Limpar cadeia ✕
+            Limpar cadeia
           </button>
         )}
 

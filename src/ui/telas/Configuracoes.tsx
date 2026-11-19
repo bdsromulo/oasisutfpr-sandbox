@@ -310,7 +310,7 @@ export function TelaConfiguracoes(props: {
                     className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
                     title="Descartar preview"
                   >
-                    ✕
+                    <IconX className="h-4 w-4" />
                   </button>
                 </div>
                 <div className="flex flex-wrap items-center justify-end gap-2.5 pt-2 border-t border-utfpr-500/20">

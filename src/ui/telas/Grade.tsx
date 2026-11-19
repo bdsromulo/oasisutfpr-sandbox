@@ -17,7 +17,7 @@ import { categoriaDe } from "../../domain/motor/elegiveis";
 import { disciplinaCanonicaDaOferta } from "../../domain/motor/identidade";
 import { calcularResumoProgressoGrade, obterCargaHoraria, type ResumoCategoriaGrade } from "../../domain/motor/progressoGrade";
 import { Badge, BalaoProgressoHover, BarraProgressoComPreview, Botao, Card, IconeStatusProgresso } from "../componentes";
-import { IconCalendar, IconCheck, IconCopy, IconDownload, IconGraduationCap, IconHourglass, IconImage, IconInfo, IconLock, IconPin, IconStar, IconTarget, IconTrash, IconTrendUp, IconUser, IconWarning, IconGrade } from "../icons";
+import { IconCalendar, IconCheck, IconCopy, IconDownload, IconGraduationCap, IconHourglass, IconImage, IconInfo, IconLock, IconStar, IconTrash, IconUser, IconWarning, IconGrade, IconBan } from "../icons";
 import { ModalGradeMagica } from "./ModalGradeMagica";
 import { useToasts } from "../toasts/contexto";
 import { avisarRemocao } from "../toasts/avisos";
@@ -41,109 +41,98 @@ const SLOTS = [
   ...[1, 2, 3, 4, 5, 6].map((n) => ["T", n] as const),
   ...[1, 2, 3, 4, 5].map((n) => ["N", n] as const),
 ];
+/**
+ * Cor de cada matéria na grade. A cor tem função (achar a mesma matéria nos
+ * vários horários), então fica, mas em tons baixos e com menos matizes: antes
+ * eram dez cores 400 saturadas, que liam como arco-íris. O amarelo da UTFPR
+ * não entra, para não competir com a ação principal da tela.
+ */
 const CORES = [
-  "bg-amber-400 text-amber-950 dark:bg-amber-500 dark:text-amber-950",
-  "bg-emerald-400 text-emerald-950 dark:bg-emerald-500 dark:text-emerald-950",
-  "bg-sky-400 text-sky-950 dark:bg-sky-500 dark:text-sky-950",
-  "bg-rose-400 text-rose-950 dark:bg-rose-500 dark:text-rose-950",
-  "bg-violet-400 text-violet-950 dark:bg-violet-500 dark:text-violet-950",
-  "bg-orange-400 text-orange-950 dark:bg-orange-500 dark:text-orange-950",
-  "bg-teal-400 text-teal-950 dark:bg-teal-500 dark:text-teal-950",
-  "bg-fuchsia-400 text-fuchsia-950 dark:bg-fuchsia-500 dark:text-fuchsia-950",
-  "bg-lime-400 text-lime-950 dark:bg-lime-500 dark:text-lime-950",
-  "bg-indigo-400 text-indigo-950 dark:bg-indigo-500 dark:text-indigo-950",
+  "bg-sky-200 text-sky-950 dark:bg-sky-900 dark:text-sky-50",
+  "bg-emerald-200 text-emerald-950 dark:bg-emerald-900 dark:text-emerald-50",
+  "bg-rose-200 text-rose-950 dark:bg-rose-900 dark:text-rose-50",
+  "bg-indigo-200 text-indigo-950 dark:bg-indigo-900 dark:text-indigo-50",
+  "bg-orange-200 text-orange-950 dark:bg-orange-900 dark:text-orange-50",
+  "bg-teal-200 text-teal-950 dark:bg-teal-900 dark:text-teal-50",
+  "bg-stone-300 text-stone-950 dark:bg-stone-700 dark:text-stone-50",
+  "bg-fuchsia-200 text-fuchsia-950 dark:bg-fuchsia-900 dark:text-fuchsia-50",
 ];
 
-function CardResumoCategoria({ r, isSubTrilha }: { r: ResumoCategoriaGrade; isSubTrilha?: boolean }) {
+/**
+ * Uma linha do Resumo do Impacto. Antes cada categoria era um cartão em grade,
+ * com chips em fonte mono e uma caixa amarela para o excedente. Numa lista só,
+ * no mesmo desenho de Minha Situação, as barras ficam alinhadas e dá para ver
+ * de relance onde a grade soma horas.
+ */
+function LinhaResumoCategoria({ r, isSubTrilha }: { r: ResumoCategoriaGrade; isSubTrilha?: boolean }) {
   const max = r.exigido > 0 ? r.exigido : 1;
   const pctTotal = Math.min(100, Math.round((r.cumpridoSimulado / max) * 100));
   const ehExcedenteConcluido = Boolean(isSubTrilha && r.cumpridoBase >= r.exigido && r.impulsoGrade > 0);
 
   return (
-    <div
-      key={r.categoriaId}
-      className={`flex flex-col justify-between rounded-2xl border p-4.5 transition-colors ${
-        ehExcedenteConcluido
-          ? "border-amber-500/60 bg-amber-50/50 dark:border-amber-500/50 dark:bg-amber-950/30 ring-1 ring-amber-500/30 shadow-md"
-          : r.impulsoGrade > 0
-          ? "border-utfpr-500/40 bg-utfpr-50/30 dark:border-utfpr-500/30 dark:bg-utfpr-950/20 shadow-sm"
-          : "border-zinc-200/80 bg-zinc-50/60 dark:border-zinc-800/80 dark:bg-zinc-900/60 opacity-85"
+    <li
+      className={`grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-2 px-5 py-3.5 md:grid-cols-[minmax(0,15rem)_minmax(0,1fr)_9rem] ${
+        isSubTrilha ? "md:pl-9" : ""
       }`}
     >
-      <div>
-        <div className="flex items-start justify-between gap-2">
-          <span className="font-display text-sm font-bold text-zinc-900 dark:text-zinc-100 leading-snug">
-            {r.categoriaNome}
+      <div className="min-w-0">
+        <span className="block text-sm font-semibold text-zinc-900 dark:text-zinc-100">{r.categoriaNome}</span>
+        {r.disciplinasEnvolvidas.length > 0 ? (
+          <span className="mt-0.5 block text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
+            {r.disciplinasEnvolvidas.map((disc, i) => (
+              <span key={disc.codigo} title={`${disc.codigo} · ${nomeLegivel(disc.nome)} (${disc.carga}h)`}>
+                {i > 0 && ", "}
+                {nomeLegivel(disc.nome)} <span className="text-zinc-400 dark:text-zinc-500">+{disc.carga}h</span>
+              </span>
+            ))}
           </span>
-          {r.impulsoGrade > 0 && (
-            ehExcedenteConcluido ? (
-              <span className="shrink-0 rounded-lg bg-amber-500/25 border border-amber-500/50 px-2 py-0.5 font-mono text-xs font-bold text-amber-900 dark:text-amber-200 ring-1 ring-amber-500/30 flex items-center gap-1">
-                +{r.impulsoGrade}h excedente
-              </span>
-            ) : (
-              <span className="shrink-0 rounded-lg bg-utfpr-500/15 border border-utfpr-500/30 px-2 py-0.5 font-mono text-xs font-bold text-utfpr-800 dark:text-utfpr-300">
-                +{r.impulsoGrade}h
-              </span>
-            )
-          )}
-        </div>
-
-        <div className="mt-3 space-y-1.5">
-          <div className="flex items-baseline justify-between text-xs">
-            <span className="font-medium text-zinc-600 dark:text-zinc-400">
-              Progresso: <strong className="text-zinc-900 dark:text-zinc-100">{r.cumpridoBase}h</strong>
-              {r.impulsoGrade > 0 && (
-                <span className="text-utfpr-600 dark:text-utfpr-400 font-bold"> +{r.impulsoGrade}h</span>
-              )}
-            </span>
-            <span className="font-mono font-bold text-zinc-700 dark:text-zinc-300">
-              {Math.min(r.exigido, r.cumpridoSimulado)}/{r.exigido}h ({pctTotal}%)
-            </span>
-          </div>
-
-          <BarraProgressoComPreview
-            cumprido={r.cumpridoBase}
-            preview={r.impulsoGrade}
-            exigido={r.exigido}
-          />
-        </div>
-
+        ) : (
+          <span className="mt-0.5 block text-xs text-zinc-500 dark:text-zinc-400">Nada desta grade conta aqui</span>
+        )}
         {ehExcedenteConcluido && (
-          <div className="mt-3 flex items-start gap-2 rounded-xl bg-amber-500/15 border border-amber-500/30 p-2.5 text-[11px] font-bold text-amber-900 dark:text-amber-200">
-            <IconStar className="h-4 w-4 shrink-0" />
+          <span className="mt-1 flex items-start gap-1.5 text-xs text-zinc-600 dark:text-zinc-300">
+            <IconStar className="mt-px h-3.5 w-3.5 shrink-0 text-amber-600 dark:text-amber-400" />
             <span>
-              Trilha já completa ({r.cumpridoBase}/{r.exigido}h)! As <strong className="font-mono text-amber-700 dark:text-amber-300">+{r.impulsoGrade}h</strong> contam como <strong className="underline decoration-amber-500">horas excedentes</strong> no bloco optativo do curso.
+              Trilha já completa. As +{r.impulsoGrade}h contam como horas excedentes no bloco optativo do curso.
             </span>
-          </div>
-        )}
-
-        {r.disciplinasEnvolvidas.length > 0 && (
-          <div className="mt-3 pt-2.5 border-t border-zinc-200/60 dark:border-zinc-800/80 space-y-1">
-            <div className="text-xs font-medium text-zinc-400 dark:text-zinc-500">
-              Matérias na grade ({r.disciplinasEnvolvidas.length}):
-            </div>
-            <div className="flex flex-wrap gap-1">
-              {r.disciplinasEnvolvidas.map((disc) => (
-                <span
-                  key={disc.codigo}
-                  className="inline-flex items-center gap-1 rounded bg-white/90 px-1.5 py-0.5 font-mono text-[11px] font-semibold text-zinc-700 shadow-2xs border border-zinc-200/80 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700/80"
-                  title={`${nomeLegivel(disc.nome)} (${disc.carga}h)`}
-                >
-                  {disc.codigo}
-                  <span className="text-[10px] font-bold text-utfpr-600 dark:text-utfpr-400">
-                    +{disc.carga}h
-                  </span>
-                </span>
-              ))}
-            </div>
-          </div>
+          </span>
         )}
       </div>
-
-      <div className="mt-3 flex items-center gap-1.5 pt-2 border-t border-zinc-200/50 dark:border-zinc-800/60 text-[11px] font-semibold text-zinc-600 dark:text-zinc-300">
-        <IconeStatusProgresso status={r.statusIcone} />
-        <span>{r.statusTexto}</span>
+      <div className="col-span-2 row-start-2 md:col-span-1 md:row-start-auto">
+        <BarraProgressoComPreview cumprido={r.cumpridoBase} preview={r.impulsoGrade} exigido={r.exigido} classe="h-2" />
       </div>
+      <div className="col-start-2 row-start-1 text-right md:col-start-auto md:row-start-auto">
+        <span className="block text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+          {Math.min(r.exigido, r.cumpridoSimulado)}
+          <span className="font-normal text-zinc-400"> / {r.exigido}h</span>
+          <span className="ml-1 text-xs font-normal text-zinc-500 dark:text-zinc-400">{pctTotal}%</span>
+        </span>
+        <span className="mt-0.5 flex items-center justify-end gap-1 text-xs text-zinc-500 dark:text-zinc-400" title={r.statusTexto}>
+          <IconeStatusProgresso status={r.statusIcone} />
+          {r.impulsoGrade > 0 ? (
+            <span className="font-medium text-zinc-800 dark:text-zinc-200">+{r.impulsoGrade}h nesta grade</span>
+          ) : (
+            <span>sem impulso</span>
+          )}
+        </span>
+      </div>
+    </li>
+  );
+}
+
+/** Legenda das cores da barra, em texto corrido e sem pílulas. */
+function LegendaResumo() {
+  return (
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-zinc-500 dark:text-zinc-400">
+      <span className="flex items-center gap-1.5">
+        <span className="h-2 w-2 rounded-full bg-emerald-500 dark:bg-emerald-400" /> Já concluído
+      </span>
+      <span className="flex items-center gap-1.5">
+        <span className="h-2 w-2 rounded-full bg-utfpr-500" /> Soma desta grade
+      </span>
+      <span className="flex items-center gap-1.5">
+        <span className="h-2 w-2 rounded-full bg-zinc-300 dark:bg-zinc-700" /> Falta
+      </span>
     </div>
   );
 }
@@ -160,65 +149,32 @@ function SecaoResumoImpactoGrade(props: {
     [props.itens, props.perfil, props.matriz]
   );
 
+  const cabecalho = (
+    <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-2 px-5 pt-4 pb-3">
+      <div>
+        <h3 className="font-display text-base font-semibold text-zinc-900 dark:text-zinc-100">
+          Impacto da grade no curso
+        </h3>
+        <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+          Quanto as matérias desta grade somam em cada categoria.
+        </p>
+      </div>
+      {temHistorico && <LegendaResumo />}
+    </div>
+  );
+
   if (!temHistorico) {
     return (
-      <div className="mt-8 rounded-2xl border border-zinc-200/90 bg-white p-6 shadow-md dark:border-zinc-800 dark:bg-zinc-900 space-y-5 animate-in fade-in duration-300">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-100 pb-4 dark:border-zinc-800">
-          <div>
-            <div className="flex items-center gap-2">
-              <IconTrendUp className="h-4 w-4 shrink-0" />
-              <h3 className="font-display text-lg font-bold text-zinc-900 dark:text-zinc-100">
-                Resumo do Impacto Curricular da Grade
-              </h3>
-            </div>
-            <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400 font-medium">
-              Veja quanto as matérias selecionadas somam em cada categoria do seu curso.
-            </p>
-          </div>
+      <section className="mt-8 overflow-hidden rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+        {cabecalho}
+        <div className="flex items-start gap-3 border-t border-zinc-100 px-5 py-4 dark:border-zinc-800">
+          <IconLock className="mt-0.5 h-4 w-4 shrink-0 text-zinc-500 dark:text-zinc-400" />
+          <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
+            Carregue seu histórico para ver quanto esta grade adianta em cada categoria
+            {cursoAtual.matriz === 981 ? ", estrato e trilha" : " e trilha"} do curso.
+          </p>
         </div>
-
-        <div className="relative overflow-hidden rounded-2xl">
-          {/* Overlay bloqueio com mensagem */}
-          <div className="absolute inset-0 z-10 flex flex-col items-center justify-center rounded-2xl bg-white/75 p-6 text-center dark:bg-zinc-900/80 border border-zinc-200/80 dark:border-zinc-800 shadow-lg">
-            <IconLock className="h-4 w-4 shrink-0" />
-            <h4 className="font-display text-base font-bold text-zinc-900 dark:text-zinc-100">
-              Histórico do Aluno não carregado
-            </h4>
-            <p className="mt-1 max-w-md text-xs font-medium text-zinc-600 dark:text-zinc-300 leading-relaxed">
-              Não é possível enxergar o resumo de progresso esperado pois o Histórico Escolar do aluno não foi carregado no início da sessão. Carregue seu histórico na aba inicial para liberar a visualização do progresso curricular por estrato e trilha.
-            </p>
-          </div>
-
-          {/* Previews vazios com blur ao fundo */}
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 blur-md opacity-40 pointer-events-none select-none p-2">
-            {(cursoAtual.matriz === 981
-              ? [
-                  "Obrigatórias (1º Estrato)",
-                  "2º Estrato",
-                  "Ciclo de Humanidades",
-                  "Trilhas em Computação (3º Estrato)",
-                  "Eletivas / Atividades",
-                  "Estágio / TCC",
-                ]
-              : [
-                  "Obrigatórias",
-                  "Optativas em Trilhas e Isoladas",
-                  "Eletivas",
-                  "Estágio / TCC",
-                ]
-            ).map((titulo, i) => (
-              <div key={i} className="flex flex-col justify-between rounded-2xl border border-zinc-200 bg-white p-4.5 dark:border-zinc-800 dark:bg-zinc-900 space-y-3">
-                <div className="flex items-start justify-between gap-2">
-                  <span className="font-display text-sm font-bold text-zinc-900 dark:text-zinc-100">{titulo}</span>
-                  <span className="text-xs font-bold text-zinc-400">0h / ---h</span>
-                </div>
-                <div className="h-2.5 w-full rounded-full bg-zinc-100 dark:bg-zinc-800" />
-                <div className="text-[11px] text-zinc-400">Progresso bloqueado (sem histórico)</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      </section>
     );
   }
 
@@ -239,133 +195,26 @@ function SecaoResumoImpactoGrade(props: {
   );
 
   return (
-    <div className="mt-8 rounded-2xl border border-zinc-200/90 bg-white p-6 shadow-md dark:border-zinc-800 dark:bg-zinc-900 space-y-5 animate-in fade-in duration-300">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-100 pb-4 dark:border-zinc-800">
-        <div>
-          <div className="flex items-center gap-2">
-            <IconTrendUp className="h-4 w-4 shrink-0" />
-            <h3 className="font-display text-lg font-bold text-zinc-900 dark:text-zinc-100">
-              Resumo do Impacto Curricular da Grade
-            </h3>
-          </div>
-          <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400 font-medium">
-            Veja quanto as matérias selecionadas somam em cada categoria do seu curso.
-          </p>
-        </div>
-        <div className="flex items-center gap-2 text-xs font-semibold">
-          <span className="flex items-center gap-1.5 rounded-full bg-zinc-100 px-3 py-1 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
-            <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" /> Já concluído
-          </span>
-          <span className="flex items-center gap-1.5 rounded-full bg-zinc-100 px-3 py-1 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
-            <span className="h-2.5 w-2.5 rounded-full bg-utfpr-500" /> +Impulso nesta Grade
-          </span>
-          <span className="flex items-center gap-1.5 rounded-full bg-zinc-100 px-3 py-1 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
-            <span className="h-2.5 w-2.5 rounded-full bg-zinc-300 dark:bg-zinc-700" /> Faltante
-          </span>
-        </div>
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <section className="mt-8 overflow-hidden rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+      {cabecalho}
+      <ul className="divide-y divide-zinc-100 border-t border-zinc-100 dark:divide-zinc-800 dark:border-zinc-800">
         {resumosNormaisPrimeiraParte.map((r) => (
-          <CardResumoCategoria key={r.categoriaId} r={r} />
+          <LinhaResumoCategoria key={r.categoriaId} r={r} />
         ))}
-
-        {(resumoTrilhasGeral || resumosSubTrilhas.length > 0) && (
-          <div className="col-span-full rounded-2xl border-2 border-utfpr-500/35 bg-white p-5 dark:bg-zinc-900 space-y-5">
-            {resumoTrilhasGeral && (
-              <div className="flex flex-col justify-between rounded-2xl border border-utfpr-500/40 bg-white/90 p-4.5 dark:bg-zinc-900/90 shadow-sm">
-                <div>
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex items-center gap-2">
-                      <IconTarget className="h-4 w-4 shrink-0" />
-                      <span className="font-display text-base font-bold text-zinc-900 dark:text-zinc-100 leading-snug">
-                        {resumoTrilhasGeral.categoriaNome}
-                      </span>
-                    </div>
-                    {resumoTrilhasGeral.impulsoGrade > 0 && (
-                      <span className="shrink-0 rounded-lg bg-utfpr-500/15 border border-utfpr-500/30 px-2.5 py-1 font-mono text-xs font-bold text-utfpr-800 dark:text-utfpr-300">
-                        +{resumoTrilhasGeral.impulsoGrade}h
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="mt-3 space-y-1.5">
-                    <div className="flex items-baseline justify-between text-xs">
-                      <span className="font-medium text-zinc-600 dark:text-zinc-400">
-                        Progresso Total: <strong className="text-zinc-900 dark:text-zinc-100">{resumoTrilhasGeral.cumpridoBase}h</strong>
-                        {resumoTrilhasGeral.impulsoGrade > 0 && (
-                          <span className="text-utfpr-600 dark:text-utfpr-400 font-bold"> +{resumoTrilhasGeral.impulsoGrade}h</span>
-                        )}
-                      </span>
-                      <span className="font-mono font-bold text-zinc-700 dark:text-zinc-300">
-                        {Math.min(resumoTrilhasGeral.exigido, resumoTrilhasGeral.cumpridoSimulado)}/{resumoTrilhasGeral.exigido}h ({Math.min(100, Math.round((resumoTrilhasGeral.cumpridoSimulado / (resumoTrilhasGeral.exigido || 1)) * 100))}%)
-                      </span>
-                    </div>
-
-                    <BarraProgressoComPreview
-                      cumprido={resumoTrilhasGeral.cumpridoBase}
-                      preview={resumoTrilhasGeral.impulsoGrade}
-                      exigido={resumoTrilhasGeral.exigido}
-                    />
-                  </div>
-
-                  {resumoTrilhasGeral.disciplinasEnvolvidas.length > 0 && (
-                    <div className="mt-3 pt-2.5 border-t border-zinc-200/60 dark:border-zinc-800/80 space-y-1">
-                      <div className="text-xs font-medium text-zinc-400 dark:text-zinc-500">
-                        Matérias de Trilhas nesta grade ({resumoTrilhasGeral.disciplinasEnvolvidas.length}):
-                      </div>
-                      <div className="flex flex-wrap gap-1">
-                        {resumoTrilhasGeral.disciplinasEnvolvidas.map((disc) => (
-                          <span
-                            key={disc.codigo}
-                            className="inline-flex items-center gap-1 rounded bg-white/90 px-1.5 py-0.5 font-mono text-[11px] font-semibold text-zinc-700 shadow-2xs border border-zinc-200/80 dark:bg-zinc-800 dark:text-zinc-300 dark:border-zinc-700/80"
-                            title={`${nomeLegivel(disc.nome)} (${disc.carga}h)`}
-                          >
-                            {disc.codigo}
-                            <span className="text-[10px] font-bold text-utfpr-600 dark:text-utfpr-400">
-                              +{disc.carga}h
-                            </span>
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                <div className="mt-3 flex items-center gap-1.5 pt-2 border-t border-zinc-200/50 dark:border-zinc-800/60 text-[11px] font-semibold text-zinc-600 dark:text-zinc-300">
-                  <IconeStatusProgresso status={resumoTrilhasGeral.statusIcone} />
-                  <span>{resumoTrilhasGeral.statusTexto}</span>
-                </div>
-              </div>
-            )}
-
-            {resumosSubTrilhas.length > 0 && (
-              <div className="space-y-3 pt-2 border-t border-zinc-200/80 dark:border-zinc-800/80">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-                  <div className="flex items-center gap-2">
-                    <span className="font-mono text-xs font-bold uppercase tracking-wider text-utfpr-700 dark:text-utfpr-400">
-                      {<IconPin className="inline h-4 w-4 shrink-0 align-[-0.2em]" />} Progresso Individual por Trilha ({resumosSubTrilhas.length})
-                    </span>
-                  </div>
-                  <span className="text-[11px] text-zinc-500 dark:text-zinc-400 font-medium">
-                    As horas das trilhas selecionadas contam para a carga optativa exigida pelo curso
-                  </span>
-                </div>
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {resumosSubTrilhas.map((r) => (
-                    <CardResumoCategoria key={r.categoriaId} r={r} isSubTrilha={true} />
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
+        {resumoTrilhasGeral && <LinhaResumoCategoria r={resumoTrilhasGeral} />}
+        {resumosSubTrilhas.length > 0 && (
+          <li className="bg-zinc-50 px-5 py-2 text-xs text-zinc-500 md:pl-9 dark:bg-zinc-950/40 dark:text-zinc-400">
+            Por trilha ({resumosSubTrilhas.length}). As horas das trilhas contam para a carga optativa do curso.
+          </li>
         )}
-
-        {resumosNormaisSegundaParte.map((r) => (
-          <CardResumoCategoria key={r.categoriaId} r={r} />
+        {resumosSubTrilhas.map((r) => (
+          <LinhaResumoCategoria key={r.categoriaId} r={r} isSubTrilha />
         ))}
-      </div>
-    </div>
+        {resumosNormaisSegundaParte.map((r) => (
+          <LinhaResumoCategoria key={r.categoriaId} r={r} />
+        ))}
+      </ul>
+    </section>
   );
 }
 
@@ -748,8 +597,8 @@ export function TelaGrade(props: {
             {/* Conteúdo */}
             <div className="flex-1 overflow-y-auto p-6 space-y-6">
               {/* Aviso de regra de compatibilidade */}
-              <div className="flex items-start gap-3 rounded-2xl border border-amber-300/80 bg-amber-50/80 p-4 text-xs text-amber-900 dark:border-amber-800/80 dark:bg-amber-950/40 dark:text-amber-200">
-                <IconInfo className="h-4 w-4 shrink-0" />
+              <div className="flex items-start gap-3 rounded-2xl border border-zinc-200 bg-white p-4 text-xs text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
+                <IconInfo className="text-amber-600 dark:text-amber-400 h-4 w-4 shrink-0" />
                 <p className="leading-relaxed">
                   <strong>Regra de compatibilidade:</strong> Só serão importadas as matérias que permaneceram exatamente iguais em horário e professor na oferta de {props.semestreAtivo || SEMESTRE_CORRENTE}. Turmas que sofreram alteração na carga horária, dias/horários ou docente serão sinalizadas como incompatíveis e não serão trazidas.
                 </p>
@@ -867,7 +716,7 @@ export function TelaGrade(props: {
                               </span>
                             ) : (
                               <span className="inline-flex items-center gap-1 rounded-full bg-red-500/15 px-2.5 py-1 text-[11px] font-bold text-red-700 dark:bg-red-500/20 dark:text-red-300" title="Matéria não está sendo ofertada no semestre atual">
-                                <span>⛔ Não Ofertada</span>
+                                <span className="flex items-center gap-1"><IconBan className="h-3.5 w-3.5" /> Não ofertada</span>
                               </span>
                             )}
                           </div>
@@ -882,10 +731,10 @@ export function TelaGrade(props: {
             {/* Footer com botão de confirmação ou sobreescrita */}
             <div className="border-t border-zinc-200/80 bg-zinc-50/80 px-6 py-4 dark:border-zinc-800/80 dark:bg-zinc-900/80">
               {props.selecao.length > 0 && !confirmacaoSobreescreverImportacao ? (
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 p-3.5">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-xl border border-zinc-200 bg-white p-3.5 dark:border-zinc-800 dark:bg-zinc-900">
                   <div className="flex items-start gap-2.5">
-                    <IconWarning className="h-4 w-4 shrink-0" />
-                    <p className="text-xs font-semibold text-amber-900 dark:text-amber-200 leading-snug">
+                    <IconWarning className="text-amber-600 dark:text-amber-400 h-4 w-4 shrink-0" />
+                    <p className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 leading-snug">
                       O seu período atual possui matérias preenchidas. Você tem certeza de que quer sobreescrevê-las com a importação?
                     </p>
                   </div>
@@ -1084,20 +933,21 @@ export function TelaGrade(props: {
 
       <div className="flex flex-wrap items-center justify-between gap-3 px-1">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Filtrar Turno:</span>
+          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Turno</span>
           <div className="flex flex-wrap gap-1.5">
             {(["TODOS", "M", "T", "N"] as const).map((t) => (
               <button
                 key={t}
                 type="button"
                 onClick={() => setTurnoFiltro(t)}
-                className={`min-h-11 rounded-lg px-3 py-1 font-display text-xs font-bold transition-colors cursor-pointer sm:min-h-0 ${
+                aria-pressed={turnoFiltro === t}
+                className={`min-h-11 rounded-lg px-3 py-1 text-xs font-medium transition-colors cursor-pointer sm:min-h-8 ${
                   turnoFiltro === t
-                    ? "bg-utfpr-500 text-zinc-950 shadow-xs"
+                    ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
                     : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700"
                 }`}
               >
-                {t === "TODOS" ? "Todos os Turnos" : t === "M" ? "Manhã" : t === "T" ? "Tarde" : "Noite"}
+                {t === "TODOS" ? "Todos" : t === "M" ? "Manhã" : t === "T" ? "Tarde" : "Noite"}
               </button>
             ))}
           </div>
@@ -1187,7 +1037,7 @@ export function TelaGrade(props: {
                                 onMouseLeave={cancelarHover}
                                 className={`group relative flex items-center justify-between gap-1 rounded-lg px-2 py-1 text-xs transition-colors ${o.cor} ${
                                   isHovered
-                                    ? "ring-2 ring-zinc-950 dark:ring-white scale-[1.03] shadow-md z-40 brightness-105 overflow-visible"
+                                    ? "ring-2 ring-zinc-950 dark:ring-white z-40 overflow-visible"
                                     : ""
                                 }`}
                                 title={`${nomeLegivel(o.item.disciplina.nome)} · ${o.item.turma.codigo}${o.sala ? ` (${o.sala})` : ""}`}
@@ -1199,7 +1049,7 @@ export function TelaGrade(props: {
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    setSelecao(selecao.filter((s) => s.codDisciplina !== codIdentificador));
+                                    removerDisciplina(codIdentificador);
                                   }}
                                   className={`h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full bg-red-600 font-mono text-[9px] font-bold text-white shadow-2xs hover:bg-red-700 cursor-pointer ${
                                     isHovered ? "flex" : "hidden group-hover:flex"
@@ -1227,16 +1077,16 @@ export function TelaGrade(props: {
           (props.exclusoesSugestao.professores && props.exclusoesSugestao.professores.length > 0) ||
           (props.exclusoesSugestao.trilhas && props.exclusoesSugestao.trilhas.length > 0) ||
           (props.exclusoesSugestao.outrosFiltros && props.exclusoesSugestao.outrosFiltros.length > 0)) && (
-          <div className="rounded-2xl border border-amber-400/60 bg-amber-50/90 p-4 text-xs text-amber-900 dark:border-amber-800/80 dark:bg-amber-950/70 dark:text-amber-200 shadow-sm space-y-1.5 animate-in fade-in">
+          <div className="rounded-2xl border border-zinc-200 bg-white p-4 text-xs text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 shadow-sm space-y-1.5 animate-in fade-in">
             <div className="font-display text-sm font-bold flex items-center justify-between">
               <span className="flex items-center gap-2">
-                <IconInfo className="h-4 w-4 shrink-0" /> Observação: Itens excluídos ou filtros na geração via Sugestão de Grade
+                <IconInfo className="text-amber-600 dark:text-amber-400 h-4 w-4 shrink-0" /> Observação: Itens excluídos ou filtros na geração via Sugestão de Grade
               </span>
               {props.onLimparExclusoes && (
                 <button
                   type="button"
                   onClick={props.onLimparExclusoes}
-                  className="text-[11px] font-normal text-amber-700 hover:underline dark:text-amber-300 cursor-pointer"
+                  className="text-[11px] font-normal text-zinc-700 hover:underline dark:text-zinc-300 cursor-pointer"
                 >
                   ocultar observação
                 </button>

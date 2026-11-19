@@ -7,6 +7,8 @@ import {
   IconInfo,
   IconPin,
   IconTrash,
+  IconX,
+  IconMaximize,
 } from "./icons";
 import type { DisciplinaOfertada, OfertaSemestre, Turma, Matriz, PerfilAluno } from "../domain/tipos";
 import { formatarSemestre } from "../domain/semestres";
@@ -197,13 +199,11 @@ export function MiniGrade(props: {
               e.stopPropagation();
               setModalCompletoAberto(true);
             }}
-            className="group/btn flex items-center gap-1.5 rounded-lg bg-zinc-100 px-2 py-1 font-display text-xs font-bold text-zinc-700 hover:bg-utfpr-500 hover:text-zinc-950 dark:bg-zinc-800 dark:text-zinc-300 transition-colors cursor-pointer shadow-2xs overflow-hidden"
+            className="flex items-center gap-1.5 rounded-lg bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-700 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700 transition-colors cursor-pointer"
             title="Expandir visualização da Grade Completa em Pop-up Grande"
           >
-            <span className="text-sm leading-none">⛶</span>
-            <span className="max-w-0 overflow-hidden opacity-0 group-hover/btn:max-w-xs group-hover/btn:opacity-100 transition-all duration-300 ease-in-out whitespace-nowrap">
-              Expandir
-            </span>
+            <IconMaximize className="h-4 w-4" />
+            <span className="whitespace-nowrap">Expandir</span>
           </button>
 
           <button
@@ -408,17 +408,17 @@ export function MiniGrade(props: {
               (props.exclusoesSugestao.professores && props.exclusoesSugestao.professores.length > 0) ||
               (props.exclusoesSugestao.trilhas && props.exclusoesSugestao.trilhas.length > 0) ||
               (props.exclusoesSugestao.outrosFiltros && props.exclusoesSugestao.outrosFiltros.length > 0)) && (
-              <div className="rounded-xl border border-amber-400/50 bg-amber-50/80 p-2 text-[11px] text-amber-900 dark:border-amber-800/80 dark:bg-amber-950/60 dark:text-amber-200 space-y-1">
+              <div className="rounded-xl border border-zinc-200 bg-white p-2 text-[11px] text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 space-y-1">
                 <div className="font-bold flex items-center justify-between">
-                  <span className="flex items-center gap-1">{<IconInfo className="inline h-4 w-4 shrink-0 align-[-0.2em]" />} Excluídos/Filtros via Sugestão de Grade:</span>
+                  <span className="flex items-center gap-1">{<IconInfo className="text-amber-600 dark:text-amber-400 inline h-4 w-4 shrink-0 align-[-0.2em]" />} Excluídos/Filtros via Sugestão de Grade:</span>
                   {props.onLimparExclusoes && (
                     <button
                       type="button"
                       onClick={props.onLimparExclusoes}
-                      className="text-[10px] font-normal text-amber-700 hover:underline dark:text-amber-300 cursor-pointer"
+                      className="text-[10px] font-normal text-zinc-700 hover:underline dark:text-zinc-300 cursor-pointer"
                       title="Ocultar observação"
                     >
-                      ✕
+                      <IconX className="h-3.5 w-3.5" />
                     </button>
                   )}
                 </div>
@@ -529,7 +529,7 @@ export function MiniGrade(props: {
                 onClick={() => setModalCompletoAberto(false)}
                 className="rounded-xl bg-zinc-100 px-4 py-2 font-display text-sm font-bold text-zinc-700 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700 transition-colors cursor-pointer"
               >
-                ✕ Fechar
+                Fechar
               </button>
             </div>
 

@@ -11,6 +11,7 @@ import {
   IconStar,
   IconWarning,
   IconGrade,
+  IconX,
 } from "../icons";
 import { descricaoDoCurso, ehTrilha, exigeExtensao } from "../../domain/cursos";
 import {
@@ -306,7 +307,7 @@ export function ModalSugestaoGrade({
             className="rounded-xl p-1.5 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-700 dark:hover:bg-zinc-800 dark:hover:text-zinc-200 cursor-pointer shrink-0"
             title="Fechar modal"
           >
-            ✕
+            <IconX className="h-4 w-4" />
           </button>
         </div>
 

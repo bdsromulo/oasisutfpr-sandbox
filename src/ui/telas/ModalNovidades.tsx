@@ -2,7 +2,6 @@ import { useEffect, type ReactNode } from "react";
 import { Botao } from "../componentes";
 import {
   IconCalendar,
-  IconCheck,
   IconCheckCircle,
   IconDownload,
   IconFileText,
@@ -75,7 +74,7 @@ export function ModalNovidades(props: {
                 data-novidade={item.id}
                 className={`rounded-2xl border p-4 ${
                   item.destaque
-                    ? "border-utfpr-500/40 bg-utfpr-500/10 dark:bg-utfpr-500/5"
+                    ? "border-zinc-300 bg-white dark:border-zinc-700 dark:bg-zinc-900"
                     : "border-zinc-200 bg-zinc-50/70 dark:border-zinc-800 dark:bg-zinc-800/30"
                 }`}
               >
@@ -87,12 +86,9 @@ export function ModalNovidades(props: {
                 </div>
                 <p className="mt-2 text-[13px] text-zinc-600 dark:text-zinc-300">{item.resumo}</p>
                 {item.detalhes && item.detalhes.length > 0 && (
-                  <ul className="mt-3 space-y-1.5 text-[13px] text-zinc-600 dark:text-zinc-300">
+                  <ul className="mt-3 list-disc space-y-1.5 pl-5 text-[13px] text-zinc-600 marker:text-zinc-400 dark:text-zinc-300 dark:marker:text-zinc-500">
                     {item.detalhes.map((d) => (
-                      <li key={d} className="flex gap-2">
-                        <IconCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-utfpr-600" />
-                        {d}
-                      </li>
+                      <li key={d}>{d}</li>
                     ))}
                   </ul>
                 )}

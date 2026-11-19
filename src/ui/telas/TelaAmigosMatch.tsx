@@ -299,7 +299,7 @@ export function TelaAmigosMatch({
                       <div className="mt-2.5 space-y-1 font-mono text-xs text-emerald-900 dark:text-emerald-300">
                         {resumirHorariosPorDia(item.turma.horarios).map((h, i) => (
                           <div key={i} className="font-semibold">
-                            ⏰ {h.diaNome} ({h.intervalo}) · Sala {h.salas}
+                            {h.diaNome} ({h.intervalo}) · Sala {h.salas}
                           </div>
                         ))}
                       </div>
@@ -384,11 +384,11 @@ export function TelaAmigosMatch({
                 {resultado.oportunidadesDeOuro.map((op) => (
                   <div
                     key={op.disciplina.codigo}
-                    className="rounded-2xl border-2 border-amber-400/80 bg-amber-50 p-5 dark:border-amber-500/70 dark:bg-amber-950/60"
+                    className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900"
                   >
-                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-amber-200/60 pb-3 dark:border-amber-800/60">
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-zinc-200 pb-3 dark:border-zinc-800">
                       <div>
-                        <span className="font-mono text-xs font-bold text-amber-800 dark:text-amber-300">
+                        <span className="font-mono text-xs font-bold text-zinc-700 dark:text-zinc-300">
                           {op.disciplina.codigo}
                         </span>
                         <h4 className="font-display text-base font-bold text-zinc-900 dark:text-white">
@@ -406,8 +406,8 @@ export function TelaAmigosMatch({
                     </div>
 
                     <div className="mt-4">
-                      <span className="text-xs font-medium text-amber-900 dark:text-amber-300">
-                        <IconCheck className="inline h-4 w-4 shrink-0 align-[-0.2em]" /> Turmas compatíveis sem conflito com a grade dos dois:
+                      <span className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
+                        <IconCheck className="text-emerald-600 dark:text-emerald-400 inline h-4 w-4 shrink-0 align-[-0.2em]" /> Turmas compatíveis sem conflito com a grade dos dois:
                       </span>
 
                       {op.turmasSugeridasLivreParaAmbos.length === 0 ? (
@@ -419,11 +419,11 @@ export function TelaAmigosMatch({
                           {op.turmasSugeridasLivreParaAmbos.map((t) => (
                             <div
                               key={t.codigo}
-                              className="flex items-center justify-between gap-3 rounded-2xl border border-amber-300 bg-white/95 p-3.5 shadow-2xs dark:border-amber-700 dark:bg-zinc-900"
+                              className="flex items-center justify-between gap-3 rounded-2xl border border-zinc-200 bg-white/95 p-3.5 shadow-2xs dark:border-zinc-800 dark:bg-zinc-900"
                             >
                               <div>
                                 <div className="flex items-center gap-2">
-                                  <span className="rounded bg-amber-500 px-2 py-0.5 font-mono text-xs font-bold text-zinc-950">
+                                  <span className="rounded bg-zinc-900 px-2 py-0.5 font-mono text-xs font-bold text-white dark:bg-zinc-100 dark:text-zinc-900">
                                     Turma {t.codigo}
                                   </span>
                                   <span className="text-[11px] font-bold text-zinc-500">{t.professores_raw || "Prof. a definir"}</span>
@@ -431,7 +431,7 @@ export function TelaAmigosMatch({
                                 <div className="mt-1.5 space-y-1 font-mono text-xs text-zinc-700 dark:text-zinc-300">
                                   {resumirHorariosPorDia(t.horarios).map((h, i) => (
                                     <div key={i} className="font-semibold">
-                                      ⏰ {h.diaNome} ({h.intervalo}) · Sala {h.salas}
+                                      {h.diaNome} ({h.intervalo}) · Sala {h.salas}
                                     </div>
                                   ))}
                                 </div>

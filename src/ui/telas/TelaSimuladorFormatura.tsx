@@ -53,6 +53,8 @@ import {
   IconPlus,
   IconWarning,
   IconInfo,
+  IconX,
+  IconCalendar,
 } from "../icons";
 import { ModalExplicacaoCalculos } from "../componentes/ModalExplicacaoCalculos";
 import {
@@ -560,8 +562,8 @@ export function TelaSimuladorFormatura(props: {
       )}
 
       {!perfil && (
-        <div className="flex items-start gap-2.5 rounded-2xl border border-amber-300/80 bg-amber-50/80 p-4 text-sm text-amber-900 dark:border-amber-800/80 dark:bg-amber-950/50 dark:text-amber-200">
-          <IconWarning className="mt-0.5 h-4 w-4 shrink-0" />
+        <div className="flex items-start gap-2.5 rounded-2xl border border-zinc-200 bg-white p-4 text-sm text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
+          <IconWarning className="text-amber-600 dark:text-amber-400 mt-0.5 h-4 w-4 shrink-0" />
           <span>
             Sem histórico importado, a projeção parte do <strong>curso inteiro do zero</strong>.
             Importe seu PDF nas configurações para uma previsão real.
@@ -578,9 +580,9 @@ export function TelaSimuladorFormatura(props: {
           estrutura (rótulo, motivo, disciplinas afetadas) que não cabe num
           cartão de canto. Por isso o conteúdo continua aqui, recolhido. */}
       {(resultado.avisos.length > 0 || resultado.exclusoesImpossiveis.length > 0) && (
-        <details className="group rounded-2xl border border-amber-300/80 bg-amber-50/70 dark:border-amber-800/80 dark:bg-amber-950/40">
-          <summary className="flex cursor-pointer list-none items-center gap-2.5 p-3.5 text-xs font-bold text-amber-900 dark:text-amber-200">
-            <IconWarning className="h-4 w-4 shrink-0" />
+        <details className="group rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+          <summary className="flex cursor-pointer list-none items-center gap-2.5 p-3.5 text-xs font-bold text-zinc-700 dark:text-zinc-300">
+            <IconWarning className="text-amber-600 dark:text-amber-400 h-4 w-4 shrink-0" />
             <span>
               {totalDeAvisos === 1
                 ? "1 aviso desta projeção"
@@ -596,7 +598,7 @@ export function TelaSimuladorFormatura(props: {
             {resultado.avisos.map((a) => (
               <p
                 key={a}
-                className="rounded-xl border border-amber-300/70 bg-white/70 p-3 text-xs leading-relaxed font-medium text-amber-900 dark:border-amber-900/60 dark:bg-zinc-900/60 dark:text-amber-200"
+                className="rounded-xl border border-zinc-200 bg-white/70 p-3 text-xs leading-relaxed font-medium text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900/60 dark:text-zinc-300"
               >
                 {a}
               </p>
@@ -607,7 +609,7 @@ export function TelaSimuladorFormatura(props: {
                 {/* A seção nasceu só para exclusões; com as alavancas da TASK-47
                     ela passou a receber também pedidos de escolha, e o texto
                     precisou deixar de falar só em "excluir". */}
-                <p className="pt-1 text-xs leading-relaxed text-amber-900/80 dark:text-amber-200/80">
+                <p className="pt-1 text-xs leading-relaxed text-zinc-700/80 dark:text-zinc-300/80">
                   A projeção abaixo é a que fecha o curso. O que você pediu para{" "}
                   <strong>excluir</strong> e o motor manteve aparece marcado na linha do tempo; o
                   que você pediu para <strong>cursar</strong> e não coube está explicado aqui.
@@ -1052,7 +1054,7 @@ export function TelaSimuladorFormatura(props: {
                               title="Não quero cursar esta matéria"
                               className="cursor-pointer rounded-lg border border-zinc-200 px-1.5 font-mono text-xs font-bold text-zinc-500 transition-colors hover:border-red-400 hover:text-red-600 dark:border-zinc-700 dark:hover:text-red-400"
                             >
-                              ✕
+                              <IconX className="h-3.5 w-3.5" />
                             </button>
                           )}
                         </span>
@@ -1208,9 +1210,7 @@ export function TelaSimuladorFormatura(props: {
                       <div className="rounded-2xl border-2 border-utfpr-500/40 bg-white p-3.5 shadow-md dark:border-utfpr-500/40 dark:bg-zinc-900 animate-in fade-in zoom-in-95 duration-200">
                         <div className="flex items-center justify-between gap-2 border-b border-zinc-200/80 pb-2.5 mb-3 dark:border-zinc-800">
                           <div className="flex items-center gap-2">
-                            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-utfpr-500/20 font-display text-xs font-bold text-utfpr-600 dark:text-utfpr-400">
-                              ⚡
-                            </span>
+                            <IconCalendar className="h-4 w-4 shrink-0 text-zinc-500 dark:text-zinc-400" />
                             <span className="font-display text-xs sm:text-sm font-bold text-zinc-900 dark:text-zinc-100">
                               Selecione para qual Grade de {s.semestre.replace("-", "/")} deseja importar:
                             </span>
@@ -1221,7 +1221,7 @@ export function TelaSimuladorFormatura(props: {
                             className="rounded-lg p-1 text-xs font-bold text-zinc-400 hover:bg-zinc-200/70 hover:text-zinc-700 dark:hover:bg-zinc-800 dark:hover:text-zinc-200 cursor-pointer"
                             title="Cancelar importação"
                           >
-                            ✕
+                            <IconX className="h-4 w-4" />
                           </button>
                         </div>
 

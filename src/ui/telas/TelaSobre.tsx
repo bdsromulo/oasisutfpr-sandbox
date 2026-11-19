@@ -221,12 +221,12 @@ export function TelaSobre(props: { onAbrirGestaoInformacao: () => void }) {
           <span className="text-utfpr-600 dark:text-utfpr-500">Oásis</span> UTFPR
         </h2>
         {/* Epígrafe de abertura: preâmbulo da descrição do projeto. */}
-        <blockquote className="mt-4 max-w-3xl border-l-2 border-utfpr-500/70 pl-4">
+        <blockquote className="mt-4 max-w-3xl">
           <p className="text-sm italic leading-relaxed text-zinc-600 dark:text-zinc-300">
             “Os planos do diligente conduzem à abundância, mas a pressa desmedida conduz
             à pobreza.”
           </p>
-          <cite className="mt-1.5 block text-xs font-semibold not-italic tracking-wide text-utfpr-700 dark:text-utfpr-400">
+          <cite className="mt-1.5 block text-xs font-medium not-italic text-zinc-500 dark:text-zinc-400">
             Provérbios 21:5
           </cite>
         </blockquote>

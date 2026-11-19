@@ -69,6 +69,7 @@ import {
   IconSun,
   IconWarning,
   LogoUTFPR,
+  IconX,
 } from "./icons";
 import { ModalMinhasAvaliacoes } from "./telas/ModalMinhasAvaliacoes";
 import { ModalNovidades } from "./telas/ModalNovidades";
@@ -1160,7 +1161,7 @@ function Aplicacao() {
           {/* coluna principal */}
           <div className="min-w-0 flex-1 w-full">
             {perfil && perfil.avisos.length > 0 && (
-              <div className="mb-6 flex items-start gap-2.5 rounded-xl border border-amber-300/80 bg-amber-50/80 p-3.5 text-sm text-amber-800 dark:border-amber-800/80 dark:bg-amber-950/60 dark:text-amber-200">
+              <div className="mb-6 flex items-start gap-2.5 rounded-xl border border-zinc-200 bg-white p-3.5 text-sm text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
                 <IconWarning className="mt-0.5 h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" />
                 <div>
                   <span className="font-semibold">Observações na leitura do documento:</span>{" "}
@@ -1574,7 +1575,7 @@ function Aplicacao() {
                     }}
                     className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-full bg-zinc-100 text-zinc-500 hover:bg-zinc-200 hover:text-zinc-800 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700 dark:hover:text-white"
                   >
-                    ✕
+                    <IconX className="h-4 w-4" />
                   </button>
                 </div>
                 <div className="flex-1 overflow-y-auto pb-6">

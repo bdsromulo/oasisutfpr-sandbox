@@ -393,7 +393,7 @@ export function TelaComoUsar() {
                   <ul className="mt-1.5 space-y-1">
                     {t.interacoes.map((i) => (
                       <li key={i} className="flex gap-2 text-xs leading-relaxed text-zinc-600 dark:text-zinc-300">
-                        <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-utfpr-500" />
+                        <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-zinc-400 dark:bg-zinc-500" />
                         <span>{i}</span>
                       </li>
                     ))}
@@ -557,9 +557,9 @@ export function TelaComoUsar() {
         </div>
       </Secao>
 
-      <div className="flex items-start gap-3 rounded-2xl border border-amber-300/80 bg-amber-50/80 p-4 dark:border-amber-800/80 dark:bg-amber-950/50">
+      <div className="flex items-start gap-3 rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
         <IconBookOpen className="mt-0.5 h-4.5 w-4.5 shrink-0 text-amber-600 dark:text-amber-400" />
-        <p className="text-xs leading-relaxed text-amber-900 dark:text-amber-200">
+        <p className="text-xs leading-relaxed text-zinc-700 dark:text-zinc-300">
           O Oásis apoia o seu planejamento, mas não é um sistema oficial da UTFPR.
           Confirme sempre a oferta e a sua situação no Portal antes de efetivar a
           matrícula.

@@ -239,8 +239,8 @@ function CardDisciplinaPossoCursar({
               bloqueio — quem lê precisa entender que é pendência a conferir no
               Portal, não porta fechada. */}
           {e.motivoBloqueio && (
-            <div className="flex items-start gap-2 rounded-xl border border-amber-300/70 bg-amber-50 p-2.5 text-xs font-semibold text-amber-800 dark:border-amber-500/40 dark:bg-amber-950/30 dark:text-amber-300">
-              <IconWarning className="h-4 w-4 shrink-0" />
+            <div className="flex items-start gap-2 rounded-xl border border-zinc-200 bg-white p-2.5 text-xs font-semibold text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
+              <IconWarning className="text-amber-600 dark:text-amber-400 h-4 w-4 shrink-0" />
               <span>{matriz ? renderizarTextoComCodigos(e.motivoBloqueio, matriz) : e.motivoBloqueio}</span>
             </div>
           )}

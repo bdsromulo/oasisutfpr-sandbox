@@ -3,6 +3,7 @@
 // Abre a partir do nome do docente no planejamento de matrícula e mostra o que a
 // comunidade registrou sobre ele — na disciplina em questão e no geral.
 import { useEffect, useMemo } from "react";
+import { IconX } from "../icons";
 import { criarConsulta, agregar } from "../../domain/reviews/acervo";
 import {
   FaixaFiltro,
@@ -123,7 +124,7 @@ export function PainelProfessor(props: {
             aria-label="Fechar"
             className="shrink-0 cursor-pointer rounded-xl border border-zinc-200 px-2.5 py-1 text-sm font-bold text-zinc-500 hover:text-zinc-800 dark:border-zinc-800 dark:hover:text-zinc-200"
           >
-            ✕
+            <IconX className="h-4 w-4" />
           </button>
         </div>
 

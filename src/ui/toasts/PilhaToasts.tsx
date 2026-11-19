@@ -11,25 +11,25 @@ import type { Toast, TomToast } from "./pilha";
  * dos demais modais (z-50): um aviso encoberto é um aviso perdido.
  */
 
+// Fundo neutro em todos os tons e a cor só no ícone: os blocos verde, âmbar e
+// vermelho claros liam como "pastel de template". O alerta, que substitui um
+// modal bloqueante, mantém a borda vermelha para não passar despercebido.
+const NEUTRO = "bg-white text-zinc-800 dark:bg-zinc-900 dark:text-zinc-100";
 const TONS: Record<TomToast, { caixa: string; icone: string }> = {
   info: {
-    caixa:
-      "border-zinc-300/80 bg-white text-zinc-800 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100",
+    caixa: `border-zinc-300/80 dark:border-zinc-700 ${NEUTRO}`,
     icone: "bg-zinc-500/15 text-zinc-600 dark:text-zinc-300",
   },
   ok: {
-    caixa:
-      "border-emerald-400/70 bg-emerald-50 text-emerald-900 dark:border-emerald-800/80 dark:bg-emerald-950/90 dark:text-emerald-100",
+    caixa: `border-zinc-300/80 dark:border-zinc-700 ${NEUTRO}`,
     icone: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300",
   },
   aviso: {
-    caixa:
-      "border-amber-400/70 bg-amber-50 text-amber-900 dark:border-amber-800/80 dark:bg-amber-950/90 dark:text-amber-100",
+    caixa: `border-zinc-300/80 dark:border-zinc-700 ${NEUTRO}`,
     icone: "bg-amber-500/15 text-amber-700 dark:text-amber-300",
   },
   alerta: {
-    caixa:
-      "border-red-400/70 bg-red-50 text-red-900 dark:border-red-800/80 dark:bg-red-950/90 dark:text-red-100",
+    caixa: `border-red-400/70 dark:border-red-800/80 ${NEUTRO}`,
     icone: "bg-red-500/15 text-red-700 dark:text-red-300",
   },
 };

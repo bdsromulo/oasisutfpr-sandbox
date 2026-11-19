@@ -38,7 +38,7 @@ export function IconUpload(props: SVGProps<SVGSVGElement>) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.75"
+      strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
       className={props.className ?? "w-6 h-6"}
@@ -57,7 +57,7 @@ export function IconCheck(props: SVGProps<SVGSVGElement>) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="2"
+      strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
       className={props.className ?? "w-4 h-4"}
@@ -74,7 +74,7 @@ export function IconCheckCircle(props: SVGProps<SVGSVGElement>) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.75"
+      strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
       className={props.className ?? "w-4 h-4"}
@@ -92,7 +92,7 @@ export function IconCopy(props: SVGProps<SVGSVGElement>) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.75"
+      strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
       className={props.className ?? "w-4 h-4"}
@@ -110,7 +110,7 @@ export function IconTrash(props: SVGProps<SVGSVGElement>) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.75"
+      strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
       className={props.className ?? "w-4 h-4"}
@@ -128,7 +128,7 @@ export function IconPlus(props: SVGProps<SVGSVGElement>) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="2"
+      strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
       className={props.className ?? "w-4 h-4"}
@@ -146,7 +146,7 @@ export function IconWarning(props: SVGProps<SVGSVGElement>) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.75"
+      strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
       className={props.className ?? "w-4 h-4"}
@@ -165,7 +165,7 @@ export function IconUser(props: SVGProps<SVGSVGElement>) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.75"
+      strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
       className={props.className ?? "w-4 h-4"}
@@ -183,7 +183,7 @@ export function IconBookOpen(props: SVGProps<SVGSVGElement>) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.75"
+      strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
       className={props.className ?? "w-4 h-4"}
@@ -201,7 +201,7 @@ export function IconCalendar(props: SVGProps<SVGSVGElement>) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.75"
+      strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
       className={props.className ?? "w-4 h-4"}
@@ -221,7 +221,7 @@ export function IconFileText(props: SVGProps<SVGSVGElement>) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.75"
+      strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
       className={props.className ?? "w-4 h-4"}
@@ -242,7 +242,7 @@ export function IconSettings(props: SVGProps<SVGSVGElement>) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.75"
+      strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
       className={props.className ?? "w-4 h-4"}
@@ -260,7 +260,7 @@ export function IconSun(props: SVGProps<SVGSVGElement>) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.75"
+      strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
       className={props.className ?? "w-4 h-4"}
@@ -278,7 +278,7 @@ export function IconMoon(props: SVGProps<SVGSVGElement>) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.75"
+      strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
       className={props.className ?? "w-4 h-4"}
@@ -295,7 +295,7 @@ export function IconMonitor(props: SVGProps<SVGSVGElement>) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.75"
+      strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
       className={props.className ?? "w-4 h-4"}
@@ -314,7 +314,7 @@ export function IconX(props: SVGProps<SVGSVGElement>) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.75"
+      strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
       className={props.className ?? "w-4 h-4"}
@@ -331,7 +331,7 @@ export function IconBuilding(props: SVGProps<SVGSVGElement>) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.75"
+      strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
       className={props.className ?? "w-4 h-4"}
@@ -349,7 +349,7 @@ export function IconGraduationCap(props: SVGProps<SVGSVGElement>) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.75"
+      strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
       className={props.className ?? "w-4 h-4"}
@@ -367,7 +367,7 @@ export function IconSearch(props: SVGProps<SVGSVGElement>) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.75"
+      strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
       className={props.className ?? "w-4 h-4"}
@@ -385,7 +385,7 @@ export function IconFilter(props: SVGProps<SVGSVGElement>) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.75"
+      strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
       className={props.className ?? "w-4 h-4"}
@@ -402,7 +402,7 @@ export function IconSortUpDown(props: SVGProps<SVGSVGElement>) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="2.2"
+      strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
       className={props.className ?? "w-4 h-4"}
@@ -421,7 +421,7 @@ export function IconInfo(props: SVGProps<SVGSVGElement>) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.9"
+      strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
       className={props.className ?? "w-4 h-4"}
@@ -440,7 +440,7 @@ export function IconShieldLock(props: SVGProps<SVGSVGElement>) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.8"
+      strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
       className={props.className ?? "w-5 h-5"}
@@ -477,7 +477,7 @@ export function IconInstagram(props: SVGProps<SVGSVGElement>) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.9"
+      strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
       className={props.className ?? "w-5 h-5"}
@@ -496,7 +496,7 @@ export function IconHelp(props: SVGProps<SVGSVGElement>) {
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth="1.9"
+      strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
       className={props.className ?? "w-4 h-4"}
@@ -517,7 +517,7 @@ function base(props: SVGProps<SVGSVGElement>, tamanho = "w-4 h-4") {
     viewBox: "0 0 24 24",
     fill: "none",
     stroke: "currentColor",
-    strokeWidth: "1.85",
+    strokeWidth: "1.5",
     strokeLinecap: "round" as const,
     strokeLinejoin: "round" as const,
     ...props,
@@ -741,6 +741,15 @@ export function IconGrade(props: SVGProps<SVGSVGElement>) {
       <path d="M3.5 9.3h17M3.5 14.7h17M9.2 4v16M14.8 4v16" />
       <rect x="10.2" y="10.3" width="3.6" height="3.4" fill="currentColor" stroke="none" />
       <rect x="4.5" y="15.7" width="3.7" height="3.3" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+/** Quatro cantos para fora: abrir em tela maior. Substitui o "⛶" de texto. */
+export function IconMaximize(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base(props)}>
+      <path d="M8.5 4H4v4.5M15.5 4H20v4.5M20 15.5V20h-4.5M4 15.5V20h4.5" />
     </svg>
   );
 }
