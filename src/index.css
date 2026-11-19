@@ -54,6 +54,14 @@
   animation: ponto-acende 1.1s ease-in-out infinite;
 }
 
+/* Troca de aba (comTransicao): só um esmaecer curto entre a tela antiga e a
+   nova. O padrão do navegador é 250ms, longo demais para uma troca que a
+   pessoa pediu com um clique. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 120ms;
+}
+
 /* Item de lista longa (Matérias abertas, Catálogo). O navegador pula o layout
    e a pintura do que está fora da tela; num PC de laboratório, com 170 turmas
    na lista, é o que deixa a rolagem e a digitação na busca sem engasgo.

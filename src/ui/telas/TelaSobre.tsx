@@ -299,8 +299,8 @@ export function TelaSobre(props: { onAbrirGestaoInformacao: () => void }) {
                   <li key={titulo} className="flex gap-2.5">
                     <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500" />
                     <span>
-                      <strong className="font-bold text-zinc-900 dark:text-white">{titulo}</strong>{" "}
-                      . {texto}
+                      <strong className="font-bold text-zinc-900 dark:text-white">{titulo}:</strong>{" "}
+                      {texto}
                     </span>
                   </li>
                 ))}

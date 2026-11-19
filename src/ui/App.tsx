@@ -79,6 +79,7 @@ import { ModalNovidades } from "./telas/ModalNovidades";
 import { MenuComandos } from "./MenuComandos";
 import { atalhoAbreMenu, GRUPO_DISCIPLINAS, type Comando } from "./comandos";
 import { nomeLegivel } from "./textos";
+import { comTransicao } from "./transicao";
 import { AvisoBeta } from "./telas/AvisoBeta";
 import { ProvedorToasts, useToasts } from "./toasts/contexto";
 import { avisarRemocao } from "./toasts/avisos";
@@ -1353,10 +1354,12 @@ function Aplicacao() {
           {/* Menu Lateral (Sidebar Desktop / Mobile Drawer) */}
           <SidebarNavegacao
             abaAtiva={aba}
-            onSelecionarAba={(novaAba) => {
-              if (novaAba === "situacao" && !perfil) setAbaSituacao("catalogo");
-              setAba(novaAba);
-            }}
+            onSelecionarAba={(novaAba) =>
+              comTransicao(() => {
+                if (novaAba === "situacao" && !perfil) setAbaSituacao("catalogo");
+                setAba(novaAba);
+              })
+            }
             temPerfil={!!perfil}
             qtdTurmasSelecao={selecao.length}
 
@@ -1400,7 +1403,7 @@ function Aplicacao() {
                 <AbasSegmentadas
                   rotulo="Seções de Minha Situação"
                   valor={abaSituacao}
-                  onMudar={setAbaSituacao}
+                  onMudar={(v) => comTransicao(() => setAbaSituacao(v))}
                   opcoes={[
                     { id: "painel", rotulo: "Painel geral" },
                     { id: "catalogo", rotulo: "Catálogo" },
@@ -1512,7 +1515,7 @@ function Aplicacao() {
                 <AbasSegmentadas
                   rotulo="Seções do Planejamento"
                   valor={abaPlanejamento}
-                  onMudar={setAbaPlanejamento}
+                  onMudar={(v) => comTransicao(() => setAbaPlanejamento(v))}
                   opcoes={[
                     {
                       id: "cursar",
