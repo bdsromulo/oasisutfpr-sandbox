@@ -82,6 +82,8 @@ export function TelaCatalogo(props: {
   matriz: Matriz;
   oferta: OfertaSemestre;
   categoriaInicial?: CategoriaCatalogo;
+  /** termo vindo do menu de comandos (Ctrl+K), já aplicado na busca */
+  buscaInicial?: string;
   onVoltar?: () => void;
 }) {
   const { perfil, matriz, oferta } = props;
@@ -92,7 +94,7 @@ export function TelaCatalogo(props: {
   const [filtroStatus, setFiltroStatus] = useState<
     "todas" | "pendentes" | "abertas" | "semoferta" | "concluidas"
   >(props.categoriaInicial && props.categoriaInicial !== "todas" ? "pendentes" : "todas");
-  const [busca, setBusca] = useState("");
+  const [busca, setBusca] = useState(props.buscaInicial ?? "");
   const [ordenacao, setOrdenacao] = useState<string>("az");
   const [revisando, setRevisando] = useState<AlvoPainelDisciplina | null>(null);
 
@@ -454,7 +456,7 @@ export function TelaCatalogo(props: {
       </div>
 
       {/* Filtros de Categoria (Dropdown) e Período (exclusivo para Catálogo) */}
-      <div className="flex flex-wrap items-center gap-4 rounded-2xl border border-zinc-200/80 bg-zinc-100/70 p-3.5 dark:border-zinc-800/80 dark:bg-zinc-900/70">
+      <div className="flex flex-wrap items-center gap-4 rounded-xl border border-zinc-200/80 bg-zinc-100/70 p-3.5 dark:border-zinc-800/80 dark:bg-zinc-900/70">
         <div className="flex flex-wrap items-center gap-2 flex-1 min-w-[240px]">
           <label htmlFor="categoria-catalogo" className="font-display text-xs font-medium text-zinc-700 dark:text-zinc-300">
             Categoria:
@@ -463,7 +465,7 @@ export function TelaCatalogo(props: {
             id="categoria-catalogo"
             value={categoria}
             onChange={(e) => setCategoria(e.target.value as CategoriaCatalogo)}
-            className="flex-1 cursor-pointer rounded-xl border border-zinc-300 bg-white px-3.5 py-2 font-display text-xs font-bold text-zinc-900 shadow-2xs transition-colors focus:border-utfpr-500 focus:outline-none focus:ring-2 focus:ring-utfpr-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:focus:border-utfpr-400"
+            className="flex-1 cursor-pointer rounded-xl border border-zinc-300 bg-white px-3.5 py-2 font-display text-xs font-bold text-zinc-900 transition-colors focus:border-utfpr-500 focus:outline-none focus:ring-2 focus:ring-utfpr-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:focus:border-utfpr-400"
           >
             {categoriasOpcoes.map(([id, rotulo]) => (
               <option key={id} value={id}>
@@ -481,7 +483,7 @@ export function TelaCatalogo(props: {
             id="periodo-catalogo"
             value={filtroPeriodo}
             onChange={(e) => setFiltroPeriodo(e.target.value)}
-            className="flex-1 cursor-pointer rounded-xl border border-zinc-300 bg-white px-3.5 py-2 font-display text-xs font-bold text-zinc-900 shadow-2xs transition-colors focus:border-utfpr-500 focus:outline-none focus:ring-2 focus:ring-utfpr-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:focus:border-utfpr-400"
+            className="flex-1 cursor-pointer rounded-xl border border-zinc-300 bg-white px-3.5 py-2 font-display text-xs font-bold text-zinc-900 transition-colors focus:border-utfpr-500 focus:outline-none focus:ring-2 focus:ring-utfpr-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:focus:border-utfpr-400"
           >
             <option value="todos">Todos os Períodos</option>
             {periodosDisponiveis.map((periodo) => (
@@ -518,7 +520,7 @@ export function TelaCatalogo(props: {
 
       {/* VISÃO EXPANDIDA DE TRILHAS (Quando categoria == "trilhas") */}
       {categoria === "trilhas" && painel && (
-        <section className="space-y-6 rounded-2xl border border-utfpr-500/30 bg-utfpr-500/5 p-6 dark:border-utfpr-500/20 dark:bg-utfpr-500/10">
+        <section className="space-y-6 rounded-xl border border-utfpr-500/30 bg-utfpr-500/5 p-6 dark:border-utfpr-500/20 dark:bg-utfpr-500/10">
           <div className="flex flex-wrap items-baseline justify-between gap-4 border-b border-zinc-200/60 pb-4 dark:border-zinc-800/60">
             <div>
               <h3 className="font-display text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
@@ -685,7 +687,7 @@ export function TelaCatalogo(props: {
       )}
 
       {/* Barra de Busca, Filtro de Status e Ordenação */}
-      <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-zinc-200/80 bg-white p-3.5 shadow-xs dark:border-zinc-800/80 dark:bg-zinc-900">
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-zinc-200/80 bg-white p-3.5 dark:border-zinc-800/80 dark:bg-zinc-900">
         <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
           <div className="relative flex-1 sm:w-72">
             <IconSearch className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
@@ -703,7 +705,7 @@ export function TelaCatalogo(props: {
               onClick={() => setFiltroStatus("todas")}
               className={`rounded-lg px-3 py-1.5 font-display text-xs font-bold transition-colors cursor-pointer ${
                 filtroStatus === "todas"
-                  ? "bg-white text-zinc-950 shadow-xs dark:bg-zinc-700 dark:text-white"
+                  ? "bg-white text-zinc-950 dark:bg-zinc-700 dark:text-white"
                   : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200"
               }`}
             >
@@ -713,7 +715,7 @@ export function TelaCatalogo(props: {
               onClick={() => setFiltroStatus("pendentes")}
               className={`rounded-lg px-3 py-1.5 font-display text-xs font-bold transition-colors cursor-pointer ${
                 filtroStatus === "pendentes"
-                  ? "bg-white text-zinc-950 shadow-xs dark:bg-zinc-700 dark:text-white"
+                  ? "bg-white text-zinc-950 dark:bg-zinc-700 dark:text-white"
                   : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200"
               }`}
             >
@@ -723,7 +725,7 @@ export function TelaCatalogo(props: {
               onClick={() => setFiltroStatus("abertas")}
               className={`rounded-lg px-3 py-1.5 font-display text-xs font-bold transition-colors cursor-pointer ${
                 filtroStatus === "abertas"
-                  ? "bg-white text-zinc-950 shadow-xs dark:bg-zinc-700 dark:text-white"
+                  ? "bg-white text-zinc-950 dark:bg-zinc-700 dark:text-white"
                   : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200"
               }`}
             >
@@ -733,7 +735,7 @@ export function TelaCatalogo(props: {
               onClick={() => setFiltroStatus("semoferta")}
               className={`rounded-lg px-3 py-1.5 font-display text-xs font-bold transition-colors cursor-pointer ${
                 filtroStatus === "semoferta"
-                  ? "bg-white text-zinc-950 shadow-xs dark:bg-zinc-700 dark:text-white"
+                  ? "bg-white text-zinc-950 dark:bg-zinc-700 dark:text-white"
                   : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200"
               }`}
             >
@@ -743,7 +745,7 @@ export function TelaCatalogo(props: {
               onClick={() => setFiltroStatus("concluidas")}
               className={`rounded-lg px-3 py-1.5 font-display text-xs font-bold transition-colors cursor-pointer ${
                 filtroStatus === "concluidas"
-                  ? "bg-white text-zinc-950 shadow-xs dark:bg-zinc-700 dark:text-white"
+                  ? "bg-white text-zinc-950 dark:bg-zinc-700 dark:text-white"
                   : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200"
               }`}
             >
@@ -776,7 +778,7 @@ export function TelaCatalogo(props: {
             return (
               <div
                 key={d.codigo}
-                className={`flex flex-col justify-between rounded-2xl border p-4 transition-colors ${
+                className={`item-lista-longa flex flex-col justify-between rounded-xl border p-4 transition-colors ${
                   concluida
                     ? "border-emerald-200/80 bg-emerald-50/40 dark:border-emerald-900/40 dark:bg-emerald-950/20"
                     : "border-zinc-200/90 bg-white hover:border-zinc-300 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700"

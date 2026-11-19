@@ -29,7 +29,7 @@ function LinhaAcao(props: {
     <button
       type="button"
       onClick={props.onClick}
-      className="flex w-full min-h-[56px] cursor-pointer items-center gap-3.5 rounded-2xl border border-zinc-200/80 bg-white px-4 py-3 text-left transition-colors active:bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900 dark:active:bg-zinc-800"
+      className="flex w-full min-h-[56px] cursor-pointer items-center gap-3.5 rounded-xl border border-zinc-200/80 bg-white px-4 py-3 text-left transition-colors active:bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-900 dark:active:bg-zinc-800"
     >
       <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
         {props.icone}
@@ -122,7 +122,7 @@ export function PainelMenuMobile(props: {
                   key={op.id}
                   type="button"
                   onClick={() => props.onMudarTema(op.id)}
-                  className={`flex min-h-[48px] cursor-pointer items-center justify-center gap-2 rounded-2xl border font-display text-sm font-bold transition-colors ${
+                  className={`flex min-h-[48px] cursor-pointer items-center justify-center gap-2 rounded-xl border font-display text-sm font-bold transition-colors ${
                     ativo
                       ? "border-utfpr-500 bg-utfpr-500 text-zinc-950"
                       : "border-zinc-200 bg-white text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300"
@@ -173,7 +173,7 @@ export function PainelMenuMobile(props: {
         <button
           type="button"
           onClick={onFechar}
-          className="mt-4 min-h-[48px] w-full cursor-pointer rounded-2xl bg-zinc-200 font-display text-sm font-bold text-zinc-700 transition-colors active:bg-zinc-300 dark:bg-zinc-800 dark:text-zinc-200"
+          className="mt-4 min-h-[48px] w-full cursor-pointer rounded-xl bg-zinc-200 font-display text-sm font-bold text-zinc-700 transition-colors active:bg-zinc-300 dark:bg-zinc-800 dark:text-zinc-200"
         >
           Fechar
         </button>

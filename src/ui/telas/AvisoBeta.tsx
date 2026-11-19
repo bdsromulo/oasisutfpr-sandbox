@@ -49,7 +49,7 @@ export function AvisoBeta() {
             .
           </p>
 
-          <div className="rounded-2xl border border-amber-500/40 bg-white/70 p-4 dark:bg-zinc-950/40">
+          <div className="rounded-xl border border-amber-500/40 bg-white/70 p-4 dark:bg-zinc-950/40">
             <p className="font-bold">Achou um erro aqui? Me avise.</p>
             <p className="mt-1.5">
               Por e-mail, em{" "}

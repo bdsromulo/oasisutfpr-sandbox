@@ -138,7 +138,7 @@ export function TelaAmigosMatch({
       {/* Grid: Exportar e Importar Código */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {/* Card: Meu Código */}
-        <div className="flex flex-col justify-between rounded-2xl border-2 border-utfpr-500/50 bg-white p-6 dark:bg-zinc-900">
+        <div className="flex flex-col justify-between rounded-xl border-2 border-utfpr-500/50 bg-white p-6 dark:bg-zinc-900">
           <div>
             <div className="flex items-center justify-between gap-2">
               <h3 className="font-display text-base font-bold text-zinc-900 dark:text-white flex items-center gap-2">
@@ -157,7 +157,7 @@ export function TelaAmigosMatch({
                   placeholder="Seu nome ou apelido..."
                   value={nomeApelido}
                   onChange={(e) => setNomeApelido(e.target.value)}
-                  className="w-full rounded-xl border border-zinc-300 bg-white px-3 py-2 text-xs font-semibold text-zinc-900 shadow-2xs focus:border-utfpr-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
+                  className="w-full rounded-xl border border-zinc-300 bg-white px-3 py-2 text-xs font-semibold text-zinc-900 focus:border-utfpr-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
                 />
               </div>
             )}
@@ -168,7 +168,7 @@ export function TelaAmigosMatch({
                 rows={3}
                 value={meuCodigo}
                 onClick={(e) => (e.target as HTMLTextAreaElement).select()}
-                className="w-full rounded-2xl border border-zinc-300/80 bg-white/90 p-3 font-mono text-xs font-bold text-zinc-800 shadow-2xs focus:outline-none dark:border-zinc-700/80 dark:bg-zinc-800/90 dark:text-zinc-200 resize-none"
+                className="w-full rounded-xl border border-zinc-300/80 bg-white/90 p-3 font-mono text-xs font-bold text-zinc-800 focus:outline-none dark:border-zinc-700/80 dark:bg-zinc-800/90 dark:text-zinc-200 resize-none"
               />
             </div>
           </div>
@@ -177,7 +177,7 @@ export function TelaAmigosMatch({
             <span className="text-xs font-semibold text-zinc-500">
               {copiado ? "Copiado para a área de transferência!" : "Clique no botão ou no texto para copiar"}
             </span>
-            <Botao onClick={handleCopiar} variante="primario" classe="!px-4 !py-2.5 !text-xs font-bold shadow-md cursor-pointer">
+            <Botao onClick={handleCopiar} variante="primario" classe="!px-4 !py-2.5 !text-xs font-bold cursor-pointer">
               {copiado ? <IconCheckCircle className="h-4 w-4 shrink-0" /> : <IconClipboard className="h-4 w-4 shrink-0" />}
               <span>{copiado ? "Copiado!" : "Copiar Código"}</span>
             </Botao>
@@ -185,7 +185,7 @@ export function TelaAmigosMatch({
         </div>
 
         {/* Card: Importar Código do Amigo */}
-        <div className="flex flex-col justify-between rounded-2xl border-2 border-zinc-200/90 bg-white/95 p-6 shadow-md dark:border-zinc-800/90 dark:bg-zinc-900/95">
+        <div className="flex flex-col justify-between rounded-xl border-2 border-zinc-200/90 bg-white/95 p-6 dark:border-zinc-800/90 dark:bg-zinc-900/95">
           <div>
             <h3 className="font-display text-base font-bold text-zinc-900 dark:text-white flex items-center gap-2">
               <span>{<IconDownload className="inline h-4 w-4 shrink-0 align-[-0.2em]" />} Comparar com Código de Amigo</span>
@@ -200,7 +200,7 @@ export function TelaAmigosMatch({
                 placeholder="Cole aqui o código do amigo(a)... (ex: OASIS-SHARE-v1:...)"
                 value={codigoInput}
                 onChange={(e) => setCodigoInput(e.target.value)}
-                className="w-full rounded-2xl border border-zinc-300/80 bg-white/90 p-3 font-mono text-xs text-zinc-800 shadow-2xs focus:outline-none focus:ring-2 focus:ring-utfpr-400 dark:border-zinc-700/80 dark:bg-zinc-800/90 dark:text-zinc-200 resize-none"
+                className="w-full rounded-xl border border-zinc-300/80 bg-white/90 p-3 font-mono text-xs text-zinc-800 focus:outline-none focus:ring-2 focus:ring-utfpr-400 dark:border-zinc-700/80 dark:bg-zinc-800/90 dark:text-zinc-200 resize-none"
               />
             </div>
 
@@ -224,7 +224,7 @@ export function TelaAmigosMatch({
                 Limpar
               </Botao>
             )}
-            <Botao onClick={handleComparar} variante="primario" classe="!px-5 !py-2.5 !text-xs font-bold shadow-md cursor-pointer">
+            <Botao onClick={handleComparar} variante="primario" classe="!px-5 !py-2.5 !text-xs font-bold cursor-pointer">
               <IconHandshake className="inline h-4 w-4 shrink-0 align-[-0.2em]" /> Calcular Match
             </Botao>
           </div>
@@ -235,7 +235,7 @@ export function TelaAmigosMatch({
       {resultado && (
         <div className="space-y-6 animate-in slide-in-from-bottom-3 duration-300">
           {/* Card Resumo do Amigo */}
-          <div className="rounded-2xl border-2 border-zinc-300/80 bg-zinc-900 p-6 text-white shadow-xl dark:border-zinc-700">
+          <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-6 text-white dark:border-zinc-700">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
                 <span className="font-mono text-xs font-bold uppercase text-utfpr-400 tracking-wider">
@@ -249,7 +249,7 @@ export function TelaAmigosMatch({
                 </p>
               </div>
 
-              <div className="flex items-center gap-4 bg-white/10 rounded-2xl p-4 border border-white/15">
+              <div className="flex items-center gap-4 bg-white/10 rounded-xl p-4 border border-white/15">
                 <div className="text-right">
                   <div className="text-[11px] uppercase font-bold text-zinc-300">Compatibilidade</div>
                   <div className="font-display text-3xl font-bold text-utfpr-400">
@@ -282,7 +282,7 @@ export function TelaAmigosMatch({
                 {resultado.matchPerfeito.map((item) => (
                   <div
                     key={`${item.disciplina.codigo}-${item.turma.codigo}`}
-                    className="rounded-2xl border-2 border-emerald-500/60 bg-emerald-50/80 p-4 dark:border-emerald-500/60 dark:bg-emerald-950/40 shadow-xs flex items-start justify-between gap-3"
+                    className="rounded-xl border-2 border-emerald-500/60 bg-emerald-50/80 p-4 dark:border-emerald-500/60 dark:bg-emerald-950/40 flex items-start justify-between gap-3"
                   >
                     <div>
                       <div className="flex items-center gap-2">
@@ -299,7 +299,7 @@ export function TelaAmigosMatch({
                       <div className="mt-2.5 space-y-1 font-mono text-xs text-emerald-900 dark:text-emerald-300">
                         {resumirHorariosPorDia(item.turma.horarios).map((h, i) => (
                           <div key={i} className="font-semibold">
-                            ⏰ {h.diaNome} ({h.intervalo}) · Sala {h.salas}
+                            {h.diaNome} ({h.intervalo}) · Sala {h.salas}
                           </div>
                         ))}
                       </div>
@@ -384,11 +384,11 @@ export function TelaAmigosMatch({
                 {resultado.oportunidadesDeOuro.map((op) => (
                   <div
                     key={op.disciplina.codigo}
-                    className="rounded-2xl border-2 border-amber-400/80 bg-amber-50 p-5 dark:border-amber-500/70 dark:bg-amber-950/60"
+                    className="rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900"
                   >
-                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-amber-200/60 pb-3 dark:border-amber-800/60">
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-b border-zinc-200 pb-3 dark:border-zinc-800">
                       <div>
-                        <span className="font-mono text-xs font-bold text-amber-800 dark:text-amber-300">
+                        <span className="font-mono text-xs font-bold text-zinc-700 dark:text-zinc-300">
                           {op.disciplina.codigo}
                         </span>
                         <h4 className="font-display text-base font-bold text-zinc-900 dark:text-white">
@@ -406,8 +406,8 @@ export function TelaAmigosMatch({
                     </div>
 
                     <div className="mt-4">
-                      <span className="text-xs font-medium text-amber-900 dark:text-amber-300">
-                        <IconCheck className="inline h-4 w-4 shrink-0 align-[-0.2em]" /> Turmas compatíveis sem conflito com a grade dos dois:
+                      <span className="text-xs font-medium text-zinc-700 dark:text-zinc-300">
+                        <IconCheck className="text-emerald-600 dark:text-emerald-400 inline h-4 w-4 shrink-0 align-[-0.2em]" /> Turmas compatíveis sem conflito com a grade dos dois:
                       </span>
 
                       {op.turmasSugeridasLivreParaAmbos.length === 0 ? (
@@ -419,11 +419,11 @@ export function TelaAmigosMatch({
                           {op.turmasSugeridasLivreParaAmbos.map((t) => (
                             <div
                               key={t.codigo}
-                              className="flex items-center justify-between gap-3 rounded-2xl border border-amber-300 bg-white/95 p-3.5 shadow-2xs dark:border-amber-700 dark:bg-zinc-900"
+                              className="flex items-center justify-between gap-3 rounded-xl border border-zinc-200 bg-white/95 p-3.5 dark:border-zinc-800 dark:bg-zinc-900"
                             >
                               <div>
                                 <div className="flex items-center gap-2">
-                                  <span className="rounded bg-amber-500 px-2 py-0.5 font-mono text-xs font-bold text-zinc-950">
+                                  <span className="rounded bg-zinc-900 px-2 py-0.5 font-mono text-xs font-bold text-white dark:bg-zinc-100 dark:text-zinc-900">
                                     Turma {t.codigo}
                                   </span>
                                   <span className="text-[11px] font-bold text-zinc-500">{t.professores_raw || "Prof. a definir"}</span>
@@ -431,7 +431,7 @@ export function TelaAmigosMatch({
                                 <div className="mt-1.5 space-y-1 font-mono text-xs text-zinc-700 dark:text-zinc-300">
                                   {resumirHorariosPorDia(t.horarios).map((h, i) => (
                                     <div key={i} className="font-semibold">
-                                      ⏰ {h.diaNome} ({h.intervalo}) · Sala {h.salas}
+                                      {h.diaNome} ({h.intervalo}) · Sala {h.salas}
                                     </div>
                                   ))}
                                 </div>

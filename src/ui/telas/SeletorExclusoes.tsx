@@ -89,7 +89,7 @@ function BlocoExclusao<T>(props: {
       {props.quantidade > 0 && <div className="flex flex-wrap gap-1.5">{props.chips}</div>}
 
       {aberto && (
-        <div className="animate-in fade-in space-y-2 rounded-2xl border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="animate-in fade-in space-y-2 rounded-xl border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900">
           <div className="flex items-center gap-2">
             <input
               type="text"

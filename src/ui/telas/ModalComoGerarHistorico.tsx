@@ -140,7 +140,7 @@ export function ModalComoGerarHistorico(props: { aberto: boolean; onFechar: () =
                 <img
                   src={passo.imagem}
                   alt={passo.titulo}
-                  className="ml-10 w-[calc(100%-2.5rem)] rounded-xl border border-zinc-200/80 shadow-sm dark:border-zinc-700/80"
+                  className="ml-10 w-[calc(100%-2.5rem)] rounded-xl border border-zinc-200/80 dark:border-zinc-700/80"
                 />
               </li>
             ))}
@@ -151,7 +151,7 @@ export function ModalComoGerarHistorico(props: { aberto: boolean; onFechar: () =
           <button
             type="button"
             onClick={onFechar}
-            className="min-h-11 w-full cursor-pointer rounded-xl bg-utfpr-500 py-2.5 font-display text-sm font-bold text-zinc-950 shadow-sm transition-colors hover:bg-utfpr-400"
+            className="min-h-11 w-full cursor-pointer rounded-xl bg-utfpr-500 py-2.5 font-display text-sm font-bold text-zinc-950 transition-colors hover:bg-utfpr-400"
           >
             Entendi, voltar para o envio
           </button>

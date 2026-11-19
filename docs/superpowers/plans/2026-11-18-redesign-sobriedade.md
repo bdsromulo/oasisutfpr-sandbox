@@ -205,3 +205,36 @@ Base visual e estrutura global. Tudo com testes passando (680) e build dentro do
 - Barra de busca de Matérias abertas numa linha, "Filtros" ativo em preto, um amarelo só na grade montada, cenários de grade sem fonte mono.
 
 Fica para a próxima leva o Resumo do Impacto da grade (outra grade de cartões e chips mono), o filtro de turno amarelo acima da grade, a paleta das matérias na grade, os avisos em tons pastel, a citação do Sobre e o menu de comandos.
+
+## Fase 2 segunda leva, fase 3 e parte da fase 4 (feito em 2026-11-19)
+
+**Fase 2, fechada**
+- Resumo do Impacto da grade virou lista no mesmo desenho de Minha Situação. Sem cartões, sem chips mono, sem caixa amarela de excedente. Linhas que a grade não move não repetem "nada muda".
+- Filtro de turno (grade e prévia) em preto quando ativo, não amarelo.
+- Paleta das matérias em oito tons baixos (200 no claro, 900 no escuro), sem amarelo. A prévia da grade usa a mesma família, um tom acima.
+- Avisos em âmbar pastel e toasts com fundo neutro e cor só no ícone. Erros em vermelho e nós do fluxograma continuam com cor, porque ali a cor tem função.
+- Citação do Sobre sem faixa à esquerda. Novidades com lista simples e cabeçalho neutro.
+- Cartões em `rounded-xl` e sem sombra. Sombra e raio maiores só em modais, gavetas, menus e avisos.
+- Ícones com traço 1,5. Os últimos emojis (✕, ⛶, ⛔, ⏰, ⚡) viraram ícone.
+- Simulador sem fonte mono em números. Códigos de disciplina seguem em mono.
+- Menu de comandos (Ctrl+K, Cmd+K no Mac). Vai para qualquer tela e acha disciplina por nome ou código. No desktop o cabeçalho mostra "Buscar" com a dica "Ctrl K"; no celular, uma lupa.
+- Contratos em `tests/sobriedade-ui.test.ts` impedem a volta de emoji, degradê, blur, `transition-all`, escala no hover e pesos 800/900.
+
+**Bugs achados no caminho**
+- O × de cada célula da grade removia a turma sem o "Desfazer". Agora passa pelo mesmo aviso.
+- A prévia da grade pintava de vermelho (choque) a turma sob o mouse quando ela era da mesma matéria já escolhida.
+- A lista de privacidade do Sobre mostrava "Título . texto", resto da troca de travessões.
+
+**Fase 3**
+- Ofertas de turma por curso e sob demanda (`src/domain/ofertas/`). JS inicial de 3,45 MB para 1,22 MB (gzip de 414 para 247 KiB). O teto do `verificar-bundle` desceu para 300 KiB. Enquanto as turmas chegam, a coluna principal mostra o carregador de pontos, ou "Tentar de novo" se a rede falhar. Conferido em navegador com os chunks atrasados de propósito: a grade salva continua no semestre certo.
+- `content-visibility: auto` nos cartões de Matérias abertas e do Catálogo.
+- O botão que abre o formulário de avaliação ignora o segundo clique. Importar savefile já era idempotente.
+
+**Fase 4**
+- Troca de aba e sub-aba com esmaecer de 120ms (View Transitions), direto com "reduzir movimento".
+
+**Ficou para depois**
+- Arrastar para fechar a gaveta da grade e o menu (fase 3.3). Precisa de teste em aparelho real.
+- Service worker (fase 3.5). Depende de decidir como avisar dado de semestre novo sem servir oferta velha.
+- Páginas de privacidade e termos, capturas reais em "Como usar", momento de conclusão e cantos contínuos. São texto e gosto do dono.
+- Troca da fonte do corpo (item 10). Sugestão na seção 3.

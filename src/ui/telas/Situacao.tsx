@@ -226,7 +226,7 @@ export function TelaSituacao(props: {
         </p>
         <button
           onClick={props.onAbrirConfiguracoes}
-          className="inline-flex items-center gap-2 rounded-xl bg-utfpr-500 px-4 py-2.5 font-display text-xs font-bold text-zinc-950 shadow-xs transition-colors hover:bg-utfpr-400"
+          className="inline-flex items-center gap-2 rounded-xl bg-utfpr-500 px-4 py-2.5 font-display text-xs font-bold text-zinc-950 transition-colors hover:bg-utfpr-400"
         >
           <span>Abrir Configurações e Importar Histórico (PDF)</span>
         </button>
@@ -265,7 +265,7 @@ export function TelaSituacao(props: {
       ))}
 
       {/* MINI CABEÇALHO COM PERÍODO, CR E PROGRESSO GLOBAL DE HORAS (ITEM 3) */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 rounded-2xl border border-zinc-200/90 bg-white p-5 shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 rounded-xl border border-zinc-200/90 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
         <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-4 sm:gap-10">
           <div className="col-span-2 sm:col-span-1">
             <span className="block text-xs font-medium text-zinc-500 dark:text-zinc-400">
@@ -331,7 +331,7 @@ export function TelaSituacao(props: {
 
       <section
         aria-labelledby="titulo-categorias"
-        className="overflow-hidden rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900"
+        className="overflow-hidden rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900"
       >
         <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 px-5 pt-4 pb-2">
           <h2 id="titulo-categorias" className="font-display text-base font-semibold text-zinc-900 dark:text-zinc-100">

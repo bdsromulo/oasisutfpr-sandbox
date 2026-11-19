@@ -8,7 +8,9 @@ import { VERSAO_NOVIDADES } from "./novidades";
 import {
   dadosDoCurso,
   dadosDoCursoPorMatriz,
-  carregarOfertasHistoricasMecatronica,
+  carregarOfertasDoCurso,
+  carregarTodasOfertas,
+  ofertasProntas,
   ofertaDoSemestre,
   semestresDoCurso,
   semestresReaisDoCurso,
@@ -64,14 +66,20 @@ import {
   IconInfo,
   IconMenu,
   IconMoon,
+  IconSearch,
   IconSettings,
   IconStar,
   IconSun,
   IconWarning,
   LogoUTFPR,
+  IconX,
 } from "./icons";
 import { ModalMinhasAvaliacoes } from "./telas/ModalMinhasAvaliacoes";
 import { ModalNovidades } from "./telas/ModalNovidades";
+import { MenuComandos } from "./MenuComandos";
+import { atalhoAbreMenu, GRUPO_DISCIPLINAS, type Comando } from "./comandos";
+import { nomeLegivel } from "./textos";
+import { comTransicao } from "./transicao";
 import { AvisoBeta } from "./telas/AvisoBeta";
 import { ProvedorToasts, useToasts } from "./toasts/contexto";
 import { avisarRemocao } from "./toasts/avisos";
@@ -252,6 +260,9 @@ function Aplicacao() {
     }
   });
   const [modalConfigAberto, setModalConfigAberto] = useState(false);
+  const [menuComandosAberto, setMenuComandosAberto] = useState(false);
+  // termo levado do menu de comandos ao Catálogo; muda a chave e remonta a tela
+  const [buscaCatalogo, setBuscaCatalogo] = useState("");
   const [modalAvaliacoesAberto, setModalAvaliacoesAberto] = useState(false);
   const [modalNovidadesAberto, setModalNovidadesAberto] = useState(false);
   // O realce vale uma vez. Depois de aberto o botão continua lá, porém calado:
@@ -277,27 +288,44 @@ function Aplicacao() {
   // padrão apesar de conterem um histórico da matriz 844.
   const cursoDoPerfil = dadosDoCursoPorMatriz(perfil?.matriz);
   const cursoAtivo = cursoDoPerfil?.id ?? preferencias.curso ?? "bsi-981";
-  const [versaoOfertasMecatronica, setVersaoOfertasMecatronica] = useState(0);
+  const dadosCurso = useMemo(() => dadosDoCurso(cursoAtivo), [cursoAtivo]);
+
+  // As ofertas de turma chegam por curso, fora do JavaScript inicial. Primeiro
+  // as do curso em uso; as dos outros cursos depois, quando o navegador estiver
+  // ocioso, porque o roster de docentes das avaliações é global (§6.10). A
+  // versão só existe para recalcular o que depende das ofertas quando chegam.
+  const [versaoOfertas, setVersaoOfertas] = useState(0);
+  const [falhaOfertas, setFalhaOfertas] = useState(false);
+  const [tentativaOfertas, setTentativaOfertas] = useState(0);
   useEffect(() => {
     let ativo = true;
-    void carregarOfertasHistoricasMecatronica()
+    setFalhaOfertas(false);
+    void carregarOfertasDoCurso(dadosCurso)
       .then(() => {
-        if (ativo) setVersaoOfertasMecatronica((versao) => versao + 1);
+        if (!ativo) return;
+        setVersaoOfertas((v) => v + 1);
+        const resto = () =>
+          void carregarTodasOfertas()
+            .then(() => ativo && setVersaoOfertas((v) => v + 1))
+            .catch(() => {});
+        if ("requestIdleCallback" in window) window.requestIdleCallback(resto, { timeout: 5000 });
+        else setTimeout(resto, 2000);
       })
       .catch(() => {
-        // Uma falha de rede mantém o placeholder vazio sem derrubar a aplicação.
-        // O navegador pode tentar novamente no próximo carregamento da página.
+        // Sem rede no meio do caminho: a tela diz o que houve e oferece tentar
+        // de novo, em vez de mostrar um curso sem nenhuma turma.
+        if (ativo) setFalhaOfertas(true);
       });
     return () => {
       ativo = false;
     };
-  }, []);
-  const dadosCurso = useMemo(() => dadosDoCurso(cursoAtivo), [cursoAtivo]);
+  }, [dadosCurso, tentativaOfertas]);
+  const ofertasDoCursoProntas = ofertasProntas(dadosCurso);
   const matriz = dadosCurso.matriz;
   const todasOfertas = dadosCurso.ofertas;
   const semestresDisponiveis = useMemo(
     () => semestresDoCurso(dadosCurso),
-    [dadosCurso, versaoOfertasMecatronica],
+    [dadosCurso, versaoOfertas],
   );
 
   // o semestre guardado pode ser de outro curso: cai no padrão se não existir
@@ -311,11 +339,11 @@ function Aplicacao() {
   // o banner se serve para avisar que o quadro é provável, não publicado.
   const oferta = useMemo<OfertaSemestre>(
     () => ofertaDoSemestre(dadosCurso, semestreAtivo),
-    [semestreAtivo, dadosCurso, versaoOfertasMecatronica],
+    [semestreAtivo, dadosCurso, versaoOfertas],
   );
   const semestresReais = useMemo(
     () => semestresReaisDoCurso(dadosCurso),
-    [dadosCurso, versaoOfertasMecatronica],
+    [dadosCurso, versaoOfertas],
   );
   const descritorSemestre = useMemo(
     () => descritorDoSemestre(semestreAtivo, semestresReais),
@@ -569,6 +597,7 @@ function Aplicacao() {
   useCamadaHistorico(comoUsarAberta, () => setComoUsarAberta(false), "comoUsarAberta");
   useCamadaHistorico(mobileGradeDrawerAberto, () => setMobileGradeDrawerAberto(false), "mobileGradeDrawerAberto");
   useCamadaHistorico(modalGradeMagica, () => setModalGradeMagica(false), "modalGradeMagica");
+  useCamadaHistorico(menuComandosAberto, () => setMenuComandosAberto(false), "menuComandosAberto");
 
   // Sincronizar tema no DOM
   useEffect(() => {
@@ -892,6 +921,164 @@ function Aplicacao() {
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-color-scheme: dark)").matches);
 
+  // Ctrl+K (Cmd+K no Mac) abre o menu de comandos de qualquer tela. Vale também
+  // com o foco num campo de texto, como nos editores: a combinação não digita nada.
+  useEffect(() => {
+    const aoTeclar = (e: KeyboardEvent) => {
+      if (!atalhoAbreMenu(e)) return;
+      e.preventDefault();
+      setMenuComandosAberto((aberto) => !aberto);
+    };
+    window.addEventListener("keydown", aoTeclar);
+    return () => window.removeEventListener("keydown", aoTeclar);
+  }, []);
+
+  const dentroDaPlataforma = !!perfil || checkinConcluido;
+  const comandos = useMemo<Comando[]>(() => {
+    // fecha as telas de material do projeto e o modal de Configurações antes
+    // de navegar (o menu abre por cima de tudo), senão a troca de aba acontece
+    // atrás deles e parece que nada mudou
+    const irPara = (fn: () => void) => () => {
+      setSobreAberta(false);
+      setComoUsarAberta(false);
+      setGiAberta(false);
+      setModalConfigAberto(false);
+      fn();
+    };
+    const abrirCatalogo = (busca: string) =>
+      irPara(() => {
+        setBuscaCatalogo(busca);
+        setCategoriaCatalogo("todas");
+        setAba("situacao");
+        setAbaSituacao("catalogo");
+      });
+    const lista: Comando[] = [];
+    if (dentroDaPlataforma) {
+      if (perfil) {
+        lista.push({
+          id: "ir:situacao",
+          grupo: "Ir para",
+          rotulo: "Minha Situação",
+          termos: ["progresso", "painel", "horas"],
+          executar: irPara(() => {
+            setAba("situacao");
+            setAbaSituacao("painel");
+          }),
+        });
+      }
+      lista.push(
+        {
+          id: "ir:catalogo",
+          grupo: "Ir para",
+          rotulo: "Catálogo de matérias",
+          termos: ["lista", "disciplinas"],
+          executar: abrirCatalogo(""),
+        },
+        {
+          id: "ir:trilhas",
+          grupo: "Ir para",
+          rotulo: "Árvore e trilhas",
+          termos: ["fluxograma", "pré-requisitos"],
+          executar: irPara(() => {
+            setAba("situacao");
+            setAbaSituacao("trilhas");
+          }),
+        },
+        {
+          id: "ir:abertas",
+          grupo: "Ir para",
+          rotulo: "Matérias abertas",
+          termos: ["planejamento", "turmas", "posso cursar"],
+          executar: irPara(() => {
+            setAba("planejamento");
+            setAbaPlanejamento("cursar");
+          }),
+        },
+        {
+          id: "ir:grade",
+          grupo: "Ir para",
+          rotulo: "Minha grade",
+          termos: ["horário", "planejamento"],
+          executar: irPara(() => {
+            setAba("planejamento");
+            setAbaPlanejamento("grade");
+          }),
+        },
+      );
+      if (perfil) {
+        lista.push({
+          id: "ir:simulador",
+          grupo: "Ir para",
+          rotulo: "Simulador de Formatura",
+          termos: ["previsão", "formar"],
+          executar: irPara(() => setAba("simulador")),
+        });
+      }
+      lista.push(
+        {
+          id: "ir:match",
+          grupo: "Ir para",
+          rotulo: "Oásis Match",
+          termos: ["amigos", "turma junto"],
+          executar: irPara(() => setAba("match")),
+        },
+        {
+          id: "acao:config",
+          grupo: "Ações",
+          rotulo: perfil ? "Configurações e histórico" : "Configurações e importar histórico",
+          termos: ["pdf", "perfil", "savefile"],
+          executar: () => setModalConfigAberto(true),
+        },
+        {
+          id: "acao:tema",
+          grupo: "Ações",
+          rotulo: temaEscuroAtivo ? "Usar tema claro" : "Usar tema escuro",
+          termos: ["tema", "modo"],
+          executar: () => setPreferencias({ ...preferencias, tema: temaEscuroAtivo ? "claro" : "escuro" }),
+        },
+        { id: "acao:novidades", grupo: "Ações", rotulo: "Novidades", termos: ["o que mudou"], executar: abrirNovidades },
+      );
+    }
+    lista.push(
+      {
+        id: "ajuda:como-usar",
+        grupo: "Ajuda",
+        rotulo: "Como usar o site",
+        termos: ["ajuda", "tutorial"],
+        executar: () => {
+          setGiAberta(false);
+          setSobreAberta(false);
+          setComoUsarAberta(true);
+        },
+      },
+      {
+        id: "ajuda:sobre",
+        grupo: "Ajuda",
+        rotulo: "Sobre o projeto",
+        termos: ["privacidade", "contato"],
+        executar: () => {
+          setGiAberta(false);
+          setComoUsarAberta(false);
+          setSobreAberta(true);
+        },
+      },
+    );
+    if (dentroDaPlataforma) {
+      for (const d of matriz.disciplinas) {
+        lista.push({
+          id: `disc:${d.codigo}`,
+          grupo: GRUPO_DISCIPLINAS,
+          rotulo: nomeLegivel(d.nome),
+          codigo: d.codigo,
+          executar: abrirCatalogo(d.codigo),
+        });
+      }
+    }
+    return lista;
+    // Os setters do React são estáveis e abrirNovidades só chama um deles.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dentroDaPlataforma, perfil, matriz, temaEscuroAtivo, preferencias]);
+
   // A barra de abas do celular existe sempre que a pessoa está dentro da
   // plataforma. As telas de material do projeto têm o próprio "Voltar".
   const navMobileVisivel =
@@ -932,6 +1119,14 @@ function Aplicacao() {
             de 32px em duas linhas, abaixo do mínimo de toque. O período do aluno
             subiu para a linha do curso, e o cabeçalho cabe numa linha só. */}
         <div className="flex shrink-0 items-center gap-1 sm:hidden">
+          <button
+            type="button"
+            onClick={() => setMenuComandosAberto(true)}
+            aria-label="Buscar tela ou disciplina"
+            className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg text-zinc-600 transition-colors hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
+          >
+            <IconSearch className="h-5 w-5 shrink-0" />
+          </button>
           {/* Só depois do check-in, como no bloco do desktop. Antes disso a
               pessoa ainda não entrou na plataforma para o que mudou fazer
               sentido. */}
@@ -958,6 +1153,19 @@ function Aplicacao() {
         </div>
 
         <div className="hidden items-center gap-1 sm:flex">
+          {/* Busca com a dica do atalho: quem vê "Ctrl K" uma vez aprende. */}
+          <button
+            type="button"
+            onClick={() => setMenuComandosAberto(true)}
+            title="Ir para uma tela ou buscar disciplina (Ctrl+K)"
+            className="mr-1 flex h-9 cursor-pointer items-center gap-2 rounded-lg border border-zinc-200 bg-white px-2.5 text-sm text-zinc-500 transition-colors hover:border-zinc-300 hover:text-zinc-800 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-200"
+          >
+            <IconSearch className="h-4 w-4" />
+            <span className="hidden lg:inline">Buscar</span>
+            <kbd className="hidden rounded border border-zinc-200 px-1 font-sans text-[11px] lg:inline dark:border-zinc-700">
+              Ctrl K
+            </kbd>
+          </button>
           {/* Controles do cabeçalho visíveis quando já iniciou a plataforma */}
           {(perfil || checkinConcluido) && (
             <>
@@ -1148,10 +1356,12 @@ function Aplicacao() {
           {/* Menu Lateral (Sidebar Desktop / Mobile Drawer) */}
           <SidebarNavegacao
             abaAtiva={aba}
-            onSelecionarAba={(novaAba) => {
-              if (novaAba === "situacao" && !perfil) setAbaSituacao("catalogo");
-              setAba(novaAba);
-            }}
+            onSelecionarAba={(novaAba) =>
+              comTransicao(() => {
+                if (novaAba === "situacao" && !perfil) setAbaSituacao("catalogo");
+                setAba(novaAba);
+              })
+            }
             temPerfil={!!perfil}
             qtdTurmasSelecao={selecao.length}
 
@@ -1160,7 +1370,7 @@ function Aplicacao() {
           {/* coluna principal */}
           <div className="min-w-0 flex-1 w-full">
             {perfil && perfil.avisos.length > 0 && (
-              <div className="mb-6 flex items-start gap-2.5 rounded-xl border border-amber-300/80 bg-amber-50/80 p-3.5 text-sm text-amber-800 dark:border-amber-800/80 dark:bg-amber-950/60 dark:text-amber-200">
+              <div className="mb-6 flex items-start gap-2.5 rounded-xl border border-zinc-200 bg-white p-3.5 text-sm text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
                 <IconWarning className="mt-0.5 h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" />
                 <div>
                   <span className="font-semibold">Observações na leitura do documento:</span>{" "}
@@ -1169,13 +1379,33 @@ function Aplicacao() {
               </div>
             )}
 
+            {/* As turmas do curso ainda estão chegando (chunk sob demanda). Sem
+                elas o Planejamento mostraria um curso sem nenhuma matéria. */}
+            {!ofertasDoCursoProntas ? (
+              <div className="flex min-h-64 flex-col items-center justify-center gap-3 rounded-xl border border-zinc-200 bg-white p-8 text-center text-sm text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
+                {falhaOfertas ? (
+                  <>
+                    <p>Não deu para baixar as turmas de {dadosCurso.rotuloCurto}. Confira a conexão.</p>
+                    <Botao variante="neutro" onClick={() => setTentativaOfertas((n) => n + 1)}>
+                      Tentar de novo
+                    </Botao>
+                  </>
+                ) : (
+                  <>
+                    <CarregadorPontos classe="text-zinc-400" rotulo="Carregando turmas" />
+                    <p>Carregando as turmas de {dadosCurso.rotuloCurto}</p>
+                  </>
+                )}
+              </div>
+            ) : (
+            <>
             {aba === "situacao" && (
               <div className="space-y-6">
                 {/* Sub-navegação em Minha Situação: Resumo, Catálogo e Trilhas */}
                 <AbasSegmentadas
                   rotulo="Seções de Minha Situação"
                   valor={abaSituacao}
-                  onMudar={setAbaSituacao}
+                  onMudar={(v) => comTransicao(() => setAbaSituacao(v))}
                   opcoes={[
                     { id: "painel", rotulo: "Painel geral" },
                     { id: "catalogo", rotulo: "Catálogo" },
@@ -1209,6 +1439,8 @@ function Aplicacao() {
 
                 {abaSituacao === "catalogo" && (
                   <TelaCatalogo
+                    key={buscaCatalogo}
+                    buscaInicial={buscaCatalogo}
                     perfil={perfilEfetivo}
                     matriz={matriz}
                     oferta={oferta}
@@ -1285,7 +1517,7 @@ function Aplicacao() {
                 <AbasSegmentadas
                   rotulo="Seções do Planejamento"
                   valor={abaPlanejamento}
-                  onMudar={setAbaPlanejamento}
+                  onMudar={(v) => comTransicao(() => setAbaPlanejamento(v))}
                   opcoes={[
                     {
                       id: "cursar",
@@ -1369,7 +1601,7 @@ function Aplicacao() {
             {aba === "simulador" && SIMULADOR_LIBERADO && perfil && (
               <Suspense
                 fallback={
-                  <div className="flex items-center justify-center gap-3 rounded-2xl border border-zinc-200 bg-white p-8 text-sm text-zinc-500 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400">
+                  <div className="flex items-center justify-center gap-3 rounded-xl border border-zinc-200 bg-white p-8 text-sm text-zinc-500 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400">
                     <CarregadorPontos classe="text-utfpr-600 dark:text-utfpr-500" />
                     Carregando o Simulador de Formatura
                   </div>
@@ -1414,10 +1646,12 @@ function Aplicacao() {
                 }}
               />
             )}
+            </>
+            )}
           </div>
 
           {/* sidebar de feedback contínuo: visível na aba de Planejamento/Posso Cursar */}
-          {aba === "planejamento" && abaPlanejamento === "cursar" && (
+          {aba === "planejamento" && abaPlanejamento === "cursar" && ofertasDoCursoProntas && (
             <aside className="sticky top-4 self-start hidden w-60 shrink-0 lg:block">
               <MiniGrade
                 oferta={oferta}
@@ -1473,6 +1707,12 @@ function Aplicacao() {
           setModalGradeMagica(false);
           setAbaPlanejamento("grade");
         }}
+      />
+
+      <MenuComandos
+        aberto={menuComandosAberto}
+        onFechar={() => setMenuComandosAberto(false)}
+        comandos={comandos}
       />
 
       {/* Apresentação do sistema de avaliações. "Avaliar" só existe com
@@ -1537,7 +1777,7 @@ function Aplicacao() {
               <button
                 type="button"
                 onClick={() => setMobileGradeDrawerAberto(true)}
-                className="ml-3 min-h-11 shrink-0 cursor-pointer rounded-xl bg-utfpr-500 px-4 py-2 font-display text-xs font-bold text-zinc-950 shadow-md transition-colors hover:bg-utfpr-400"
+                className="ml-3 min-h-11 shrink-0 cursor-pointer rounded-xl bg-utfpr-500 px-4 py-2 font-display text-xs font-bold text-zinc-950 transition-colors hover:bg-utfpr-400"
               >
                 {preview ? "Ver Preview" : "Abrir Grade"}
               </button>
@@ -1574,7 +1814,7 @@ function Aplicacao() {
                     }}
                     className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-full bg-zinc-100 text-zinc-500 hover:bg-zinc-200 hover:text-zinc-800 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700 dark:hover:text-white"
                   >
-                    ✕
+                    <IconX className="h-4 w-4" />
                   </button>
                 </div>
                 <div className="flex-1 overflow-y-auto pb-6">

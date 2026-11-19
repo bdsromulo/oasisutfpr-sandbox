@@ -287,12 +287,12 @@ describe("epocaDoCarimbo", () => {
 // Mecatronica` muta os objetos de curso do módulo, então qualquer outro teste
 // que o chamasse antes deixaria este passar mesmo com o script quebrado.
 describe("roster completo: ofertas carregadas sob demanda", () => {
-  it("a ingestão publica avaliação de Mecatrônica sem carregamento prévio", () => {
+  it("a ingestão carrega todas as ofertas antes de montar o roster", () => {
     const script = fileURLToPath(new URL("../scripts/ingerir-reviews.ts", import.meta.url));
     const fonte = readFileSync(script, "utf-8");
 
     // o roster do script precisa nascer completo, sem depender de quem o chama
-    expect(fonte).toContain("await carregarOfertasHistoricasMecatronica()");
+    expect(fonte).toContain("await carregarTodasOfertas()");
   });
 
   it("o elenco de Mecatrônica entra no roster depois do carregamento", async () => {

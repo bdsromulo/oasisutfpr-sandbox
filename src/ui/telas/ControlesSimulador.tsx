@@ -12,6 +12,7 @@
 // A camada 2 (botão "trocar" na linha do tempo) vive na própria tela, porque é
 // contextual à disciplina projetada.
 import type { Matriz } from "../../domain/tipos";
+import { IconX } from "../icons";
 import { descricaoDoCurso, ehTrilha } from "../../domain/cursos";
 import { PRIMEIRO_SLOT, rotuloDoSlot, SLOTS_ORDENADOS, ULTIMO_SLOT } from "../../domain/horarios";
 import { formatarSemestre } from "../../domain/motor/simuladorFormatura";
@@ -129,7 +130,7 @@ export function SeletorTrilhasAlvo(props: {
             >
               <span className="block max-w-[16rem] truncate">{nomeLegivel(t.nome)}</span>
               <span
-                className={`mt-0.5 block font-mono text-[10px] ${
+                className={`mt-0.5 block text-[10px] ${
                   completa ? "text-emerald-600 dark:text-emerald-400" : "text-zinc-500"
                 }`}
               >
@@ -180,7 +181,7 @@ export function ControlesAvancados(props: {
             const atual = valor.ritmoPorSemestre[s];
             return (
               <div key={s} className="flex items-center gap-2">
-                <span className="w-24 font-mono text-xs font-bold text-zinc-600 dark:text-zinc-300">
+                <span className="w-24 text-xs font-bold text-zinc-600 dark:text-zinc-300">
                   {formatarSemestre(s)}
                 </span>
                 <select
@@ -267,7 +268,7 @@ export function ControlesAvancados(props: {
                 title="Deixar o Oásis escolher de novo"
                 className="cursor-pointer rounded-lg border border-utfpr-500/60 bg-utfpr-500/15 px-2 py-1 font-mono text-[11px] font-bold text-utfpr-900 hover:border-red-400 hover:bg-red-50 hover:text-red-700 dark:text-utfpr-200 dark:hover:bg-red-950/40 dark:hover:text-red-300"
               >
-                {c} ✕
+                {c} <IconX className="inline h-3 w-3 align-[-0.1em]" />
               </button>
             ))}
           </div>

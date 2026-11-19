@@ -3,7 +3,7 @@
 // Três responsabilidades e nada mais: escolher o professor, mostrar o que será
 // público e abrir o formulário já preenchido. O que a pessoa responde acontece
 // lá — aqui não há envio, nem rascunho, nem estado a guardar.
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { construirRoster, idDaUnidade } from "../../domain/reviews/professores";
 import { CURSOS } from "../../domain/dadosCurso";
 import { montarUrlDeAvaliacao, type AlvoAvaliacao } from "../../domain/reviews/forms";
@@ -78,6 +78,10 @@ export function ModalEnvioForms(props: {
   const [escolhido, setEscolhido] = useState<string | null>(null);
   const [busca, setBusca] = useState("");
   const [professorManual, setProfessorManual] = useState("");
+  // Trava de clique duplo: o modal só fecha no render seguinte, e um segundo
+  // clique rápido nesse intervalo abria o formulário em duas abas, o que vira
+  // duas avaliações iguais se a pessoa enviar as duas.
+  const jaAbriuRef = useRef(false);
   // O roster é calculado ao abrir/renderizar o modal para incluir ofertas
   // históricas carregadas depois do primeiro paint da aplicação.
   const roster = useMemo(
@@ -107,6 +111,7 @@ export function ModalEnvioForms(props: {
     );
     setBusca("");
     setProfessorManual("");
+    jaAbriuRef.current = false;
   }, [alvo?.codigo, alvo?.semestre, idDoHistorico, professorDoHistoricoForaDoElenco]);
 
   useEffect(() => {
@@ -136,6 +141,8 @@ export function ModalEnvioForms(props: {
   }
 
   function abrir() {
+    if (jaAbriuRef.current) return;
+    jaAbriuRef.current = true;
     window.open(montarUrlDeAvaliacao(alvo!, autor, professor), "_blank", "noopener");
     onFechar();
   }
@@ -231,9 +238,9 @@ export function ModalEnvioForms(props: {
             resposta na validação da ingestão, e o erro só aparece dias depois,
             quando a avaliação não sai. O aviso é o único ponto onde dá para
             evitar isso, então ele vem antes do botão e em tom de alerta. */}
-        <div className="mt-4 flex items-start gap-2.5 rounded-xl border border-amber-300/80 bg-amber-50/80 p-3 dark:border-amber-800/80 dark:bg-amber-950/40">
-          <IconWarning className="mt-0.5 h-4 w-4 shrink-0 text-amber-700 dark:text-amber-300" />
-          <div className="min-w-0 text-xs leading-relaxed text-amber-900 dark:text-amber-200">
+        <div className="mt-4 flex items-start gap-2.5 rounded-xl border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900">
+          <IconWarning className="mt-0.5 h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" />
+          <div className="min-w-0 text-xs leading-relaxed text-zinc-700 dark:text-zinc-300">
             <p className="font-bold">O formulário abre já preenchido. Não altere esses campos.</p>
             <p className="mt-1">
               Seu nome, o código, o nome da disciplina, o semestre e o professor chegam prontos

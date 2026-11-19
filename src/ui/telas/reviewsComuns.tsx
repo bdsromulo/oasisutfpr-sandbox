@@ -244,7 +244,7 @@ export function CartaoReview(props: { review: Review; mostrarCodigo?: boolean })
   const { review: r } = props;
   const quantidades = detalheDeQuantidades(r);
   return (
-    <div className="rounded-2xl border border-zinc-200/70 bg-white p-3 dark:border-zinc-800/70 dark:bg-zinc-900">
+    <div className="rounded-xl border border-zinc-200/70 bg-white p-3 dark:border-zinc-800/70 dark:bg-zinc-900">
       <div className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-1">
         <span className="text-sm font-semibold text-zinc-800 dark:text-zinc-100">{r.autor}</span>
         <span className="font-mono text-[10px] text-zinc-400">
@@ -525,7 +525,7 @@ export function BotaoReviews(props: {
       aria-label={vazio ? `Sem avaliações ${rotuloAlvo}` : `Ver ${n} avaliações ${rotuloAlvo}`}
       className={
         variante === "acao"
-          ? `inline-flex shrink-0 items-center gap-1 rounded-lg border px-2 py-0.5 text-[11px] font-bold shadow-2xs transition-colors ${estiloAcao} ${props.classe ?? ""}`
+          ? `inline-flex shrink-0 items-center gap-1 rounded-lg border px-2 py-0.5 text-[11px] font-bold transition-colors ${estiloAcao} ${props.classe ?? ""}`
           : `inline-flex shrink-0 items-center gap-0.5 rounded-lg px-1.5 py-0.5 text-[11px] font-bold transition ${
               vazio
                 ? "cursor-not-allowed text-zinc-300 dark:text-zinc-700"

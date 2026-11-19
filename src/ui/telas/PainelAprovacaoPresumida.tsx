@@ -106,8 +106,8 @@ export function PainelAprovacaoPresumida(props: {
   } como aprovadas`;
 
   const aviso = desatualizado && (
-    <div className="flex items-start gap-2.5 rounded-xl border border-amber-300/80 bg-amber-50/80 p-3 text-xs font-medium text-amber-900 dark:border-amber-800/80 dark:bg-amber-950/50 dark:text-amber-200">
-      <IconWarning className="mt-0.5 h-4 w-4 shrink-0" />
+    <div className="flex items-start gap-2.5 rounded-xl border border-zinc-200 bg-white p-3 text-xs font-medium text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
+      <IconWarning className="text-amber-600 dark:text-amber-400 mt-0.5 h-4 w-4 shrink-0" />
       <span>
         Este histórico é de {formatarSemestre(semestreDoPdf!)}, e o semestre corrente é{" "}
         {formatarSemestre(SEMESTRE_CORRENTE)}. As matérias abaixo já devem ter nota lançada.
@@ -128,7 +128,7 @@ export function PainelAprovacaoPresumida(props: {
   // data de formatura que ela está olhando é perder o fio.
   if (props.compacto) {
     return (
-      <details className="group rounded-2xl border border-emerald-400/60 bg-emerald-50/70 dark:border-emerald-800/70 dark:bg-emerald-950/40">
+      <details className="group rounded-xl border border-emerald-400/60 bg-emerald-50/70 dark:border-emerald-800/70 dark:bg-emerald-950/40">
         <summary className="flex cursor-pointer list-none items-center gap-2.5 p-3 text-xs">
           <IconCheck className="h-4 w-4 shrink-0 text-emerald-700 dark:text-emerald-400" />
           <span className="font-semibold text-emerald-900 dark:text-emerald-200">

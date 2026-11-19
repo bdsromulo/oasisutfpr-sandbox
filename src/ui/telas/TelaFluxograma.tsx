@@ -267,7 +267,7 @@ export function TelaFluxograma(props: {
   return (
     <div className="space-y-4">
       {/* Abas dos dois boards */}
-      <div className={`grid ${quantidadeBoards === 3 ? "grid-cols-3" : quantidadeBoards === 2 ? "grid-cols-2" : "grid-cols-1"} gap-2 rounded-2xl border-2 border-zinc-200/90 bg-white/95 p-2 shadow-md dark:border-zinc-800/90 dark:bg-zinc-900/95`}>
+      <div className={`grid ${quantidadeBoards === 3 ? "grid-cols-3" : quantidadeBoards === 2 ? "grid-cols-2" : "grid-cols-1"} gap-2 rounded-xl border-2 border-zinc-200/90 bg-white/95 p-2 dark:border-zinc-800/90 dark:bg-zinc-900/95`}>
         {(
           [
             { id: "obrigatorias" as const, rotulo: curso.matriz === 981 ? "Obrigatórias & 2º Estrato" : "Obrigatórias", icone: <IconGraduationCap className="h-4 w-4 shrink-0" />, qtd: boardObr.nos.length },
@@ -289,9 +289,9 @@ export function TelaFluxograma(props: {
               key={op.id}
               type="button"
               onClick={() => setAbaBoard(op.id)}
-              className={`flex items-center justify-center gap-2.5 rounded-2xl px-4 py-3 font-display text-sm font-bold transition-colors cursor-pointer ${
+              className={`flex items-center justify-center gap-2.5 rounded-xl px-4 py-3 font-display text-sm font-bold transition-colors cursor-pointer ${
                 ativo
-                  ? "bg-zinc-900 text-utfpr-400 shadow-md ring-2 ring-utfpr-500/40 dark:bg-zinc-800"
+                  ? "bg-zinc-900 text-utfpr-400 ring-2 ring-utfpr-500/40 dark:bg-zinc-800"
                   : "bg-zinc-50/90 text-zinc-700 hover:bg-utfpr-50 dark:bg-zinc-800/60 dark:text-zinc-300"
               }`}
             >
@@ -310,20 +310,20 @@ export function TelaFluxograma(props: {
       </div>
 
       {abaBoard === "trilhas" && temOferta && (
-        <p className="rounded-2xl border border-indigo-300/70 bg-indigo-50/70 px-4 py-3 text-xs font-medium leading-relaxed text-indigo-900 dark:border-indigo-800/70 dark:bg-indigo-950/40 dark:text-indigo-200">
+        <p className="rounded-xl border border-indigo-300/70 bg-indigo-50/70 px-4 py-3 text-xs font-medium leading-relaxed text-indigo-900 dark:border-indigo-800/70 dark:bg-indigo-950/40 dark:text-indigo-200">
           Este board mostra apenas disciplinas de trilha que <strong>efetivamente abriram</strong> em {ofertas.map((o) => o.semestre.replace("-", ".")).join(" ou ")}. Trilhas sem oferta conhecida não aparecem. Blocos tracejados são
           pré-requisitos que vivem fora da trilha.
         </p>
       )}
 
       {!temOferta && abaBoard !== "obrigatorias" && (
-        <p className="rounded-2xl border border-amber-300/70 bg-amber-50/70 px-4 py-3 text-xs font-medium leading-relaxed text-amber-900 dark:border-amber-800/70 dark:bg-amber-950/40 dark:text-amber-200">
+        <p className="rounded-xl border border-zinc-200 bg-white px-4 py-3 text-xs font-medium leading-relaxed text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
           Como ainda não há Turmas Abertas importadas para este curso, este board mostra a lista curricular completa da matriz.
         </p>
       )}
 
       {/* Barra de ferramentas: busca e zoom */}
-      <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-zinc-200/90 bg-white p-3 shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="flex flex-wrap items-center gap-3 rounded-xl border border-zinc-200/90 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900">
         <div className="relative min-w-[220px] flex-1">
           <input
             type="search"
@@ -350,7 +350,7 @@ export function TelaFluxograma(props: {
             onClick={() => setSelecionado(null)}
             className="rounded-xl bg-utfpr-500/20 px-3 py-1.5 font-display text-xs font-bold text-utfpr-700 transition-colors hover:bg-utfpr-500/30 dark:text-utfpr-400 cursor-pointer"
           >
-            Limpar cadeia ✕
+            Limpar cadeia
           </button>
         )}
 
@@ -410,7 +410,7 @@ export function TelaFluxograma(props: {
       <div
         ref={viewportRef}
         onMouseDown={iniciarArrasto}
-        className="relative h-[620px] cursor-grab overflow-hidden rounded-2xl border-2 border-zinc-200/90 bg-zinc-50 shadow-inner active:cursor-grabbing dark:border-zinc-800/90 dark:bg-zinc-950/60"
+        className="relative h-[620px] cursor-grab overflow-hidden rounded-xl border-2 border-zinc-200/90 bg-zinc-50 shadow-inner active:cursor-grabbing dark:border-zinc-800/90 dark:bg-zinc-950/60"
         style={{
           backgroundImage:
             "radial-gradient(circle, rgb(161 161 170 / 0.28) 1px, transparent 1px)",
@@ -516,7 +516,7 @@ export function TelaFluxograma(props: {
                 }`}
                 className={`absolute flex flex-col justify-center overflow-hidden rounded-xl border-2 px-3 text-left shadow-xs transition-colors hover:z-10 hover:shadow-lg cursor-pointer ${cor.no} ${
                   estado === "ativo" ? "ring-2 ring-utfpr-500 ring-offset-1 dark:ring-offset-zinc-950" : ""
-                } ${selecionado === n.id ? "scale-[1.03] shadow-lg" : ""}`}
+                } ${selecionado === n.id ? "ring-2 ring-zinc-900 dark:ring-white" : ""}`}
                 style={{
                   left: n.x,
                   top: n.y,
@@ -560,7 +560,7 @@ export function TelaFluxograma(props: {
       </div>
 
       {/* Legenda de cores */}
-      <div className="flex flex-wrap items-center gap-x-5 gap-y-2 rounded-2xl border border-zinc-200/90 bg-white px-4 py-3 dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="flex flex-wrap items-center gap-x-5 gap-y-2 rounded-xl border border-zinc-200/90 bg-white px-4 py-3 dark:border-zinc-800 dark:bg-zinc-900">
         {gruposPresentes.map((g) => (
           <span key={g} className="flex items-center gap-2 text-xs font-semibold text-zinc-600 dark:text-zinc-400">
             <span className={`h-3 w-3 rounded ${CORES[g].barra}`} />

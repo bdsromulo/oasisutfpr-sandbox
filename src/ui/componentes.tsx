@@ -76,7 +76,7 @@ export function Card({
   return (
     <div
       {...resto}
-      className={`rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900 ${props.classe ?? ""}`}
+      className={`rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900 ${props.classe ?? ""}`}
     >
       {props.titulo && (
         <div className="mb-3 font-display text-sm font-semibold text-zinc-600 dark:text-zinc-400">
@@ -121,7 +121,7 @@ export function AbasSegmentadas<T extends string>(props: {
             onClick={() => props.onMudar(op.id)}
             className={`flex min-h-10 flex-1 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-lg px-4 text-sm font-medium transition-colors sm:flex-none ${
               ativo
-                ? "bg-white text-zinc-950 shadow-xs dark:bg-zinc-800 dark:text-white"
+                ? "bg-white text-zinc-950 dark:bg-zinc-800 dark:text-white"
                 : "text-zinc-600 hover:text-zinc-950 dark:text-zinc-400 dark:hover:text-white"
             }`}
           >

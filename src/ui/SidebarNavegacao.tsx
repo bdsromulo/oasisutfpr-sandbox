@@ -115,7 +115,7 @@ export function SidebarNavegacao({
                   item.bloqueado
                     ? "cursor-not-allowed text-zinc-400 dark:text-zinc-600"
                     : ativo
-                      ? "cursor-pointer bg-white text-zinc-950 shadow-xs ring-1 ring-zinc-200 dark:bg-zinc-900 dark:text-white dark:ring-zinc-800"
+                      ? "cursor-pointer bg-white text-zinc-950 ring-1 ring-zinc-200 dark:bg-zinc-900 dark:text-white dark:ring-zinc-800"
                       : "cursor-pointer text-zinc-600 hover:bg-zinc-200/50 hover:text-zinc-950 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-white"
                 } ${colapsado ? "justify-center !px-0" : ""}`}
               >

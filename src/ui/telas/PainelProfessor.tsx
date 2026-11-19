@@ -3,6 +3,7 @@
 // Abre a partir do nome do docente no planejamento de matrícula e mostra o que a
 // comunidade registrou sobre ele — na disciplina em questão e no geral.
 import { useEffect, useMemo } from "react";
+import { IconX } from "../icons";
 import { criarConsulta, agregar } from "../../domain/reviews/acervo";
 import {
   FaixaFiltro,
@@ -123,12 +124,12 @@ export function PainelProfessor(props: {
             aria-label="Fechar"
             className="shrink-0 cursor-pointer rounded-xl border border-zinc-200 px-2.5 py-1 text-sm font-bold text-zinc-500 hover:text-zinc-800 dark:border-zinc-800 dark:hover:text-zinc-200"
           >
-            ✕
+            <IconX className="h-4 w-4" />
           </button>
         </div>
 
         {dados.total === 0 ? (
-          <p className="rounded-2xl border border-zinc-200/70 bg-white p-4 text-sm leading-relaxed text-zinc-600 dark:border-zinc-800/70 dark:bg-zinc-900 dark:text-zinc-300">
+          <p className="rounded-xl border border-zinc-200/70 bg-white p-4 text-sm leading-relaxed text-zinc-600 dark:border-zinc-800/70 dark:bg-zinc-900 dark:text-zinc-300">
             Ainda não há avaliações deste professor. Quem já cursou pode avaliar pela tela
             de progresso, nas disciplinas concluídas.
           </p>
@@ -159,7 +160,7 @@ export function PainelProfessor(props: {
             )}
 
             {alvo.codigo && dados.naDisciplina.n === 0 && (
-              <p className="rounded-2xl border border-zinc-200/70 bg-white p-3 text-xs leading-relaxed text-zinc-600 dark:border-zinc-800/70 dark:bg-zinc-900 dark:text-zinc-300">
+              <p className="rounded-xl border border-zinc-200/70 bg-white p-3 text-xs leading-relaxed text-zinc-600 dark:border-zinc-800/70 dark:bg-zinc-900 dark:text-zinc-300">
                 Nenhuma avaliação deste professor nesta disciplina específica. Abaixo, o que
                 a comunidade registrou sobre ele em outras.
               </p>

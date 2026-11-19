@@ -661,7 +661,9 @@ Toda tarefa — seja **Feature** ou **Bug** — carrega exatamente um destes sta
 - **TASK-67 — Redesign de sobriedade (visual, acessibilidade e desempenho em PC fraco):**
   - Plano completo, diagnóstico e status por item em `docs/superpowers/plans/2026-11-18-redesign-sobriedade.md`.
   - Fase 1 feita na branch `redesign-sobriedade`. Fundação visual, varredura de efeitos caros e de vícios visuais, cabeçalho em uma linha, barra de abas no rodapé do celular, controle segmentado único, faixa de semestre recolhível, "Desfazer" em remoções e esqueleto de carregamento no `index.html`.
-  - Fases 2 a 4 pendentes. Telas uma a uma, dados por curso sob demanda, privacidade e termos.
+  - Fase 2 feita (duas levas): Resumo do Impacto em lista, paleta baixa, avisos neutros, cartões `rounded-xl`, ícones 1,5, menu de comandos Ctrl+K.
+  - Fase 3 feita em parte: ofertas por curso sob demanda (JS inicial 414 para 247 KiB gzip), `content-visibility` nas listas longas, avaliação sem envio duplo. Faltam arrastar para fechar e service worker.
+  - Fase 4 em parte: transição curta entre abas. Faltam privacidade, termos, capturas em "Como usar", momento de conclusão e a decisão da fonte, que dependem do dono.
 
 ### Pendente
 - **BUG-06 — Quem já integralizou o curso não recebe data de formatura, recebe um traço:**

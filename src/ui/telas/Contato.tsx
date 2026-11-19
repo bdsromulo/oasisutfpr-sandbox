@@ -92,7 +92,7 @@ export function PilulaFaleConosco(props: {
         aria-expanded={aberta}
         title={`Fale conosco pelo ${EMAIL_CONTATO}`}
         aria-label="Fale conosco"
-        className="flex min-h-11 min-w-11 cursor-pointer items-center justify-center gap-2 rounded-full border border-zinc-300/80 bg-white px-4 py-2 max-sm:px-0 font-display text-xs font-bold text-zinc-800 shadow-sm transition-colors hover:border-utfpr-500 hover:text-zinc-950 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:border-utfpr-500"
+        className="flex min-h-11 min-w-11 cursor-pointer items-center justify-center gap-2 rounded-full border border-zinc-300/80 bg-white px-4 py-2 max-sm:px-0 font-display text-xs font-bold text-zinc-800 transition-colors hover:border-utfpr-500 hover:text-zinc-950 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:hover:border-utfpr-500"
       >
         <IconMail className="h-4 w-4 shrink-0 text-utfpr-600 dark:text-utfpr-500" />
         {/* No celular só o envelope: o rótulo cobria o fim de cada lista. */}
@@ -119,7 +119,7 @@ export function BotaoFaleConosco(props: { compacto?: boolean }) {
   return (
     <a
       href={LINK_MAILTO}
-      className="inline-flex items-center gap-2 rounded-xl bg-utfpr-500 px-4 py-2.5 font-display text-sm font-bold text-zinc-950 shadow-sm transition-colors hover:bg-utfpr-400"
+      className="inline-flex items-center gap-2 rounded-xl bg-utfpr-500 px-4 py-2.5 font-display text-sm font-bold text-zinc-950 transition-colors hover:bg-utfpr-400"
     >
       <IconMail className="h-4.5 w-4.5 shrink-0" />
       <span>Fale conosco: {EMAIL_CONTATO}</span>
