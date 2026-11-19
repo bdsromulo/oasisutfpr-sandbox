@@ -1,6 +1,6 @@
 # REPOSITORIO.md — Guia e Contrato para Agentes (LLMs) e Mantenedores do Oásis UTFPR
 
-Este documento é o **contrato de trabalho e manual canônico de arquitetura** para qualquer assistente de IA ou desenvolvedor que atue neste repositório. Leia-o **inteiro** antes de qualquer alteração. Ele descreve o protocolo inviolável de autoria, a arquitetura em 3 camadas, o pipeline de dados, a metodologia de validação e a estrutura documental do projeto.
+Este documento é o **contrato de trabalho e manual canônico de arquitetura** para qualquer assistente de IA ou desenvolvedor que atue neste repositório. Leia-o **inteiro** antes de qualquer alteração. Se a alteração toca interface (tela, componente, estilo ou texto visível), leia também **`docs/GUIA-INTERFACE.md`**, que é parte deste contrato. Ele descreve o protocolo inviolável de autoria, a arquitetura em 3 camadas, o pipeline de dados, a metodologia de validação e a estrutura documental do projeto.
 
 ---
 
@@ -282,6 +282,7 @@ ocorre em `1146..1149 → 1140`: as subáreas oferecem as disciplinas, mas a car
 - Se a feature envolver mudanças de arquitetura de informação ou usabilidade, consulte e registre em `Estrategia.md`.
 - Garantir que `git status` esteja limpo e que `npm test` e `npm run build` tenham sido executados localmente com sucesso antes de concluir uma tarefa.
 - Feature nova nasce no sandbox e só chega à produção depois de validada lá (§7).
+- Toda mudança de interface segue `docs/GUIA-INTERFACE.md` (sobriedade visual, acessibilidade, desempenho e texto). O checklist de PR está no §13 dele.
 
 ---
 
