@@ -170,7 +170,8 @@ function CardDisciplinaPossoCursar({
   }, [e.oferta, filtrarConflitos, selecao, itensSelecao, codIdentificador, turmaNoHorario]);
 
   return (
-    <Card classe="flex flex-col justify-start !p-0 overflow-hidden">
+    <>
+    <Card classe="item-lista-longa flex flex-col justify-start !p-0 overflow-hidden">
       {/* Alterna as turmas. Tem papel de botão e responde a Enter e espaço:
           como div clicável pura, ficava fora do alcance de quem usa teclado. */}
       <div
@@ -425,14 +426,17 @@ function CardDisciplinaPossoCursar({
         </div>
       )}
 
-      {matriz && (
-        <PainelDisciplina
-          alvo={revisando}
-          matriz={matriz}
-          onFechar={() => setRevisando(null)}
-        />
-      )}
     </Card>
+    {/* Fora do cartão: o cartão tem content-visibility, que contém a pintura
+        e prenderia este painel de posição fixa dentro dele. */}
+    {matriz && (
+      <PainelDisciplina
+        alvo={revisando}
+        matriz={matriz}
+        onFechar={() => setRevisando(null)}
+      />
+    )}
+    </>
   );
 }
 

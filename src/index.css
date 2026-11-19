@@ -54,6 +54,16 @@
   animation: ponto-acende 1.1s ease-in-out infinite;
 }
 
+/* Item de lista longa (Matérias abertas, Catálogo). O navegador pula o layout
+   e a pintura do que está fora da tela; num PC de laboratório, com 170 turmas
+   na lista, é o que deixa a rolagem e a digitação na busca sem engasgo.
+   `auto` no tamanho guarda a altura real depois da primeira pintura, então a
+   barra de rolagem não pula. */
+.item-lista-longa {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 160px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-toast-entra,
   .animate-toast-sai {

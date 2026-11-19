@@ -98,3 +98,28 @@ describe("choque na prévia da grade", () => {
     expect(haChoqueNaCasa([], "A")).toBe(false);
   });
 });
+
+describe("listas longas leves", () => {
+  it("pula a pintura dos itens fora da tela em Matérias abertas e no Catálogo", () => {
+    expect(fonte("src/index.css")).toMatch(/\.item-lista-longa\s*\{[^}]*content-visibility:\s*auto/);
+    expect(fonte("src/ui/telas/PossoCursar.tsx")).toContain("item-lista-longa");
+    expect(fonte("src/ui/telas/Catalogo.tsx")).toContain("item-lista-longa");
+  });
+
+  it("deixa o painel de avaliações fora do cartão contido", () => {
+    // content-visibility contém a pintura: um painel fixed dentro do cartão
+    // ficaria preso nele em vez de cobrir a tela.
+    const posso = fonte("src/ui/telas/PossoCursar.tsx");
+    const card = posso.slice(posso.indexOf("function CardDisciplinaPossoCursar"), posso.indexOf("export function TelaPossoCursar"));
+    expect(card.indexOf("<PainelDisciplina")).toBeGreaterThan(card.lastIndexOf("</Card>"));
+  });
+});
+
+describe("envio único", () => {
+  it("abre o formulário de avaliação uma vez só, mesmo com clique duplo", () => {
+    const modal = fonte("src/ui/telas/ModalEnvioForms.tsx");
+    const abrir = modal.slice(modal.indexOf("function abrir()"), modal.indexOf("window.open("));
+    expect(abrir).toContain("if (jaAbriuRef.current) return;");
+    expect(abrir).toContain("jaAbriuRef.current = true;");
+  });
+});

@@ -3,7 +3,7 @@
 // Três responsabilidades e nada mais: escolher o professor, mostrar o que será
 // público e abrir o formulário já preenchido. O que a pessoa responde acontece
 // lá — aqui não há envio, nem rascunho, nem estado a guardar.
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { construirRoster, idDaUnidade } from "../../domain/reviews/professores";
 import { CURSOS } from "../../domain/dadosCurso";
 import { montarUrlDeAvaliacao, type AlvoAvaliacao } from "../../domain/reviews/forms";
@@ -78,6 +78,10 @@ export function ModalEnvioForms(props: {
   const [escolhido, setEscolhido] = useState<string | null>(null);
   const [busca, setBusca] = useState("");
   const [professorManual, setProfessorManual] = useState("");
+  // Trava de clique duplo: o modal só fecha no render seguinte, e um segundo
+  // clique rápido nesse intervalo abria o formulário em duas abas, o que vira
+  // duas avaliações iguais se a pessoa enviar as duas.
+  const jaAbriuRef = useRef(false);
   // O roster é calculado ao abrir/renderizar o modal para incluir ofertas
   // históricas carregadas depois do primeiro paint da aplicação.
   const roster = useMemo(
@@ -107,6 +111,7 @@ export function ModalEnvioForms(props: {
     );
     setBusca("");
     setProfessorManual("");
+    jaAbriuRef.current = false;
   }, [alvo?.codigo, alvo?.semestre, idDoHistorico, professorDoHistoricoForaDoElenco]);
 
   useEffect(() => {
@@ -136,6 +141,8 @@ export function ModalEnvioForms(props: {
   }
 
   function abrir() {
+    if (jaAbriuRef.current) return;
+    jaAbriuRef.current = true;
     window.open(montarUrlDeAvaliacao(alvo!, autor, professor), "_blank", "noopener");
     onFechar();
   }

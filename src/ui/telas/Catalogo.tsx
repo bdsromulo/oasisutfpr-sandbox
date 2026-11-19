@@ -778,7 +778,7 @@ export function TelaCatalogo(props: {
             return (
               <div
                 key={d.codigo}
-                className={`flex flex-col justify-between rounded-xl border p-4 transition-colors ${
+                className={`item-lista-longa flex flex-col justify-between rounded-xl border p-4 transition-colors ${
                   concluida
                     ? "border-emerald-200/80 bg-emerald-50/40 dark:border-emerald-900/40 dark:bg-emerald-950/20"
                     : "border-zinc-200/90 bg-white hover:border-zinc-300 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700"
