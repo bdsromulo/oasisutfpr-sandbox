@@ -32,6 +32,8 @@ export interface ValorModelagem {
   aulaFinal: string;
   /** disciplinas presas a um semestre: chave = semestre, valor = códigos */
   fixacoesPorSemestre: Record<string, string[]>;
+  /** matérias tiradas de um semestre sem exclusão: chave = semestre, valor = códigos */
+  vetosPorSemestre: Record<string, string[]>;
 }
 
 export const MODELAGEM_VAZIA: ValorModelagem = {
@@ -41,4 +43,5 @@ export const MODELAGEM_VAZIA: ValorModelagem = {
   aulaInicial: PRIMEIRO_SLOT,
   aulaFinal: ULTIMO_SLOT,
   fixacoesPorSemestre: {},
+  vetosPorSemestre: {},
 };

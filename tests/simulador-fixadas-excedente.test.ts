@@ -3,8 +3,7 @@ import matrizJson from "../data/matriz-981.json";
 import turmas20252 from "../data/turmas/2025-2.json";
 import turmas20261 from "../data/turmas/2026-1.json";
 import turmas20262 from "../data/turmas/2026-2.json";
-import { inferirSazonalidade, simularFormatura } from "../src/domain/motor/simuladorFormatura";
-import { criarMapaIdentidade } from "../src/domain/motor/identidade";
+import { simularFormatura } from "../src/domain/motor/simuladorFormatura";
 import type { Matriz, OfertaSemestre, PerfilAluno, ResumoConjunto } from "../src/domain/tipos";
 
 /**

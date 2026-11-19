@@ -43,12 +43,32 @@ export function fixarNoSemestre(
   return { ...valor, fixacoesPorSemestre: limpo };
 }
 
+/**
+ * Tira a disciplina de um semestre sem excluí-la do curso: solta qualquer
+ * prisão a semestre e registra o veto. O motor não a põe ali, mas ela segue
+ * elegível nos outros semestres.
+ */
+export function vetarNoSemestre(
+  valor: ValorModelagem,
+  codigo: string,
+  semestre: string,
+): ValorModelagem {
+  const solto = fixarNoSemestre(valor, codigo, null);
+  const atuais = solto.vetosPorSemestre[semestre] ?? [];
+  if (atuais.includes(codigo)) return solto;
+  return {
+    ...solto,
+    vetosPorSemestre: { ...solto.vetosPorSemestre, [semestre]: [...atuais, codigo] },
+  };
+}
+
 /** Quantos ajustes o aluno fez — alimenta o contador do painel avançado. */
 export function totalModelagem(v: ValorModelagem): number {
   return (
     v.disciplinasFixadas.length +
     Object.keys(v.ritmoPorSemestre).length +
     Object.values(v.fixacoesPorSemestre).reduce((a, c) => a + c.length, 0) +
+    Object.values(v.vetosPorSemestre).reduce((a, c) => a + c.length, 0) +
     (v.aulaInicial !== PRIMEIRO_SLOT || v.aulaFinal !== ULTIMO_SLOT ? 1 : 0)
   );
 }

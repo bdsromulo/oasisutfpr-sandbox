@@ -24,9 +24,11 @@ preenchimento automático já tinha fechado a categoria com Presença Africana e
 
 ### Parte A: fixadas e excedente (motor)
 
-- Antes de montar os semestres, o motor reserva as horas das matérias fixadas:
-  elas contam como cobertura da categoria para o preenchimento automático. Se
-  a fixada cobre o que falta, nenhuma outra da categoria entra sozinha.
+- **Correção de rumo na implementação:** a causa real do caso do dono era outra.
+  Presença Africana (FCH7XC) estava fixada ("quero cursar") por uma troca, fechou
+  as 45h de Humanidades, e o Planejamento de Carreira (também fixado) era
+  descartado por "categoria fechada". Por isso a reserva de horas para fixadas
+  foi descartada (YAGNI): o que resolve é a regra abaixo.
 - Matéria fixada ignora o fechamento da categoria (humanidades, 2º estrato,
   expressão gráfica, eletivas, grupos de opção, trilhas). A regra de trilha-alvo
   continua valendo para trilhas.

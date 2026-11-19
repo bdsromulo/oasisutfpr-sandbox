@@ -658,6 +658,11 @@ Toda tarefa — seja **Feature** ou **Bug** — carrega exatamente um destes sta
 *(nenhum no momento)*
 
 ### Em Andamento
+- **TASK-68 — Simulador de Formatura: matéria pedida entra além do mínimo, aviso de excedente e três ações por matéria:**
+  - Spec em `docs/superpowers/specs/2026-11-19-simulador-fixadas-excedente-design.md`. Branch `simulador-fixadas-excedente`.
+  - Caso real (matriz 981): Humanidades 90/135 com Presença Africana fixada; Planejamento de Carreira (60h) era recusado com "a categoria dela fecha sem ela". Matéria pedida (quero cursar ou presa a semestre) agora entra com a categoria fechada, e o excedente aparece como aviso e no cartão da categoria.
+  - Ações por matéria: excluir (X, entra na lista de exclusão), tirar deste semestre (veto, não exclui) e trocar (a trocada só é vetada naquele semestre). Todas com "Desfazer".
+  - Fora do escopo: o plano automático continua cursando só o mínimo.
 - **TASK-67 — Redesign de sobriedade (visual, acessibilidade e desempenho em PC fraco):**
   - Plano completo, diagnóstico e status por item em `docs/superpowers/plans/2026-11-18-redesign-sobriedade.md`.
   - Fase 1 feita na branch `redesign-sobriedade`. Fundação visual, varredura de efeitos caros e de vícios visuais, cabeçalho em uma linha, barra de abas no rodapé do celular, controle segmentado único, faixa de semestre recolhível, "Desfazer" em remoções e esqueleto de carregamento no `index.html`.

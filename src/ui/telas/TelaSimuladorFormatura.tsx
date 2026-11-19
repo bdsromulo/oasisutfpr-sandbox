@@ -16,6 +16,7 @@ import {
 import {
   ControlesAvancados,
   fixarNoSemestre,
+  vetarNoSemestre,
   listarTrilhasDisponiveis,
   MODELAGEM_VAZIA,
   SeletorTrilhasAlvo,
@@ -43,7 +44,7 @@ import {
 } from "../../domain/semestres";
 import { useToasts } from "../toasts/contexto";
 import { PainelAprovacaoPresumida } from "./PainelAprovacaoPresumida";
-import { avisarProjecao } from "../toasts/avisos";
+import { avisarProjecao, avisarRemocao } from "../toasts/avisos";
 import { Barra, Card, Chevron } from "../componentes";
 import {
   IconBan,
@@ -228,6 +229,7 @@ function CardRequisito(props: { req: Requisito }) {
       <div className="mt-2 text-[11px] font-medium leading-snug text-zinc-500 dark:text-zinc-400">
         {req.cumprido}h já concluídas
         {req.planejado > 0 && <> · {req.planejado}h na projeção</>}
+        {req.excedente > 0 && <> · {req.excedente}h acima do mínimo</>}
       </div>
     </div>
   );
@@ -351,6 +353,7 @@ export function TelaSimuladorFormatura(props: {
         ritmoPorSemestre: modelagem.ritmoPorSemestre,
         janela: { aulaInicial: modelagem.aulaInicial, aulaFinal: modelagem.aulaFinal },
         fixacoesPorSemestre: modelagem.fixacoesPorSemestre,
+        vetosPorSemestre: modelagem.vetosPorSemestre,
       }),
     [perfil, matriz, ofertas, ritmo, semestreDePartida, gradeFixada, exclusoes, modelagem],
   );
@@ -380,26 +383,29 @@ export function TelaSimuladorFormatura(props: {
   }, [matriz, perfil]);
 
   /**
-   * Troca uma disciplina projetada por outra: fixa a escolhida e exclui a que
-   * saiu. Só fixar não bastaria — a substituída continuaria elegível e o motor
-   * poderia repescá-la, deixando a troca sem efeito visível.
+   * Troca uma disciplina projetada por outra: fixa a escolhida e tira a trocada
+   * DESTE semestre. A trocada não vai para a lista de exclusão: se o curso ainda
+   * precisar dela, o motor pode usá-la em outro semestre. Para banir de vez, o
+   * aluno usa o X.
    */
-  function trocarDisciplina(sai: string, entra: string) {
-    setModelagem({
+  function trocarDisciplina(sai: string, entra: string, semestre: string) {
+    const anterior = modelagem;
+    const nomeDe = (c: string) => matriz.disciplinas.find((d) => d.codigo === c)?.nome ?? c;
+    const comEntrada: ValorModelagem = {
       ...modelagem,
       disciplinasFixadas: [
         ...modelagem.disciplinasFixadas.filter((c) => c !== entra && c !== sai),
         entra,
       ],
-    });
-    const nomeQueSai = matriz.disciplinas.find((d) => d.codigo === sai);
-    if (nomeQueSai && !exclusoes.disciplinas.some((x) => x.codigo === sai)) {
-      setExclusoes({
-        ...exclusoes,
-        disciplinas: [...exclusoes.disciplinas, { codigo: sai, nome: nomeQueSai.nome }],
-      });
-    }
+    };
+    setModelagem(vetarNoSemestre(comEntrada, sai, semestre));
     setTrocando(null);
+    avisarRemocao(toasts, {
+      chave: "trocar-disciplina",
+      titulo: `${nomeLegivel(nomeDe(entra))} entrou no lugar de ${nomeLegivel(nomeDe(sai))}`,
+      descricao: "A matéria trocada não foi excluída: só saiu deste semestre.",
+      desfazer: () => setModelagem(anterior),
+    });
   }
 
   /**
@@ -414,11 +420,14 @@ export function TelaSimuladorFormatura(props: {
       [];
 
     for (const req of resultado.requisitos) {
-      if (req.atendido || req.id === "extensao") continue;
+      // categoria já fechada continua na lista: horas acima do mínimo são
+      // permitidas, e o aluno pode querer uma matéria a mais dela
+      if (req.id === "extensao") continue;
       const disciplinas = matriz.disciplinas.filter(
         (d) =>
           !d.codigo.startsWith("ENADE") &&
           !cumpridas(d) &&
+          !perfil?.aprovadas.has(d.codigo) &&
           categoriaDaDisciplina(d) === req.id,
       );
       if (disciplinas.length === 0) continue;
@@ -485,12 +494,38 @@ export function TelaSimuladorFormatura(props: {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [arrasto?.codigo, arrasto?.origem, modelagem]);
 
-  /** X: tira do plano de vez. Obrigatória não recebe o botão. */
-  function removerDoPlano(codigo: string, nome: string) {
+  /** X: exclui do curso. Entra na lista de exclusão e o motor não a usa mais. */
+  function excluirDoPlano(codigo: string, nome: string) {
+    const modelagemAnterior = modelagem;
+    const exclusoesAnteriores = exclusoes;
     setModelagem(fixarNoSemestre(modelagem, codigo, null));
     if (!exclusoes.disciplinas.some((x) => x.codigo === codigo)) {
       setExclusoes({ ...exclusoes, disciplinas: [...exclusoes.disciplinas, { codigo, nome }] });
     }
+    avisarRemocao(toasts, {
+      chave: "excluir-disciplina",
+      titulo: `${nomeLegivel(nome)} excluída do plano`,
+      descricao: "Ela fica na lista de exclusões até você restaurá-la.",
+      desfazer: () => {
+        setModelagem(modelagemAnterior);
+        setExclusoes(exclusoesAnteriores);
+      },
+    });
+  }
+
+  /**
+   * Tirar deste semestre: o motor não a coloca aqui, mas ela não vai para a
+   * lista de exclusão e pode entrar em outro semestre, se o curso precisar.
+   */
+  function tirarDoSemestre(codigo: string, nome: string, semestre: string) {
+    const anterior = modelagem;
+    setModelagem(vetarNoSemestre(modelagem, codigo, semestre));
+    avisarRemocao(toasts, {
+      chave: "tirar-do-semestre",
+      titulo: `${nomeLegivel(nome)} saiu de ${formatarSemestre(semestre)}`,
+      descricao: "Não foi excluída: pode aparecer em outro semestre.",
+      desfazer: () => setModelagem(anterior),
+    });
   }
 
   const totalMaterias = resultado.semestres.reduce((a, s) => a + s.materias, 0);
@@ -1047,11 +1082,20 @@ export function TelaSimuladorFormatura(props: {
                           >
                             ›
                           </button>
+                          <button
+                            type="button"
+                            onClick={() => tirarDoSemestre(d.codigo, d.nome, s.semestre)}
+                            title="Tirar só deste semestre. Não exclui a matéria: ela pode voltar em outro semestre."
+                            className="cursor-pointer rounded-lg border border-zinc-200 px-1.5 font-display text-[10px] font-bold text-zinc-500 transition-colors hover:border-utfpr-500 hover:text-zinc-900 dark:border-zinc-700 dark:hover:text-white"
+                          >
+                            tirar
+                          </button>
                           {d.categoria !== "obrigatorias" && (
                             <button
                               type="button"
-                              onClick={() => removerDoPlano(d.codigo, d.nome)}
-                              title="Não quero cursar esta matéria"
+                              onClick={() => excluirDoPlano(d.codigo, d.nome)}
+                              title="Excluir: não cursar esta matéria em semestre nenhum"
+                              aria-label="Excluir matéria do plano"
                               className="cursor-pointer rounded-lg border border-zinc-200 px-1.5 font-mono text-xs font-bold text-zinc-500 transition-colors hover:border-red-400 hover:text-red-600 dark:border-zinc-700 dark:hover:text-red-400"
                             >
                               <IconX className="h-3.5 w-3.5" />
@@ -1091,7 +1135,7 @@ export function TelaSimuladorFormatura(props: {
                                   <button
                                     key={alt.codigo}
                                     type="button"
-                                    onClick={() => trocarDisciplina(d.codigo, alt.codigo)}
+                                    onClick={() => trocarDisciplina(d.codigo, alt.codigo, s.semestre)}
                                     className="block w-full cursor-pointer rounded-xl px-2 py-1.5 text-left text-xs font-semibold text-zinc-700 hover:bg-utfpr-500/15 dark:text-zinc-200"
                                   >
                                     {nomeLegivel(alt.nome)}
@@ -1169,7 +1213,10 @@ export function TelaSimuladorFormatura(props: {
                         faltantesPorCategoria.map(([cat, lista]) => (
                           <div key={cat} className="mb-1.5">
                             <p className="px-1.5 py-1 font-display text-xs font-medium text-zinc-400">
-                              {ROTULO_CURTO[cat]} · faltam {lista.horasFaltantes}h
+                              {ROTULO_CURTO[cat]} ·{" "}
+                              {lista.horasFaltantes > 0
+                                ? `faltam ${lista.horasFaltantes}h`
+                                : "já fechada, o que entrar passa do mínimo"}
                             </p>
                             {lista.disciplinas.slice(0, 40).map((alt) => (
                               <button

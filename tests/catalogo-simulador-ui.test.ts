@@ -5,6 +5,7 @@ import { rotulosClassificacaoCatalogo } from "../src/ui/telas/Catalogo";
 import { listarGradesDoPlanejamento } from "../src/ui/telas/TelaSimuladorFormatura";
 import {
   fixarNoSemestre,
+  vetarNoSemestre,
   MODELAGEM_VAZIA,
   totalModelagem,
 } from "../src/ui/telas/ControlesSimulador";
@@ -108,5 +109,26 @@ describe("fixarNoSemestre", () => {
     // mover a mesma disciplina não inventa um segundo ajuste
     v = fixarNoSemestre(v, "IF62C", "2028-1");
     expect(totalModelagem(v)).toBe(2);
+  });
+});
+
+describe("vetarNoSemestre", () => {
+  it("registra o veto e solta a prisão a semestre, sem tocar nas fixadas", () => {
+    const base = fixarNoSemestre(
+      { ...MODELAGEM_VAZIA, disciplinasFixadas: ["IF99Z"] },
+      "IF61C",
+      "2027-1",
+    );
+    const v = vetarNoSemestre(base, "IF61C", "2027-1");
+    expect(v.vetosPorSemestre).toEqual({ "2027-1": ["IF61C"] });
+    expect(v.fixacoesPorSemestre).toEqual({});
+    expect(v.disciplinasFixadas).toEqual(["IF99Z"]);
+  });
+
+  it("vetar duas vezes o mesmo semestre não duplica o código", () => {
+    let v = vetarNoSemestre(MODELAGEM_VAZIA, "IF61C", "2027-1");
+    v = vetarNoSemestre(v, "IF61C", "2027-1");
+    expect(v.vetosPorSemestre["2027-1"]).toEqual(["IF61C"]);
+    expect(totalModelagem(v)).toBe(1);
   });
 });
