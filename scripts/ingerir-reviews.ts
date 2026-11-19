@@ -30,7 +30,7 @@ import {
   idDaUnidade,
   type Roster,
 } from "../src/domain/reviews/professores";
-import { CURSOS, carregarOfertasHistoricasMecatronica } from "../src/domain/dadosCurso";
+import { CURSOS, carregarTodasOfertas } from "../src/domain/dadosCurso";
 
 const CAMINHO_SAIDA = "data/reviews.json";
 
@@ -335,13 +335,13 @@ async function principal() {
     return falhar("uso: npx tsx scripts/ingerir-reviews.ts <url-do-csv-publicado>");
   }
 
-  // As ofertas de Mecatrônica não vêm no bundle inicial: `dadosCurso` as deixa
-  // num placeholder vazio e só as busca sob demanda, para não pesar o primeiro
-  // carregamento do site. As telas chamam este carregador; a ingestão não
-  // chamava, e montava o roster com 365 unidades docentes em vez de 452 — todo
-  // o elenco de Mecatrônica ficava de fora, e as avaliações do curso caíam na
-  // rota "Professor Não Ofertado" mesmo com o docente visível na UI.
-  await carregarOfertasHistoricasMecatronica();
+  // Nenhuma oferta de turma vem no bundle inicial: `dadosCurso` as deixa em
+  // placeholders vazios e só as busca sob demanda, para não pesar o primeiro
+  // carregamento do site. Quando só Mecatrônica era assim, a ingestão não
+  // chamava o carregador e montava o roster com 365 unidades docentes em vez de
+  // 452 — o elenco de Mecatrônica ficava de fora, e as avaliações do curso
+  // caíam na rota "Professor Não Ofertado" mesmo com o docente visível na UI.
+  await carregarTodasOfertas();
 
   const resposta = await fetch(url, { redirect: "follow" });
   if (!resposta.ok) {

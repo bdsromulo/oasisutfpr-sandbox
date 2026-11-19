@@ -8,7 +8,9 @@ import { VERSAO_NOVIDADES } from "./novidades";
 import {
   dadosDoCurso,
   dadosDoCursoPorMatriz,
-  carregarOfertasHistoricasMecatronica,
+  carregarOfertasDoCurso,
+  carregarTodasOfertas,
+  ofertasProntas,
   ofertaDoSemestre,
   semestresDoCurso,
   semestresReaisDoCurso,
@@ -285,27 +287,44 @@ function Aplicacao() {
   // padrão apesar de conterem um histórico da matriz 844.
   const cursoDoPerfil = dadosDoCursoPorMatriz(perfil?.matriz);
   const cursoAtivo = cursoDoPerfil?.id ?? preferencias.curso ?? "bsi-981";
-  const [versaoOfertasMecatronica, setVersaoOfertasMecatronica] = useState(0);
+  const dadosCurso = useMemo(() => dadosDoCurso(cursoAtivo), [cursoAtivo]);
+
+  // As ofertas de turma chegam por curso, fora do JavaScript inicial. Primeiro
+  // as do curso em uso; as dos outros cursos depois, quando o navegador estiver
+  // ocioso, porque o roster de docentes das avaliações é global (§6.10). A
+  // versão só existe para recalcular o que depende das ofertas quando chegam.
+  const [versaoOfertas, setVersaoOfertas] = useState(0);
+  const [falhaOfertas, setFalhaOfertas] = useState(false);
+  const [tentativaOfertas, setTentativaOfertas] = useState(0);
   useEffect(() => {
     let ativo = true;
-    void carregarOfertasHistoricasMecatronica()
+    setFalhaOfertas(false);
+    void carregarOfertasDoCurso(dadosCurso)
       .then(() => {
-        if (ativo) setVersaoOfertasMecatronica((versao) => versao + 1);
+        if (!ativo) return;
+        setVersaoOfertas((v) => v + 1);
+        const resto = () =>
+          void carregarTodasOfertas()
+            .then(() => ativo && setVersaoOfertas((v) => v + 1))
+            .catch(() => {});
+        if ("requestIdleCallback" in window) window.requestIdleCallback(resto, { timeout: 5000 });
+        else setTimeout(resto, 2000);
       })
       .catch(() => {
-        // Uma falha de rede mantém o placeholder vazio sem derrubar a aplicação.
-        // O navegador pode tentar novamente no próximo carregamento da página.
+        // Sem rede no meio do caminho: a tela diz o que houve e oferece tentar
+        // de novo, em vez de mostrar um curso sem nenhuma turma.
+        if (ativo) setFalhaOfertas(true);
       });
     return () => {
       ativo = false;
     };
-  }, []);
-  const dadosCurso = useMemo(() => dadosDoCurso(cursoAtivo), [cursoAtivo]);
+  }, [dadosCurso, tentativaOfertas]);
+  const ofertasDoCursoProntas = ofertasProntas(dadosCurso);
   const matriz = dadosCurso.matriz;
   const todasOfertas = dadosCurso.ofertas;
   const semestresDisponiveis = useMemo(
     () => semestresDoCurso(dadosCurso),
-    [dadosCurso, versaoOfertasMecatronica],
+    [dadosCurso, versaoOfertas],
   );
 
   // o semestre guardado pode ser de outro curso: cai no padrão se não existir
@@ -319,11 +338,11 @@ function Aplicacao() {
   // o banner se serve para avisar que o quadro é provável, não publicado.
   const oferta = useMemo<OfertaSemestre>(
     () => ofertaDoSemestre(dadosCurso, semestreAtivo),
-    [semestreAtivo, dadosCurso, versaoOfertasMecatronica],
+    [semestreAtivo, dadosCurso, versaoOfertas],
   );
   const semestresReais = useMemo(
     () => semestresReaisDoCurso(dadosCurso),
-    [dadosCurso, versaoOfertasMecatronica],
+    [dadosCurso, versaoOfertas],
   );
   const descritorSemestre = useMemo(
     () => descritorDoSemestre(semestreAtivo, semestresReais),
@@ -1355,6 +1374,26 @@ function Aplicacao() {
               </div>
             )}
 
+            {/* As turmas do curso ainda estão chegando (chunk sob demanda). Sem
+                elas o Planejamento mostraria um curso sem nenhuma matéria. */}
+            {!ofertasDoCursoProntas ? (
+              <div className="flex min-h-64 flex-col items-center justify-center gap-3 rounded-xl border border-zinc-200 bg-white p-8 text-center text-sm text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
+                {falhaOfertas ? (
+                  <>
+                    <p>Não deu para baixar as turmas de {dadosCurso.rotuloCurto}. Confira a conexão.</p>
+                    <Botao variante="neutro" onClick={() => setTentativaOfertas((n) => n + 1)}>
+                      Tentar de novo
+                    </Botao>
+                  </>
+                ) : (
+                  <>
+                    <CarregadorPontos classe="text-zinc-400" rotulo="Carregando turmas" />
+                    <p>Carregando as turmas de {dadosCurso.rotuloCurto}</p>
+                  </>
+                )}
+              </div>
+            ) : (
+            <>
             {aba === "situacao" && (
               <div className="space-y-6">
                 {/* Sub-navegação em Minha Situação: Resumo, Catálogo e Trilhas */}
@@ -1602,10 +1641,12 @@ function Aplicacao() {
                 }}
               />
             )}
+            </>
+            )}
           </div>
 
           {/* sidebar de feedback contínuo: visível na aba de Planejamento/Posso Cursar */}
-          {aba === "planejamento" && abaPlanejamento === "cursar" && (
+          {aba === "planejamento" && abaPlanejamento === "cursar" && ofertasDoCursoProntas && (
             <aside className="sticky top-4 self-start hidden w-60 shrink-0 lg:block">
               <MiniGrade
                 oferta={oferta}

@@ -107,7 +107,6 @@ describe("descritor e interface da matriz 973", () => {
   it("liga a matriz às três ofertas próprias e habilita as avaliações", async () => {
     const curso = dadosDoCursoPorMatriz(973);
     expect(curso?.id).toBe("eng-mecatronica-973");
-    expect(Object.keys(curso?.ofertas ?? {})).toEqual(["2026-2"]);
     await carregarOfertasHistoricasMecatronica();
     expect(Object.keys(curso?.ofertas ?? {})).toEqual(["2026-2", "2026-1", "2025-2"]);
     expect(curso?.semestresProjetados).toEqual(["2027-1"]);
