@@ -82,6 +82,8 @@ export function TelaCatalogo(props: {
   matriz: Matriz;
   oferta: OfertaSemestre;
   categoriaInicial?: CategoriaCatalogo;
+  /** termo vindo do menu de comandos (Ctrl+K), já aplicado na busca */
+  buscaInicial?: string;
   onVoltar?: () => void;
 }) {
   const { perfil, matriz, oferta } = props;
@@ -92,7 +94,7 @@ export function TelaCatalogo(props: {
   const [filtroStatus, setFiltroStatus] = useState<
     "todas" | "pendentes" | "abertas" | "semoferta" | "concluidas"
   >(props.categoriaInicial && props.categoriaInicial !== "todas" ? "pendentes" : "todas");
-  const [busca, setBusca] = useState("");
+  const [busca, setBusca] = useState(props.buscaInicial ?? "");
   const [ordenacao, setOrdenacao] = useState<string>("az");
   const [revisando, setRevisando] = useState<AlvoPainelDisciplina | null>(null);
 

@@ -77,7 +77,7 @@ function LinhaResumoCategoria({ r, isSubTrilha }: { r: ResumoCategoriaGrade; isS
     >
       <div className="min-w-0">
         <span className="block text-sm font-semibold text-zinc-900 dark:text-zinc-100">{r.categoriaNome}</span>
-        {r.disciplinasEnvolvidas.length > 0 ? (
+        {r.disciplinasEnvolvidas.length > 0 && (
           <span className="mt-0.5 block text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
             {r.disciplinasEnvolvidas.map((disc, i) => (
               <span key={disc.codigo} title={`${disc.codigo} · ${nomeLegivel(disc.nome)} (${disc.carga}h)`}>
@@ -86,8 +86,6 @@ function LinhaResumoCategoria({ r, isSubTrilha }: { r: ResumoCategoriaGrade; isS
               </span>
             ))}
           </span>
-        ) : (
-          <span className="mt-0.5 block text-xs text-zinc-500 dark:text-zinc-400">Nada desta grade conta aqui</span>
         )}
         {ehExcedenteConcluido && (
           <span className="mt-1 flex items-start gap-1.5 text-xs text-zinc-600 dark:text-zinc-300">
@@ -107,14 +105,14 @@ function LinhaResumoCategoria({ r, isSubTrilha }: { r: ResumoCategoriaGrade; isS
           <span className="font-normal text-zinc-400"> / {r.exigido}h</span>
           <span className="ml-1 text-xs font-normal text-zinc-500 dark:text-zinc-400">{pctTotal}%</span>
         </span>
-        <span className="mt-0.5 flex items-center justify-end gap-1 text-xs text-zinc-500 dark:text-zinc-400" title={r.statusTexto}>
-          <IconeStatusProgresso status={r.statusIcone} />
-          {r.impulsoGrade > 0 ? (
-            <span className="font-medium text-zinc-800 dark:text-zinc-200">+{r.impulsoGrade}h nesta grade</span>
-          ) : (
-            <span>sem impulso</span>
-          )}
-        </span>
+        {/* Só as linhas que a grade move dizem algo; nas outras o "nada muda"
+            repetido seis vezes era ruído. */}
+        {r.impulsoGrade > 0 && (
+          <span className="mt-0.5 flex items-center justify-end gap-1 text-xs font-medium text-zinc-800 dark:text-zinc-200" title={r.statusTexto}>
+            <IconeStatusProgresso status={r.statusIcone} />
+            +{r.impulsoGrade}h nesta grade
+          </span>
+        )}
       </div>
     </li>
   );

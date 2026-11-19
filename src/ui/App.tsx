@@ -64,6 +64,7 @@ import {
   IconInfo,
   IconMenu,
   IconMoon,
+  IconSearch,
   IconSettings,
   IconStar,
   IconSun,
@@ -73,6 +74,9 @@ import {
 } from "./icons";
 import { ModalMinhasAvaliacoes } from "./telas/ModalMinhasAvaliacoes";
 import { ModalNovidades } from "./telas/ModalNovidades";
+import { MenuComandos } from "./MenuComandos";
+import { atalhoAbreMenu, GRUPO_DISCIPLINAS, type Comando } from "./comandos";
+import { nomeLegivel } from "./textos";
 import { AvisoBeta } from "./telas/AvisoBeta";
 import { ProvedorToasts, useToasts } from "./toasts/contexto";
 import { avisarRemocao } from "./toasts/avisos";
@@ -253,6 +257,9 @@ function Aplicacao() {
     }
   });
   const [modalConfigAberto, setModalConfigAberto] = useState(false);
+  const [menuComandosAberto, setMenuComandosAberto] = useState(false);
+  // termo levado do menu de comandos ao Catálogo; muda a chave e remonta a tela
+  const [buscaCatalogo, setBuscaCatalogo] = useState("");
   const [modalAvaliacoesAberto, setModalAvaliacoesAberto] = useState(false);
   const [modalNovidadesAberto, setModalNovidadesAberto] = useState(false);
   // O realce vale uma vez. Depois de aberto o botão continua lá, porém calado:
@@ -570,6 +577,7 @@ function Aplicacao() {
   useCamadaHistorico(comoUsarAberta, () => setComoUsarAberta(false), "comoUsarAberta");
   useCamadaHistorico(mobileGradeDrawerAberto, () => setMobileGradeDrawerAberto(false), "mobileGradeDrawerAberto");
   useCamadaHistorico(modalGradeMagica, () => setModalGradeMagica(false), "modalGradeMagica");
+  useCamadaHistorico(menuComandosAberto, () => setMenuComandosAberto(false), "menuComandosAberto");
 
   // Sincronizar tema no DOM
   useEffect(() => {
@@ -893,6 +901,162 @@ function Aplicacao() {
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-color-scheme: dark)").matches);
 
+  // Ctrl+K (Cmd+K no Mac) abre o menu de comandos de qualquer tela. Vale também
+  // com o foco num campo de texto, como nos editores: a combinação não digita nada.
+  useEffect(() => {
+    const aoTeclar = (e: KeyboardEvent) => {
+      if (!atalhoAbreMenu(e)) return;
+      e.preventDefault();
+      setMenuComandosAberto((aberto) => !aberto);
+    };
+    window.addEventListener("keydown", aoTeclar);
+    return () => window.removeEventListener("keydown", aoTeclar);
+  }, []);
+
+  const dentroDaPlataforma = !!perfil || checkinConcluido;
+  const comandos = useMemo<Comando[]>(() => {
+    // fecha as telas de material do projeto antes de navegar, senão a troca
+    // de aba acontece atrás delas e parece que nada mudou
+    const irPara = (fn: () => void) => () => {
+      setSobreAberta(false);
+      setComoUsarAberta(false);
+      setGiAberta(false);
+      fn();
+    };
+    const abrirCatalogo = (busca: string) =>
+      irPara(() => {
+        setBuscaCatalogo(busca);
+        setCategoriaCatalogo("todas");
+        setAba("situacao");
+        setAbaSituacao("catalogo");
+      });
+    const lista: Comando[] = [];
+    if (dentroDaPlataforma) {
+      if (perfil) {
+        lista.push({
+          id: "ir:situacao",
+          grupo: "Ir para",
+          rotulo: "Minha Situação",
+          termos: ["progresso", "painel", "horas"],
+          executar: irPara(() => {
+            setAba("situacao");
+            setAbaSituacao("painel");
+          }),
+        });
+      }
+      lista.push(
+        {
+          id: "ir:catalogo",
+          grupo: "Ir para",
+          rotulo: "Catálogo de matérias",
+          termos: ["lista", "disciplinas"],
+          executar: abrirCatalogo(""),
+        },
+        {
+          id: "ir:trilhas",
+          grupo: "Ir para",
+          rotulo: "Árvore e trilhas",
+          termos: ["fluxograma", "pré-requisitos"],
+          executar: irPara(() => {
+            setAba("situacao");
+            setAbaSituacao("trilhas");
+          }),
+        },
+        {
+          id: "ir:abertas",
+          grupo: "Ir para",
+          rotulo: "Matérias abertas",
+          termos: ["planejamento", "turmas", "posso cursar"],
+          executar: irPara(() => {
+            setAba("planejamento");
+            setAbaPlanejamento("cursar");
+          }),
+        },
+        {
+          id: "ir:grade",
+          grupo: "Ir para",
+          rotulo: "Minha grade",
+          termos: ["horário", "planejamento"],
+          executar: irPara(() => {
+            setAba("planejamento");
+            setAbaPlanejamento("grade");
+          }),
+        },
+      );
+      if (perfil) {
+        lista.push({
+          id: "ir:simulador",
+          grupo: "Ir para",
+          rotulo: "Simulador de Formatura",
+          termos: ["previsão", "formar"],
+          executar: irPara(() => setAba("simulador")),
+        });
+      }
+      lista.push(
+        {
+          id: "ir:match",
+          grupo: "Ir para",
+          rotulo: "Oásis Match",
+          termos: ["amigos", "turma junto"],
+          executar: irPara(() => setAba("match")),
+        },
+        {
+          id: "acao:config",
+          grupo: "Ações",
+          rotulo: perfil ? "Configurações e histórico" : "Configurações e importar histórico",
+          termos: ["pdf", "perfil", "savefile"],
+          executar: () => setModalConfigAberto(true),
+        },
+        {
+          id: "acao:tema",
+          grupo: "Ações",
+          rotulo: temaEscuroAtivo ? "Usar tema claro" : "Usar tema escuro",
+          termos: ["tema", "modo"],
+          executar: () => setPreferencias({ ...preferencias, tema: temaEscuroAtivo ? "claro" : "escuro" }),
+        },
+        { id: "acao:novidades", grupo: "Ações", rotulo: "Novidades", termos: ["o que mudou"], executar: abrirNovidades },
+      );
+    }
+    lista.push(
+      {
+        id: "ajuda:como-usar",
+        grupo: "Ajuda",
+        rotulo: "Como usar o site",
+        termos: ["ajuda", "tutorial"],
+        executar: () => {
+          setGiAberta(false);
+          setSobreAberta(false);
+          setComoUsarAberta(true);
+        },
+      },
+      {
+        id: "ajuda:sobre",
+        grupo: "Ajuda",
+        rotulo: "Sobre o projeto",
+        termos: ["privacidade", "contato"],
+        executar: () => {
+          setGiAberta(false);
+          setComoUsarAberta(false);
+          setSobreAberta(true);
+        },
+      },
+    );
+    if (dentroDaPlataforma) {
+      for (const d of matriz.disciplinas) {
+        lista.push({
+          id: `disc:${d.codigo}`,
+          grupo: GRUPO_DISCIPLINAS,
+          rotulo: nomeLegivel(d.nome),
+          codigo: d.codigo,
+          executar: abrirCatalogo(d.codigo),
+        });
+      }
+    }
+    return lista;
+    // Os setters do React são estáveis e abrirNovidades só chama um deles.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dentroDaPlataforma, perfil, matriz, temaEscuroAtivo, preferencias]);
+
   // A barra de abas do celular existe sempre que a pessoa está dentro da
   // plataforma. As telas de material do projeto têm o próprio "Voltar".
   const navMobileVisivel =
@@ -933,6 +1097,14 @@ function Aplicacao() {
             de 32px em duas linhas, abaixo do mínimo de toque. O período do aluno
             subiu para a linha do curso, e o cabeçalho cabe numa linha só. */}
         <div className="flex shrink-0 items-center gap-1 sm:hidden">
+          <button
+            type="button"
+            onClick={() => setMenuComandosAberto(true)}
+            aria-label="Buscar tela ou disciplina"
+            className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg text-zinc-600 transition-colors hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
+          >
+            <IconSearch className="h-5 w-5 shrink-0" />
+          </button>
           {/* Só depois do check-in, como no bloco do desktop. Antes disso a
               pessoa ainda não entrou na plataforma para o que mudou fazer
               sentido. */}
@@ -959,6 +1131,19 @@ function Aplicacao() {
         </div>
 
         <div className="hidden items-center gap-1 sm:flex">
+          {/* Busca com a dica do atalho: quem vê "Ctrl K" uma vez aprende. */}
+          <button
+            type="button"
+            onClick={() => setMenuComandosAberto(true)}
+            title="Ir para uma tela ou buscar disciplina (Ctrl+K)"
+            className="mr-1 flex h-9 cursor-pointer items-center gap-2 rounded-lg border border-zinc-200 bg-white px-2.5 text-sm text-zinc-500 transition-colors hover:border-zinc-300 hover:text-zinc-800 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-200"
+          >
+            <IconSearch className="h-4 w-4" />
+            <span className="hidden lg:inline">Buscar</span>
+            <kbd className="hidden rounded border border-zinc-200 px-1 font-sans text-[11px] lg:inline dark:border-zinc-700">
+              Ctrl K
+            </kbd>
+          </button>
           {/* Controles do cabeçalho visíveis quando já iniciou a plataforma */}
           {(perfil || checkinConcluido) && (
             <>
@@ -1210,6 +1395,8 @@ function Aplicacao() {
 
                 {abaSituacao === "catalogo" && (
                   <TelaCatalogo
+                    key={buscaCatalogo}
+                    buscaInicial={buscaCatalogo}
                     perfil={perfilEfetivo}
                     matriz={matriz}
                     oferta={oferta}
@@ -1474,6 +1661,12 @@ function Aplicacao() {
           setModalGradeMagica(false);
           setAbaPlanejamento("grade");
         }}
+      />
+
+      <MenuComandos
+        aberto={menuComandosAberto}
+        onFechar={() => setMenuComandosAberto(false)}
+        comandos={comandos}
       />
 
       {/* Apresentação do sistema de avaliações. "Avaliar" só existe com

@@ -41,18 +41,33 @@ const SLOTS: [string, number][] = [
   ...[1, 2, 3, 4, 5].map((n) => ["N", n] as [string, number]),
 ];
 
+// Mesma paleta de tons baixos da grade completa (Grade.tsx), num tom acima
+// porque aqui cada casa tem 14px e precisa aparecer contra o fundo zinc.
 export const CORES_GRADE = [
-  "bg-utfpr-500 text-zinc-900",
-  "bg-sky-500 text-white",
-  "bg-emerald-500 text-white",
-  "bg-violet-500 text-white",
-  "bg-rose-500 text-white",
-  "bg-orange-500 text-white",
-  "bg-teal-500 text-white",
-  "bg-fuchsia-500 text-white",
-  "bg-lime-500 text-zinc-900",
-  "bg-indigo-500 text-white",
+  "bg-sky-300 text-sky-950 dark:bg-sky-700",
+  "bg-emerald-300 text-emerald-950 dark:bg-emerald-700",
+  "bg-rose-300 text-rose-950 dark:bg-rose-700",
+  "bg-indigo-300 text-indigo-950 dark:bg-indigo-700",
+  "bg-orange-300 text-orange-950 dark:bg-orange-700",
+  "bg-teal-300 text-teal-950 dark:bg-teal-700",
+  "bg-stone-400 text-stone-950 dark:bg-stone-600",
+  "bg-fuchsia-300 text-fuchsia-950 dark:bg-fuchsia-700",
 ];
+
+/**
+ * Se uma casa da prévia está em choque. Duas turmas na mesma casa são choque.
+ * A prévia (turma sob o mouse) só choca com matéria DIFERENTE: prévia de outra
+ * turma da mesma matéria troca a turma, não soma. Antes, passar o mouse na
+ * turma já escolhida pintava os próprios horários de vermelho.
+ */
+export function haChoqueNaCasa(
+  ocupantes: { codigoSelecao: string }[],
+  codigoEmPrevia: string | undefined,
+): boolean {
+  if (ocupantes.length > 1) return true;
+  if (codigoEmPrevia === undefined) return false;
+  return ocupantes.some((o) => o.codigoSelecao !== codigoEmPrevia);
+}
 
 export interface PreviewTurma {
   disciplina: DisciplinaOfertada;
@@ -300,7 +315,7 @@ export function MiniGrade(props: {
           )}
 
           <div className="flex items-center justify-between gap-1 pt-1 border-t border-zinc-100 dark:border-zinc-800">
-            <span className="text-[10px] font-bold uppercase text-zinc-400">Turno:</span>
+            <span className="text-[11px] font-medium text-zinc-500 dark:text-zinc-400">Turno</span>
             <div className="flex gap-1">
               {(["TODOS", "M", "T", "N"] as const).map((t) => (
                 <button
@@ -309,7 +324,7 @@ export function MiniGrade(props: {
                   onClick={() => setTurnoFiltro(t)}
                   className={`rounded px-1.5 py-0.5 text-[10px] font-bold transition-colors cursor-pointer ${
                     turnoFiltro === t
-                      ? "bg-utfpr-500 text-zinc-950"
+                      ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
                       : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-400"
                   }`}
                 >
@@ -349,7 +364,7 @@ export function MiniGrade(props: {
                       const k = `${dia}${turno}${aula}`;
                       const ocupantes = porSlot.get(k) ?? [];
                       const emPreview = slotsPreview.has(k);
-                      const choque = ocupantes.length > 1 || (emPreview && ocupantes.length > 0);
+                      const choque = haChoqueNaCasa(ocupantes, emPreview ? preview?.disciplina.codigo : undefined);
                       const isHovered = ocupantes.some((o) => o.codigo === disciplinaHoverId);
 
                       return (

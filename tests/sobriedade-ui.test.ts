@@ -83,3 +83,18 @@ describe("sobriedade da interface", () => {
     expect(pilha).not.toMatch(/bg-(emerald|amber|red)-50\b/);
   });
 });
+
+describe("choque na prévia da grade", () => {
+  it("não acusa choque da turma sob o mouse com a própria matéria já escolhida", async () => {
+    const { haChoqueNaCasa } = await import("../src/ui/MiniGrade");
+    expect(haChoqueNaCasa([{ codigoSelecao: "MAT7AL" }], "MAT7AL")).toBe(false);
+  });
+
+  it("acusa choque com outra matéria e entre duas turmas na mesma casa", async () => {
+    const { haChoqueNaCasa } = await import("../src/ui/MiniGrade");
+    expect(haChoqueNaCasa([{ codigoSelecao: "MAT7AL" }], "ICSG20")).toBe(true);
+    expect(haChoqueNaCasa([{ codigoSelecao: "A" }, { codigoSelecao: "B" }], undefined)).toBe(true);
+    expect(haChoqueNaCasa([{ codigoSelecao: "A" }], undefined)).toBe(false);
+    expect(haChoqueNaCasa([], "A")).toBe(false);
+  });
+});

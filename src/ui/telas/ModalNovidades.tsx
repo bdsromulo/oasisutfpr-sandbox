@@ -55,8 +55,8 @@ export function ModalNovidades(props: {
         className="max-h-[88vh] w-full overflow-y-auto rounded-t-3xl border-zinc-200 bg-white shadow-2xl sm:max-w-xl sm:rounded-2xl sm:border dark:border-zinc-800 dark:bg-zinc-900"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="border-b border-zinc-200 bg-utfpr-500/25 p-6 dark:border-zinc-800">
-          <h2 className="font-display text-3xl font-medium text-zinc-950 dark:text-white">
+        <div className="border-b border-zinc-200 p-6 dark:border-zinc-800">
+          <h2 className="font-display text-2xl font-semibold text-zinc-950 dark:text-white">
             Novidades
           </h2>
           <p className="mt-2 text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
