@@ -129,7 +129,7 @@ export function PainelProfessor(props: {
         </div>
 
         {dados.total === 0 ? (
-          <p className="rounded-2xl border border-zinc-200/70 bg-white p-4 text-sm leading-relaxed text-zinc-600 dark:border-zinc-800/70 dark:bg-zinc-900 dark:text-zinc-300">
+          <p className="rounded-xl border border-zinc-200/70 bg-white p-4 text-sm leading-relaxed text-zinc-600 dark:border-zinc-800/70 dark:bg-zinc-900 dark:text-zinc-300">
             Ainda não há avaliações deste professor. Quem já cursou pode avaliar pela tela
             de progresso, nas disciplinas concluídas.
           </p>
@@ -160,7 +160,7 @@ export function PainelProfessor(props: {
             )}
 
             {alvo.codigo && dados.naDisciplina.n === 0 && (
-              <p className="rounded-2xl border border-zinc-200/70 bg-white p-3 text-xs leading-relaxed text-zinc-600 dark:border-zinc-800/70 dark:bg-zinc-900 dark:text-zinc-300">
+              <p className="rounded-xl border border-zinc-200/70 bg-white p-3 text-xs leading-relaxed text-zinc-600 dark:border-zinc-800/70 dark:bg-zinc-900 dark:text-zinc-300">
                 Nenhuma avaliação deste professor nesta disciplina específica. Abaixo, o que
                 a comunidade registrou sobre ele em outras.
               </p>

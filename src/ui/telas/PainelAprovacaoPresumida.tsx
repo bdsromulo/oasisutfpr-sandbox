@@ -128,7 +128,7 @@ export function PainelAprovacaoPresumida(props: {
   // data de formatura que ela está olhando é perder o fio.
   if (props.compacto) {
     return (
-      <details className="group rounded-2xl border border-emerald-400/60 bg-emerald-50/70 dark:border-emerald-800/70 dark:bg-emerald-950/40">
+      <details className="group rounded-xl border border-emerald-400/60 bg-emerald-50/70 dark:border-emerald-800/70 dark:bg-emerald-950/40">
         <summary className="flex cursor-pointer list-none items-center gap-2.5 p-3 text-xs">
           <IconCheck className="h-4 w-4 shrink-0 text-emerald-700 dark:text-emerald-400" />
           <span className="font-semibold text-emerald-900 dark:text-emerald-200">

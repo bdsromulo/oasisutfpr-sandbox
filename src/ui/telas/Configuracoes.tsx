@@ -101,9 +101,9 @@ export function TelaConfiguracoes(props: {
                   <button
                     key={op.id}
                     onClick={() => onSalvarPreferencias({ ...preferencias, tema: op.id })}
-                    className={`flex flex-col items-center gap-2 rounded-2xl border p-3.5 text-xs font-semibold transition-colors ${
+                    className={`flex flex-col items-center gap-2 rounded-xl border p-3.5 text-xs font-semibold transition-colors ${
                       ativo
-                        ? "border-utfpr-500 bg-utfpr-500/15 text-zinc-900 dark:text-white font-bold shadow-2xs"
+                        ? "border-utfpr-500 bg-utfpr-500/15 text-zinc-900 dark:text-white font-bold"
                         : "border-zinc-200/80 bg-zinc-50/60 text-zinc-600 hover:bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-800/40 dark:text-zinc-400 dark:hover:bg-zinc-800"
                     }`}
                   >
@@ -144,9 +144,9 @@ export function TelaConfiguracoes(props: {
                   <button
                     key={op.id}
                     onClick={() => onSalvarPreferencias({ ...preferencias, layout: op.id })}
-                    className={`flex flex-col items-start gap-1.5 rounded-2xl border p-4 text-left transition-colors ${
+                    className={`flex flex-col items-start gap-1.5 rounded-xl border p-4 text-left transition-colors ${
                       ativo
-                        ? "border-utfpr-500 bg-utfpr-500/15 dark:bg-utfpr-500/10 shadow-2xs"
+                        ? "border-utfpr-500 bg-utfpr-500/15 dark:bg-utfpr-500/10"
                         : "border-zinc-200/80 bg-zinc-50/60 hover:bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-800/40 dark:hover:bg-zinc-800"
                     }`}
                   >
@@ -166,7 +166,7 @@ export function TelaConfiguracoes(props: {
           </div>
 
           {/* Seção 2.1: Filtro de Conflitos em Tempo Real */}
-          <div className="flex items-center justify-between rounded-2xl border border-zinc-200/80 bg-zinc-50/60 p-4 dark:border-zinc-800 dark:bg-zinc-800/30">
+          <div className="flex items-center justify-between rounded-xl border border-zinc-200/80 bg-zinc-50/60 p-4 dark:border-zinc-800 dark:bg-zinc-800/30">
             <div>
               <span className="font-display text-sm font-bold text-zinc-900 dark:text-zinc-100">
                 Filtrar horários que não encaixam na grade
@@ -196,7 +196,7 @@ export function TelaConfiguracoes(props: {
           </div>
 
           {/* Seção 3: Gerenciar Histórico e Usuário */}
-          <div className="space-y-4 rounded-2xl border border-zinc-200/80 bg-zinc-50/50 p-4 dark:border-zinc-800 dark:bg-zinc-900/50">
+          <div className="space-y-4 rounded-xl border border-zinc-200/80 bg-zinc-50/50 p-4 dark:border-zinc-800 dark:bg-zinc-900/50">
             <div className="flex items-center justify-between">
               <div>
                 <span className="font-display text-sm font-bold text-zinc-900 dark:text-zinc-100">
@@ -212,7 +212,7 @@ export function TelaConfiguracoes(props: {
             </div>
 
             <div className="flex flex-wrap items-center gap-3 pt-2">
-              <label className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-utfpr-500 px-3.5 py-2 text-xs font-bold text-zinc-950 shadow-xs transition-colors hover:bg-utfpr-400">
+              <label className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-utfpr-500 px-3.5 py-2 text-xs font-bold text-zinc-950 transition-colors hover:bg-utfpr-400">
                 <IconUpload className="w-4 h-4" />
                 <span>{processandoPreview || props.carregandoPDF ? "Analisando PDF..." : "Carregar histórico atualizado (PDF)"}</span>
                 <input
@@ -290,7 +290,7 @@ export function TelaConfiguracoes(props: {
             )}
 
             {perfilPreview && (
-              <div className="mt-4 rounded-2xl border-2 border-utfpr-500 bg-utfpr-500/10 p-4 space-y-3 dark:bg-utfpr-500/5 animate-in fade-in duration-200">
+              <div className="mt-4 rounded-xl border-2 border-utfpr-500 bg-utfpr-500/10 p-4 space-y-3 dark:bg-utfpr-500/5 animate-in fade-in duration-200">
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <Badge tom="acento">{<IconFileText className="inline h-4 w-4 shrink-0 align-[-0.2em]" />} Confira antes de salvar</Badge>
@@ -336,7 +336,7 @@ export function TelaConfiguracoes(props: {
           </div>
 
           {/* Savefile: o PDF nunca é copiado; só o perfil já lido e o planejamento. */}
-          <div className="space-y-3 rounded-2xl border border-zinc-200/80 bg-zinc-50/50 p-4 dark:border-zinc-800 dark:bg-zinc-900/50">
+          <div className="space-y-3 rounded-xl border border-zinc-200/80 bg-zinc-50/50 p-4 dark:border-zinc-800 dark:bg-zinc-900/50">
             <div>
               <span className="font-display text-sm font-bold text-zinc-900 dark:text-zinc-100">
                 Backup e transferência de dados
@@ -351,7 +351,7 @@ export function TelaConfiguracoes(props: {
                 <IconDownload className="h-4 w-4 shrink-0" />
                 Baixar savefile
               </Botao>
-              <label className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-utfpr-500 px-3.5 py-2 text-xs font-bold text-zinc-950 shadow-xs transition-colors hover:bg-utfpr-400">
+              <label className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-utfpr-500 px-3.5 py-2 text-xs font-bold text-zinc-950 transition-colors hover:bg-utfpr-400">
                 <IconUpload className="h-4 w-4" />
                 <span>{processandoSavefile ? "Verificando arquivo..." : "Importar savefile"}</span>
                 <input
@@ -409,7 +409,7 @@ export function TelaConfiguracoes(props: {
           </div>
 
           {/* Seção 4: Zona de Perigo - Limpeza de Dados */}
-          <div className="space-y-3 rounded-2xl border border-red-200/80 bg-red-50/50 p-4 dark:border-red-900/40 dark:bg-red-950/30">
+          <div className="space-y-3 rounded-xl border border-red-200/80 bg-red-50/50 p-4 dark:border-red-900/40 dark:bg-red-950/30">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <span className="font-display text-sm font-bold text-red-800 dark:text-red-300">

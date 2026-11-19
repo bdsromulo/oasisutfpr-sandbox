@@ -25,7 +25,7 @@ function Tabela(props: { colunas: Coluna[]; linhas: Record<string, ReactNode>[] 
         Deslize horizontalmente para consultar todas as colunas.
       </p>
       <div
-        className="overflow-x-auto rounded-2xl border border-zinc-200/90 dark:border-zinc-800"
+        className="overflow-x-auto rounded-xl border border-zinc-200/90 dark:border-zinc-800"
         role="region"
         aria-label="Tabela com rolagem horizontal"
         tabIndex={0}
@@ -119,7 +119,7 @@ function Secao(props: { numero: string; titulo: string; descricao?: string; chil
 /** Parágrafo corrido dentro de um cartão, para as seções sem tabela. */
 function Texto(props: { children: ReactNode }) {
   return (
-    <div className="rounded-2xl border border-zinc-200/90 bg-white p-5 text-sm leading-relaxed text-zinc-600 shadow-xs dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
+    <div className="rounded-xl border border-zinc-200/90 bg-white p-5 text-sm leading-relaxed text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
       {props.children}
     </div>
   );
@@ -737,7 +737,7 @@ function ListaTopicos(props: { itens: { rotulo: string; texto: string }[] }) {
       {props.itens.map((it) => (
         <div
           key={it.rotulo}
-          className="rounded-2xl border border-zinc-200/90 bg-white p-4 shadow-xs dark:border-zinc-800 dark:bg-zinc-900"
+          className="rounded-xl border border-zinc-200/90 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900"
         >
           <div className="font-display text-xs font-medium text-utfpr-700 dark:text-utfpr-400">
             {it.rotulo}
@@ -755,7 +755,7 @@ function QuadranteSwot() {
       {SWOT.map((q) => (
         <div
           key={q.sigla}
-          className={`rounded-2xl border bg-white p-4 shadow-xs dark:bg-zinc-900 ${
+          className={`rounded-xl border bg-white p-4 dark:bg-zinc-900 ${
             q.tom === "bom"
               ? "border-emerald-500/40 dark:border-emerald-500/30"
               : "border-red-500/40 dark:border-red-500/30"
@@ -796,7 +796,7 @@ function QuadranteSwot() {
 
 function ListaSimples(props: { itens: string[] }) {
   return (
-    <ul className="space-y-2.5 rounded-2xl border border-zinc-200/90 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
+    <ul className="space-y-2.5 rounded-xl border border-zinc-200/90 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-900">
       {props.itens.map((f) => (
         <li key={f} className="flex gap-3 text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">
           <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-utfpr-500" />
@@ -810,7 +810,7 @@ function ListaSimples(props: { itens: string[] }) {
 export function TelaGestaoInformacao() {
   return (
     <div className="space-y-12">
-      <header className="rounded-2xl border-2 border-zinc-200/90 bg-white/95 p-6 shadow-md dark:border-zinc-800/90 dark:bg-zinc-900/95">
+      <header className="rounded-xl border-2 border-zinc-200/90 bg-white/95 p-6 dark:border-zinc-800/90 dark:bg-zinc-900/95">
         <div className="flex items-start gap-4">
           <IconFolders className="h-4 w-4 shrink-0" />
           <div>

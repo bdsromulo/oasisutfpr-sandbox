@@ -72,7 +72,7 @@ export function ModalNovidades(props: {
               <section
                 key={item.id}
                 data-novidade={item.id}
-                className={`rounded-2xl border p-4 ${
+                className={`rounded-xl border p-4 ${
                   item.destaque
                     ? "border-zinc-300 bg-white dark:border-zinc-700 dark:bg-zinc-900"
                     : "border-zinc-200 bg-zinc-50/70 dark:border-zinc-800 dark:bg-zinc-800/30"

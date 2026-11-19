@@ -457,7 +457,7 @@ export function TelaGrade(props: {
     Boolean(props.onEnviarParaSimulador) && estadoDaGrade !== "passado";
   const chavesGrades = props.cestaGrades ? Object.keys(props.cestaGrades).sort() : ["A"];
   const barraAbas = props.cestaGrades && props.onMudarGradeAtiva && (
-    <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900">
+    <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900">
       <div className="flex flex-wrap items-center gap-2">
         <span className="mr-1 text-xs text-zinc-500 dark:text-zinc-400">Cenários</span>
         {chavesGrades.map((g) => {
@@ -597,7 +597,7 @@ export function TelaGrade(props: {
             {/* Conteúdo */}
             <div className="flex-1 overflow-y-auto p-6 space-y-6">
               {/* Aviso de regra de compatibilidade */}
-              <div className="flex items-start gap-3 rounded-2xl border border-zinc-200 bg-white p-4 text-xs text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
+              <div className="flex items-start gap-3 rounded-xl border border-zinc-200 bg-white p-4 text-xs text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
                 <IconInfo className="text-amber-600 dark:text-amber-400 h-4 w-4 shrink-0" />
                 <p className="leading-relaxed">
                   <strong>Regra de compatibilidade:</strong> Só serão importadas as matérias que permaneceram exatamente iguais em horário e professor na oferta de {props.semestreAtivo || SEMESTRE_CORRENTE}. Turmas que sofreram alteração na carga horária, dias/horários ou docente serão sinalizadas como incompatíveis e não serão trazidas.
@@ -622,7 +622,7 @@ export function TelaGrade(props: {
                         }}
                         className={`flex items-center gap-2 rounded-xl px-4 py-2.5 font-mono text-xs font-bold transition-colors cursor-pointer ${
                           sel
-                            ? "bg-zinc-900 text-utfpr-400 shadow-sm dark:bg-zinc-800 dark:text-utfpr-300 border-2 border-utfpr-500"
+                            ? "bg-zinc-900 text-utfpr-400 dark:bg-zinc-800 dark:text-utfpr-300 border-2 border-utfpr-500"
                             : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800/60 dark:text-zinc-400 dark:hover:bg-zinc-800 border-2 border-transparent"
                         }`}
                       >
@@ -654,7 +654,7 @@ export function TelaGrade(props: {
                           }}
                           className={`flex items-center gap-2 rounded-xl px-4 py-2 font-mono text-xs font-bold transition-colors cursor-pointer ${
                             sel
-                              ? "bg-utfpr-500 text-zinc-950 shadow-xs font-bold"
+                              ? "bg-utfpr-500 text-zinc-950 font-bold"
                               : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800/60 dark:text-zinc-400 dark:hover:bg-zinc-800"
                           }`}
                         >
@@ -680,7 +680,7 @@ export function TelaGrade(props: {
                       {itensPreviewImportacao.filter((x) => x.compativel).length} de {itensPreviewImportacao.length} prontas para importar
                     </span>
                   </div>
-                  <div className="max-h-64 overflow-y-auto rounded-2xl border border-zinc-200/80 bg-zinc-50/60 p-3 space-y-2 dark:border-zinc-800/80 dark:bg-zinc-900/60 divide-y divide-zinc-200/50 dark:divide-zinc-800/50">
+                  <div className="max-h-64 overflow-y-auto rounded-xl border border-zinc-200/80 bg-zinc-50/60 p-3 space-y-2 dark:border-zinc-800/80 dark:bg-zinc-900/60 divide-y divide-zinc-200/50 dark:divide-zinc-800/50">
                     {itensPreviewImportacao.length === 0 ? (
                       <p className="py-8 text-center text-xs text-zinc-400 italic">Nenhuma matéria encontrada nesta grade.</p>
                     ) : (
@@ -747,7 +747,7 @@ export function TelaGrade(props: {
                     </button>
                     <button
                       onClick={() => setConfirmacaoSobreescreverImportacao(true)}
-                      className="rounded-xl bg-amber-600 hover:bg-amber-700 text-white px-3.5 py-2 font-display text-xs font-bold shadow-sm transition-colors cursor-pointer"
+                      className="rounded-xl bg-amber-600 hover:bg-amber-700 text-white px-3.5 py-2 font-display text-xs font-bold transition-colors cursor-pointer"
                     >
                       Sim, Sobreescrever
                     </button>
@@ -770,7 +770,7 @@ export function TelaGrade(props: {
                     className={`flex items-center gap-2 rounded-xl px-5 py-2.5 font-display text-xs font-bold transition-colors ${
                       itensPreviewImportacao.filter((x) => x.compativel).length === 0
                         ? "bg-zinc-200 text-zinc-400 cursor-not-allowed dark:bg-zinc-800 dark:text-zinc-600"
-                        : "bg-utfpr-500 text-zinc-950 hover:bg-utfpr-400 shadow-sm cursor-pointer"
+                        : "bg-utfpr-500 text-zinc-950 hover:bg-utfpr-400 cursor-pointer"
                     }`}
                   >
                     <span>Confirmar Importação ({itensPreviewImportacao.filter((x) => x.compativel).length} matérias)</span>
@@ -789,7 +789,7 @@ export function TelaGrade(props: {
     return (
       <div className="space-y-6">
         {barraAbas}
-        <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-zinc-200/80 bg-white/80 p-4 shadow-2xs dark:border-zinc-800/80 dark:bg-zinc-900/80">
+        <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-zinc-200/80 bg-white/80 p-4 dark:border-zinc-800/80 dark:bg-zinc-900/80">
           <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
             Dica: você pode gerar uma grade ideal automaticamente ou adicionar matérias na aba Matérias Abertas.
           </p>
@@ -837,7 +837,7 @@ export function TelaGrade(props: {
         </div>
       ))}
 
-      <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-zinc-200/80 bg-white/80 p-4 shadow-2xs dark:border-zinc-800/80 dark:bg-zinc-900/80">
+      <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-zinc-200/80 bg-white/80 p-4 dark:border-zinc-800/80 dark:bg-zinc-900/80">
         <div className="flex flex-wrap items-center gap-3">
           <Badge tom="acento" icon={<IconCalendar className="h-3.5 w-3.5" />}>
             {aulasSemanais(itens)} aulas / semana
@@ -959,7 +959,7 @@ export function TelaGrade(props: {
       </p>
       <div
         ref={gradeTableRef}
-        className="overflow-x-auto rounded-2xl border border-zinc-200/80 bg-white p-2 shadow-xs sm:p-4 dark:border-zinc-800/80 dark:bg-zinc-900"
+        className="overflow-x-auto rounded-xl border border-zinc-200/80 bg-white p-2 sm:p-4 dark:border-zinc-800/80 dark:bg-zinc-900"
         role="region"
         aria-label="Grade horária com rolagem horizontal"
         tabIndex={0}
@@ -1051,7 +1051,7 @@ export function TelaGrade(props: {
                                     e.stopPropagation();
                                     removerDisciplina(codIdentificador);
                                   }}
-                                  className={`h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full bg-red-600 font-mono text-[9px] font-bold text-white shadow-2xs hover:bg-red-700 cursor-pointer ${
+                                  className={`h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full bg-red-600 font-mono text-[9px] font-bold text-white hover:bg-red-700 cursor-pointer ${
                                     isHovered ? "flex" : "hidden group-hover:flex"
                                   }`}
                                   title={`Remover ${codIdentificador}`}
@@ -1077,7 +1077,7 @@ export function TelaGrade(props: {
           (props.exclusoesSugestao.professores && props.exclusoesSugestao.professores.length > 0) ||
           (props.exclusoesSugestao.trilhas && props.exclusoesSugestao.trilhas.length > 0) ||
           (props.exclusoesSugestao.outrosFiltros && props.exclusoesSugestao.outrosFiltros.length > 0)) && (
-          <div className="rounded-2xl border border-zinc-200 bg-white p-4 text-xs text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 shadow-sm space-y-1.5 animate-in fade-in">
+          <div className="rounded-xl border border-zinc-200 bg-white p-4 text-xs text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 space-y-1.5 animate-in fade-in">
             <div className="font-display text-sm font-bold flex items-center justify-between">
               <span className="flex items-center gap-2">
                 <IconInfo className="text-amber-600 dark:text-amber-400 h-4 w-4 shrink-0" /> Observação: Itens excluídos ou filtros na geração via Sugestão de Grade
@@ -1179,9 +1179,9 @@ export function TelaGrade(props: {
                     iniciarHover(codIdentificador, chaveElemento);
                   }
                 }}
-                className={`relative flex flex-col justify-between gap-3 rounded-xl border p-3.5 shadow-2xs transition-colors ${
+                className={`relative flex flex-col justify-between gap-3 rounded-xl border p-3.5 transition-colors ${
                   isHovered
-                    ? "border-utfpr-500 bg-utfpr-500/5 ring-1 ring-utfpr-500 dark:border-utfpr-400 dark:bg-utfpr-500/10 scale-[1.01] z-40 overflow-visible"
+                    ? "border-utfpr-500 bg-utfpr-500/5 ring-1 ring-utfpr-500 dark:border-utfpr-400 dark:bg-utfpr-500/10 z-40 overflow-visible"
                     : "border-zinc-200/80 bg-white dark:border-zinc-800/80 dark:bg-zinc-900"
                 }`}
               >

@@ -204,7 +204,7 @@ function LinkSocial(props: { href: string; rotulo: string; children: ReactNode }
       rel="noopener noreferrer"
       title={props.rotulo}
       aria-label={props.rotulo}
-      className="inline-flex items-center gap-2 rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm font-semibold text-zinc-700 shadow-2xs transition-colors hover:border-utfpr-500/60 hover:bg-utfpr-50/60 hover:text-zinc-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:border-utfpr-500/50 dark:hover:bg-zinc-800 dark:hover:text-white"
+      className="inline-flex items-center gap-2 rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm font-semibold text-zinc-700 transition-colors hover:border-utfpr-500/60 hover:bg-utfpr-50/60 hover:text-zinc-950 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:border-utfpr-500/50 dark:hover:bg-zinc-800 dark:hover:text-white"
     >
       {props.children}
     </a>
@@ -215,7 +215,7 @@ export function TelaSobre(props: { onAbrirGestaoInformacao: () => void }) {
   return (
     <div className="space-y-10">
       {/* Capa */}
-      <header className="rounded-2xl border border-zinc-200/90 bg-white p-7 dark:border-zinc-800 dark:bg-zinc-900">
+      <header className="rounded-xl border border-zinc-200/90 bg-white p-7 dark:border-zinc-800 dark:bg-zinc-900">
         <Badge tom="acento">Sobre o projeto</Badge>
         <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">
           <span className="text-utfpr-600 dark:text-utfpr-500">Oásis</span> UTFPR
@@ -275,7 +275,7 @@ export function TelaSobre(props: { onAbrirGestaoInformacao: () => void }) {
       >
         <Card>
           <div className="flex items-start gap-4">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
               <IconShieldLock className="h-5.5 w-5.5" />
             </span>
             <div className="space-y-3 text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
@@ -358,7 +358,7 @@ export function TelaSobre(props: { onAbrirGestaoInformacao: () => void }) {
         <Card>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-start gap-4">
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-utfpr-500/20 text-utfpr-700 dark:text-utfpr-400">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-utfpr-500/20 text-utfpr-700 dark:text-utfpr-400">
                 <IconBookOpen className="h-5.5 w-5.5" />
               </span>
               <p className="text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
@@ -391,7 +391,7 @@ export function TelaSobre(props: { onAbrirGestaoInformacao: () => void }) {
               <img
                 src="creditos/romulo.jpeg"
                 alt="Rômulo Barbosa da Silva"
-                className="h-24 w-24 shrink-0 rounded-2xl object-cover shadow-xs ring-2 ring-utfpr-500/40"
+                className="h-24 w-24 shrink-0 rounded-xl object-cover ring-2 ring-utfpr-500/40"
               />
               <div className="min-w-0 flex-1">
                 <Badge tom="acento">Criador e desenvolvedor</Badge>

@@ -230,7 +230,7 @@ export function MiniGrade(props: {
                         onClick={() => onMudarGradeAtiva(g)}
                         className={`flex h-7 w-8 items-center justify-center rounded-lg font-mono text-xs font-bold transition-colors ${
                           ativa
-                            ? "bg-zinc-900 text-utfpr-500 shadow-xs dark:bg-zinc-800 dark:text-utfpr-400 border border-utfpr-500/40"
+                            ? "bg-zinc-900 text-utfpr-500 dark:bg-zinc-800 dark:text-utfpr-400 border border-utfpr-500/40"
                             : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800/60 dark:text-zinc-400 dark:hover:bg-zinc-800"
                         }`}
                         title={`Grade ${g}`}
@@ -369,7 +369,7 @@ export function MiniGrade(props: {
                                     ? "bg-utfpr-500/40 ring-1 ring-utfpr-500"
                                     : "bg-zinc-100 dark:bg-zinc-800"
                             } ${
-                              isHovered ? "ring-2 ring-zinc-950 dark:ring-white scale-110 z-40 shadow-xs brightness-105 overflow-visible" : ""
+                              isHovered ? "ring-2 ring-zinc-950 dark:ring-white z-40 overflow-visible" : ""
                             }`}
                           >
                             {isHovered && ocupantes.length > 0 && (
@@ -378,7 +378,7 @@ export function MiniGrade(props: {
                                   e.stopPropagation();
                                   onRemoverTurma?.(ocupantes[0].codigo);
                                 }}
-                                className="flex h-3 w-3 items-center justify-center rounded-full bg-red-600 text-[8px] font-bold text-white shadow-2xs hover:bg-red-700 cursor-pointer"
+                                className="flex h-3 w-3 items-center justify-center rounded-full bg-red-600 text-[8px] font-bold text-white hover:bg-red-700 cursor-pointer"
                                 title={`Remover ${ocupantes[0].codigo}`}
                               >
                                 ×
@@ -471,7 +471,7 @@ export function MiniGrade(props: {
                     onMouseLeave={cancelarHover}
                     title={`${nomeLegivel(item.disciplina.nome)}${codigoCurricular !== item.disciplina.codigo ? ` · oferta ${item.disciplina.codigo}` : ""}`}
                     className={`group relative flex items-center justify-between gap-1.5 text-xs rounded-md px-1.5 py-1 transition-colors ${
-                      isHovered ? "bg-zinc-100 dark:bg-zinc-800 ring-1 ring-zinc-300 dark:ring-zinc-700 scale-[1.01] z-40 overflow-visible" : ""
+                      isHovered ? "bg-zinc-100 dark:bg-zinc-800 ring-1 ring-zinc-300 dark:ring-zinc-700 z-40 overflow-visible" : ""
                     }`}
                   >
                     <div className="flex items-center gap-1.5 min-w-0">
@@ -488,7 +488,7 @@ export function MiniGrade(props: {
                           e.stopPropagation();
                           onRemoverTurma(codIdentificador);
                         }}
-                        className={`h-4 w-4 shrink-0 items-center justify-center rounded-full bg-red-600 font-mono text-[10px] font-bold text-white shadow-2xs hover:bg-red-700 cursor-pointer ${
+                        className={`h-4 w-4 shrink-0 items-center justify-center rounded-full bg-red-600 font-mono text-[10px] font-bold text-white hover:bg-red-700 cursor-pointer ${
                           isHovered ? "flex" : "hidden group-hover:flex"
                         }`}
                         title={`Remover ${codIdentificador}`}
@@ -571,8 +571,8 @@ export function MiniGrade(props: {
                                       key={`${ocup.codigo}-${ocup.turma}-${idxItem}`}
                                       onMouseEnter={() => setDisciplinaHoverId(ocup.codigo)}
                                       onMouseLeave={() => setDisciplinaHoverId(null)}
-                                      className={`group relative rounded-xl p-2 shadow-2xs transition-colors ${ocup.cor} ${
-                                        isHovered ? "ring-2 ring-zinc-950 dark:ring-white scale-[1.03] z-10 brightness-105" : ""
+                                      className={`group relative rounded-xl p-2 transition-colors ${ocup.cor} ${
+                                        isHovered ? "ring-2 ring-zinc-950 dark:ring-white z-10" : ""
                                       }`}
                                     >
                                       <div className="font-mono text-[11px] font-bold tracking-tight flex items-center justify-between">
@@ -658,7 +658,7 @@ export function MiniGrade(props: {
                   props.onLimparExclusoes?.();
                   setModalConfirmarLimpar(false);
                 }}
-                className="rounded-xl bg-red-600 px-4 py-2 font-display text-xs font-bold text-white hover:bg-red-700 transition-colors shadow-md cursor-pointer"
+                className="rounded-xl bg-red-600 px-4 py-2 font-display text-xs font-bold text-white hover:bg-red-700 transition-colors cursor-pointer"
               >
                 Sim, Limpar Grade
               </button>

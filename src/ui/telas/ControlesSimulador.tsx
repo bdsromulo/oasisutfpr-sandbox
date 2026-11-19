@@ -130,7 +130,7 @@ export function SeletorTrilhasAlvo(props: {
             >
               <span className="block max-w-[16rem] truncate">{nomeLegivel(t.nome)}</span>
               <span
-                className={`mt-0.5 block font-mono text-[10px] ${
+                className={`mt-0.5 block text-[10px] ${
                   completa ? "text-emerald-600 dark:text-emerald-400" : "text-zinc-500"
                 }`}
               >
@@ -181,7 +181,7 @@ export function ControlesAvancados(props: {
             const atual = valor.ritmoPorSemestre[s];
             return (
               <div key={s} className="flex items-center gap-2">
-                <span className="w-24 font-mono text-xs font-bold text-zinc-600 dark:text-zinc-300">
+                <span className="w-24 text-xs font-bold text-zinc-600 dark:text-zinc-300">
                   {formatarSemestre(s)}
                 </span>
                 <select

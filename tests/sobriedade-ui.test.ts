@@ -48,6 +48,18 @@ describe("sobriedade da interface", () => {
     expect(ocorrencias(/bg-gradient-|bg-linear-|backdrop-blur|transition-all\b/)).toEqual([]);
   });
 
+  it("não aumenta nem clareia elementos no hover ou na seleção", () => {
+    // Movimento decorativo: o destaque é por anel ou cor, não por escala.
+    expect(ocorrencias(/(?<![\w-])scale-(\d|\[)|brightness-\d/)).toEqual([]);
+  });
+
+  it("dá ao cartão base cantos xl e nenhuma sombra", () => {
+    const comp = fonte("src/ui/componentes.tsx");
+    const card = comp.slice(comp.indexOf("export function Card("), comp.indexOf("export function AbasSegmentadas"));
+    expect(card).toContain("rounded-xl");
+    expect(card).not.toMatch(/rounded-2xl|shadow-/);
+  });
+
   it("não volta a usar os pesos 800 e 900", () => {
     expect(ocorrencias(/\bfont-(black|extrabold)\b/)).toEqual([]);
   });

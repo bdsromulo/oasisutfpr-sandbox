@@ -259,7 +259,7 @@ function CardDisciplinaPossoCursar({
                         onMouseLeave={() => onPreview(null)}
                         className={`flex flex-wrap items-center justify-between gap-3 rounded-xl border p-3 transition-colors ${
                           marcada
-                            ? "border-utfpr-500/60 bg-utfpr-500/15 dark:bg-utfpr-500/10 shadow-2xs"
+                            ? "border-utfpr-500/60 bg-utfpr-500/15 dark:bg-utfpr-500/10"
                             : "border-zinc-200/80 bg-white hover:border-zinc-300 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700"
                         }`}
                       >
@@ -345,7 +345,7 @@ function CardDisciplinaPossoCursar({
                                 onPreview(p);
                                 if (onAbrirMobilePreview) onAbrirMobilePreview(p);
                               }}
-                              className="inline-flex items-center gap-1 rounded-xl border border-zinc-200/80 bg-zinc-50 px-2.5 py-1 text-xs font-bold text-zinc-700 hover:bg-utfpr-500 hover:text-zinc-950 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-utfpr-400 dark:hover:text-zinc-950 transition-colors cursor-pointer shadow-2xs"
+                              className="inline-flex items-center gap-1 rounded-xl border border-zinc-200/80 bg-zinc-50 px-2.5 py-1 text-xs font-bold text-zinc-700 hover:bg-utfpr-500 hover:text-zinc-950 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-utfpr-400 dark:hover:text-zinc-950 transition-colors cursor-pointer"
                               title="Espiar nesta turma na grade (ideal no celular ou para teste rápido)"
                             >
                               <IconEye className="h-4 w-4 shrink-0" />
@@ -369,7 +369,7 @@ function CardDisciplinaPossoCursar({
                                     setProgressoCarregadoTurma(t.codigo);
                                   }
                                 }}
-                                className="inline-flex items-center gap-1 rounded-xl border border-zinc-200/80 bg-zinc-50 px-2.5 py-1 text-xs font-bold text-zinc-700 hover:bg-utfpr-500 hover:text-zinc-950 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-utfpr-400 dark:hover:text-zinc-950 transition-colors cursor-pointer shadow-2xs"
+                                className="inline-flex items-center gap-1 rounded-xl border border-zinc-200/80 bg-zinc-50 px-2.5 py-1 text-xs font-bold text-zinc-700 hover:bg-utfpr-500 hover:text-zinc-950 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-utfpr-400 dark:hover:text-zinc-950 transition-colors cursor-pointer"
                                 title="Status de progresso desta matéria no currículo"
                               >
                                 <IconBarChart className="h-4 w-4 shrink-0" />
@@ -617,7 +617,7 @@ export function TelaPossoCursar(props: {
       {/* Busca e filtros no MESMO bloco: abrir os filtros expande este cartão
           para baixo, em vez de fazer nascer um segundo cartão solto. Eram duas
           caixas falando da mesma coisa. */}
-      <div className="rounded-2xl border border-zinc-200 bg-white text-sm dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="rounded-xl border border-zinc-200 bg-white text-sm dark:border-zinc-800 dark:bg-zinc-900">
       <div className="flex flex-wrap items-center gap-2 p-3">
         <div className="contents">
           <input
@@ -684,7 +684,7 @@ export function TelaPossoCursar(props: {
                 setGrupo(id);
                 if (id !== "trilhas") setTrilha("todas");
               }}
-              className="cursor-pointer rounded-xl border border-zinc-300 bg-white px-3.5 py-2 font-display text-xs font-bold text-zinc-900 shadow-2xs transition-colors focus:border-utfpr-500 focus:outline-none focus:ring-2 focus:ring-utfpr-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:focus:border-utfpr-400 min-w-[200px]"
+              className="cursor-pointer rounded-xl border border-zinc-300 bg-white px-3.5 py-2 font-display text-xs font-bold text-zinc-900 transition-colors focus:border-utfpr-500 focus:outline-none focus:ring-2 focus:ring-utfpr-500/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:focus:border-utfpr-400 min-w-[200px]"
             >
               {grupos.map(([id, rotulo]) => (
                 <option key={id} value={id}>

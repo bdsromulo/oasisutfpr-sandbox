@@ -1370,7 +1370,7 @@ function Aplicacao() {
             {aba === "simulador" && SIMULADOR_LIBERADO && perfil && (
               <Suspense
                 fallback={
-                  <div className="flex items-center justify-center gap-3 rounded-2xl border border-zinc-200 bg-white p-8 text-sm text-zinc-500 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400">
+                  <div className="flex items-center justify-center gap-3 rounded-xl border border-zinc-200 bg-white p-8 text-sm text-zinc-500 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400">
                     <CarregadorPontos classe="text-utfpr-600 dark:text-utfpr-500" />
                     Carregando o Simulador de Formatura
                   </div>
@@ -1538,7 +1538,7 @@ function Aplicacao() {
               <button
                 type="button"
                 onClick={() => setMobileGradeDrawerAberto(true)}
-                className="ml-3 min-h-11 shrink-0 cursor-pointer rounded-xl bg-utfpr-500 px-4 py-2 font-display text-xs font-bold text-zinc-950 shadow-md transition-colors hover:bg-utfpr-400"
+                className="ml-3 min-h-11 shrink-0 cursor-pointer rounded-xl bg-utfpr-500 px-4 py-2 font-display text-xs font-bold text-zinc-950 transition-colors hover:bg-utfpr-400"
               >
                 {preview ? "Ver Preview" : "Abrir Grade"}
               </button>

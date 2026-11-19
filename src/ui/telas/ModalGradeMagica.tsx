@@ -313,7 +313,7 @@ export function ModalSugestaoGrade({
 
         {confirmacaoExistentesAberta ? (
           <div className="space-y-4 py-3 animate-in fade-in">
-            <div className="rounded-2xl border border-amber-500/40 bg-amber-500/10 p-4 text-sm text-zinc-800 dark:text-zinc-200">
+            <div className="rounded-xl border border-amber-500/40 bg-amber-500/10 p-4 text-sm text-zinc-800 dark:text-zinc-200">
               <p className="font-bold text-base mb-1.5 text-amber-700 dark:text-amber-300 flex items-center gap-2">
                 <IconWarning className="h-4 w-4 shrink-0" /> Grade com matérias preenchidas
               </p>
@@ -323,7 +323,7 @@ export function ModalSugestaoGrade({
             </div>
 
             {mensagemSemAdicao && (
-              <div className="rounded-2xl border border-blue-500/40 bg-blue-500/10 p-4 text-xs font-semibold text-blue-700 dark:text-blue-300 animate-in fade-in leading-relaxed">
+              <div className="rounded-xl border border-blue-500/40 bg-blue-500/10 p-4 text-xs font-semibold text-blue-700 dark:text-blue-300 animate-in fade-in leading-relaxed">
                 {mensagemSemAdicao}
               </div>
             )}
@@ -365,9 +365,9 @@ export function ModalSugestaoGrade({
             </label>
             <div className="grid gap-2.5 sm:grid-cols-2">
               <label
-                className={`flex items-start gap-3 rounded-2xl border p-3.5 cursor-pointer transition-colors ${
+                className={`flex items-start gap-3 rounded-xl border p-3.5 cursor-pointer transition-colors ${
                   estrategia === "adiantar_maximo"
-                    ? "border-utfpr-500/60 bg-utfpr-500/10 shadow-2xs"
+                    ? "border-utfpr-500/60 bg-utfpr-500/10"
                     : "border-zinc-200 bg-zinc-50/60 hover:bg-zinc-100/60 dark:border-zinc-800 dark:bg-zinc-800/40 dark:hover:bg-zinc-800/80"
                 }`}
               >
@@ -387,9 +387,9 @@ export function ModalSugestaoGrade({
               </label>
 
               <label
-                className={`flex items-start gap-3 rounded-2xl border p-3.5 cursor-pointer transition-colors ${
+                className={`flex items-start gap-3 rounded-xl border p-3.5 cursor-pointer transition-colors ${
                   estrategia === "balanceado"
-                    ? "border-utfpr-500/60 bg-utfpr-500/10 shadow-2xs"
+                    ? "border-utfpr-500/60 bg-utfpr-500/10"
                     : "border-zinc-200 bg-zinc-50/60 hover:bg-zinc-100/60 dark:border-zinc-800 dark:bg-zinc-800/40 dark:hover:bg-zinc-800/80"
                 }`}
               >
@@ -529,7 +529,7 @@ export function ModalSugestaoGrade({
                 className={`flex items-center justify-center gap-2 rounded-xl border p-2.5 text-xs font-bold cursor-pointer transition-colors ${
                   !sedeCentro
                     ? "border-zinc-200 bg-zinc-50/60 text-zinc-400 dark:border-zinc-800 dark:bg-zinc-800/40 dark:text-zinc-500"
-                    : "border-utfpr-500/60 bg-utfpr-500/10 text-zinc-900 dark:text-zinc-100 shadow-2xs"
+                    : "border-utfpr-500/60 bg-utfpr-500/10 text-zinc-900 dark:text-zinc-100"
                 }`}
               >
                 <input
@@ -544,7 +544,7 @@ export function ModalSugestaoGrade({
                 className={`flex items-center justify-center gap-2 rounded-xl border p-2.5 text-xs font-bold cursor-pointer transition-colors ${
                   !sedeEcoville
                     ? "border-zinc-200 bg-zinc-50/60 text-zinc-400 dark:border-zinc-800 dark:bg-zinc-800/40 dark:text-zinc-500"
-                    : "border-utfpr-500/60 bg-utfpr-500/10 text-zinc-900 dark:text-zinc-100 shadow-2xs"
+                    : "border-utfpr-500/60 bg-utfpr-500/10 text-zinc-900 dark:text-zinc-100"
                 }`}
               >
                 <input
@@ -559,7 +559,7 @@ export function ModalSugestaoGrade({
                 className={`flex items-center justify-center gap-2 rounded-xl border p-2.5 text-xs font-bold cursor-pointer transition-colors ${
                   !sedeNeoville
                     ? "border-zinc-200 bg-zinc-50/60 text-zinc-400 dark:border-zinc-800 dark:bg-zinc-800/40 dark:text-zinc-500"
-                    : "border-utfpr-500/60 bg-utfpr-500/10 text-zinc-900 dark:text-zinc-100 shadow-2xs"
+                    : "border-utfpr-500/60 bg-utfpr-500/10 text-zinc-900 dark:text-zinc-100"
                 }`}
               >
                 <input
@@ -581,7 +581,7 @@ export function ModalSugestaoGrade({
             <button
               type="button"
               onClick={() => setDefinicoesAvanadasAbertas(!definicoesAvanadasAbertas)}
-              className="flex w-full items-center justify-between rounded-2xl border border-zinc-200/80 bg-zinc-50/80 p-3.5 text-left font-display text-xs font-medium text-zinc-700 transition-colors hover:bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-800/50 dark:text-zinc-300 dark:hover:bg-zinc-800 cursor-pointer"
+              className="flex w-full items-center justify-between rounded-xl border border-zinc-200/80 bg-zinc-50/80 p-3.5 text-left font-display text-xs font-medium text-zinc-700 transition-colors hover:bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-800/50 dark:text-zinc-300 dark:hover:bg-zinc-800 cursor-pointer"
             >
               <div className="flex items-center gap-2">
                 <span>{<IconSettings className="inline h-4 w-4 shrink-0 align-[-0.2em]" />} Definições Avançadas</span>
@@ -599,7 +599,7 @@ export function ModalSugestaoGrade({
             </button>
 
             {definicoesAvanadasAbertas && (
-              <div className="mt-4 space-y-5 rounded-2xl border border-zinc-200/80 bg-zinc-50/40 p-4 dark:border-zinc-800 dark:bg-zinc-800/20 animate-in fade-in">
+              <div className="mt-4 space-y-5 rounded-xl border border-zinc-200/80 bg-zinc-50/40 p-4 dark:border-zinc-800 dark:bg-zinc-800/20 animate-in fade-in">
                 {/* Excluir Disciplinas */}
                 <div className="space-y-2.5">
                   <div className="flex items-center justify-between">
@@ -646,7 +646,7 @@ export function ModalSugestaoGrade({
                   )}
 
                   {modoBuscaDisc && (
-                    <div className="space-y-2 rounded-2xl border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900 animate-in fade-in">
+                    <div className="space-y-2 rounded-xl border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900 animate-in fade-in">
                       <div className="flex items-center gap-2">
                         <input
                           type="text"
@@ -740,7 +740,7 @@ export function ModalSugestaoGrade({
                   )}
 
                   {modoBuscaProf && (
-                    <div className="space-y-2 rounded-2xl border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900 animate-in fade-in">
+                    <div className="space-y-2 rounded-xl border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900 animate-in fade-in">
                       <div className="flex items-center gap-2">
                         <input
                           type="text"
@@ -832,7 +832,7 @@ export function ModalSugestaoGrade({
                   )}
 
                   {modoBuscaTrilha && (
-                    <div className="space-y-2 rounded-2xl border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900 animate-in fade-in">
+                    <div className="space-y-2 rounded-xl border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900 animate-in fade-in">
                       <div className="flex items-center gap-2">
                         <input
                           type="text"
@@ -892,7 +892,7 @@ export function ModalSugestaoGrade({
                       title="Desconsidera todas as matérias optativas de Humanidades na geração da sugestão"
                       className={`flex items-center gap-2.5 rounded-xl border p-2.5 text-xs font-semibold cursor-pointer transition-colors ${
                         semHumanidades
-                          ? "border-red-500/60 bg-red-500/10 text-red-900 dark:text-red-200 shadow-2xs"
+                          ? "border-red-500/60 bg-red-500/10 text-red-900 dark:text-red-200"
                           : "border-zinc-200 bg-white text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300"
                       }`}
                     >
@@ -911,7 +911,7 @@ export function ModalSugestaoGrade({
                       title="Desconsidera qualquer matéria optativa pertencente a uma das 12 Trilhas da matriz"
                       className={`flex items-center gap-2.5 rounded-xl border p-2.5 text-xs font-semibold cursor-pointer transition-colors ${
                         semTrilhas
-                          ? "border-red-500/60 bg-red-500/10 text-red-900 dark:text-red-200 shadow-2xs"
+                          ? "border-red-500/60 bg-red-500/10 text-red-900 dark:text-red-200"
                           : "border-zinc-200 bg-white text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300"
                       }`}
                     >
@@ -930,7 +930,7 @@ export function ModalSugestaoGrade({
                       title="Desconsidera matérias eletivas ou disciplinas fora da grade na montagem da sugestão"
                       className={`flex items-center gap-2.5 rounded-xl border p-2.5 text-xs font-semibold cursor-pointer transition-colors ${
                         semEletivas
-                          ? "border-red-500/60 bg-red-500/10 text-red-900 dark:text-red-200 shadow-2xs"
+                          ? "border-red-500/60 bg-red-500/10 text-red-900 dark:text-red-200"
                           : "border-zinc-200 bg-white text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300"
                       }`}
                     >
@@ -949,7 +949,7 @@ export function ModalSugestaoGrade({
                       title="Aumenta substancialmente o peso e a prioridade de matérias extensionistas no cálculo"
                       className={`flex items-center gap-2.5 rounded-xl border p-2.5 text-xs font-semibold cursor-pointer transition-colors ${
                         priorizarExtensionistas
-                          ? "border-utfpr-500/60 bg-utfpr-500/15 text-zinc-900 dark:text-zinc-100 shadow-2xs"
+                          ? "border-utfpr-500/60 bg-utfpr-500/15 text-zinc-900 dark:text-zinc-100"
                           : "border-zinc-200 bg-white text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300"
                       }`}
                     >
@@ -970,7 +970,7 @@ export function ModalSugestaoGrade({
           </div>
 
           {bloqueiaConfirmacaoTurno && (
-            <div className="rounded-2xl border border-red-500/50 bg-red-500/10 p-3.5 text-xs font-bold text-red-700 dark:text-red-300 flex items-center gap-2.5 leading-relaxed">
+            <div className="rounded-xl border border-red-500/50 bg-red-500/10 p-3.5 text-xs font-bold text-red-700 dark:text-red-300 flex items-center gap-2.5 leading-relaxed">
               <IconWarning className="h-5 w-5 shrink-0 text-red-500" />
               <span>
                 Você não quer estudar mesmo né? Assim não dá pra te ajudar, escolha pelo menos um turno.
@@ -979,7 +979,7 @@ export function ModalSugestaoGrade({
           )}
 
           {bloqueiaConfirmacaoSede && !bloqueiaConfirmacaoTurno && (
-            <div className="rounded-2xl border border-red-500/50 bg-red-500/10 p-3.5 text-xs font-bold text-red-700 dark:text-red-300 flex items-center gap-2.5 leading-relaxed">
+            <div className="rounded-xl border border-red-500/50 bg-red-500/10 p-3.5 text-xs font-bold text-red-700 dark:text-red-300 flex items-center gap-2.5 leading-relaxed">
               <IconWarning className="h-5 w-5 shrink-0 text-red-500" />
               <span>
                 Selecione pelo menos uma sede (ex: Centro) para podermos buscar turmas disponíveis.

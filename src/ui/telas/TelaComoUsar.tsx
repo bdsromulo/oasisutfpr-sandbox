@@ -261,7 +261,7 @@ export function TelaComoUsar() {
   return (
     <div className="space-y-10">
       {/* Capa */}
-      <header className="rounded-2xl border border-zinc-200/90 bg-white p-7 dark:border-zinc-800 dark:bg-zinc-900">
+      <header className="rounded-xl border border-zinc-200/90 bg-white p-7 dark:border-zinc-800 dark:bg-zinc-900">
         <Badge tom="acento">Manual da plataforma</Badge>
         <h2 className="mt-3 font-display text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">
           Como usar o site
@@ -557,7 +557,7 @@ export function TelaComoUsar() {
         </div>
       </Secao>
 
-      <div className="flex items-start gap-3 rounded-2xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="flex items-start gap-3 rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
         <IconBookOpen className="mt-0.5 h-4.5 w-4.5 shrink-0 text-amber-600 dark:text-amber-400" />
         <p className="text-xs leading-relaxed text-zinc-700 dark:text-zinc-300">
           O Oásis apoia o seu planejamento, mas não é um sistema oficial da UTFPR.
