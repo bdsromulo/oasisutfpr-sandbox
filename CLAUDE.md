@@ -2,6 +2,8 @@
 
 > Guia completo e agnóstico de fornecedor para agentes: **`REPOSITORIO.md`**.
 > Leia-o antes da primeira alteração. Este arquivo é o resumo.
+> Qualquer mudança de interface (tela, componente, estilo ou texto visível): leia também
+> **`docs/GUIA-INTERFACE.md`** antes de escrever código. É obrigatório e vale para todo agente.
 
 ## Regras invioláveis
 
@@ -57,6 +59,13 @@ de palavras (coordenadas x fixas por coluna); as anomalias conhecidas da fonte e
 documentadas nos docstrings dos validadores (regras R1–R8 e M1–M7, com variantes por
 curso). Ao encontrar anomalia nova: auditar no texto cru do PDF antes de mexer no
 parser, e registrar a regra aprendida no validador correspondente.
+
+## Interface
+
+Qualquer tela, componente, estilo ou texto visível novo ou alterado segue
+**`docs/GUIA-INTERFACE.md`** (princípios do redesign de sobriedade, TASK-67). Leia o guia
+antes de escrever e confira o checklist do §13 antes de concluir. `tests/sobriedade-ui.test.ts` falha se emoji,
+degradê, blur, `transition-all`, escala no hover ou peso 800/900 voltarem.
 
 ## Convenções
 

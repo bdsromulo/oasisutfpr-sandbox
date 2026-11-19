@@ -19,6 +19,7 @@ Princípios:
 
 > **Contribuindo com ajuda de IA?** Leia [`REPOSITORIO.md`](REPOSITORIO.md) — guia para
 > agentes, incluindo o protocolo de que nenhuma LLM se credita em commits.
+> Mexendo em interface? Siga também o [`docs/GUIA-INTERFACE.md`](docs/GUIA-INTERFACE.md).
 
 ## Como rodar
 
