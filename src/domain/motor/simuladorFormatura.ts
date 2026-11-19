@@ -132,6 +132,14 @@ export type IdCategoria =
   // horas de extensão: vêm embutidas no CHEXT das disciplinas, não de um conjunto
   | "extensao";
 
+/** Categorias de carga simples, onde "horas a mais" tem um sentido único. */
+const CATEGORIAS_COM_EXCEDENTE: IdCategoria[] = [
+  "segundoEstrato",
+  "humanidades",
+  "expressaoGrafica",
+  "eletivas",
+];
+
 export interface Requisito {
   id: IdCategoria;
   nome: string;
@@ -141,6 +149,13 @@ export interface Requisito {
   /** horas que a projeção planeja cursar para fechar a categoria */
   planejado: number;
   atendido: boolean;
+  /**
+   * Horas que o plano entrega acima do que a categoria precisa para fechar.
+   * Não é erro: o aluno pode pedir matérias além do mínimo, e a tela só avisa.
+   * Só categorias de carga simples calculam (humanidades, 2º estrato, expressão
+   * gráfica, eletivas); nas demais vale 0.
+   */
+  excedente: number;
 }
 
 export interface DisciplinaPlanejada {
@@ -498,6 +513,12 @@ export interface OpcoesSimulacao {
    * seguir fechando.
    */
   fixacoesPorSemestre?: Record<string, string[]>;
+  /**
+   * Disciplinas que o aluno tirou de um semestre sem excluí-las do curso. O
+   * motor não as coloca naquele semestre; em outro, se ainda forem necessárias,
+   * podem entrar. Chave no formato `2027-1`.
+   */
+  vetosPorSemestre?: Record<string, string[]>;
 }
 
 /**
@@ -577,6 +598,19 @@ export function simularFormatura(
       !fixacoesLiberadas.has(codigo)
     );
   };
+
+  // Matéria que o aluno pediu, por "quero cursar" ou por prendê-la a um semestre.
+  // Horas além do mínimo da categoria não são problema: o pedido entra mesmo com
+  // a categoria já fechada por outra matéria pedida, e o excedente vira aviso.
+  const desejadas = new Set<string>([...fixadasPeloAluno, ...semestreFixadoDe.keys()]);
+
+  // Vetos por semestre: sair de um semestre não é exclusão do curso.
+  const vetadasPorSemestre = new Map<string, Set<string>>();
+  for (const [semestre, codigos] of Object.entries(opcoes.vetosPorSemestre ?? {})) {
+    vetadasPorSemestre.set(chaveSemestre(semestre), new Set(codigos));
+  }
+  const vetadaNoSemestre = (codigo: string, semestre: string) =>
+    vetadasPorSemestre.get(chaveSemestre(semestre))?.has(codigo) ?? false;
 
   const excluidaPeloAluno = (d: DisciplinaMatriz) =>
     disciplinaEstaExcluida({ codigo: d.codigo, nome: d.nome }, disciplinasExcluidas);
@@ -1081,15 +1115,19 @@ export function simularFormatura(
         // presa a OUTRO semestre: fica reservada para ele, e não é planejada
         // antes da hora só porque coube aqui
         if (presaEmOutro(d.codigo, semestreAtual)) return false;
+        // o aluno tirou esta matéria deste semestre (sem excluí-la do curso)
+        if (vetadaNoSemestre(d.codigo, semestreAtual)) return false;
         const cat = categoriaDe(d, matriz)!;
-        // categoria já fechada: não se cursa além do mínimo
+        // Categoria já fechada: o plano automático não cursa além do mínimo, mas
+        // o que o aluno pediu entra mesmo assim (o excedente vira aviso).
+        const pedida = desejadas.has(d.codigo);
         if (cat === "trilhas") {
-          if (!faltaTerceiroEstrato()) return false;
+          if (!faltaTerceiroEstrato() && !pedida) return false;
           if (ehTrilha(cursoDesc, d.conjunto) && !trilhasAlvo.has(d.conjunto!)) return false;
         } else if (cat === "opcoes") {
           const grupo = grupoOpcaoDe(cursoDesc, d.conjunto);
-          if (grupo === null || faltaNoGrupo(grupo) === 0) return false;
-        } else if (cat !== "obrigatorias" && falta(cat) === 0) {
+          if (grupo === null || (faltaNoGrupo(grupo) === 0 && !pedida)) return false;
+        } else if (cat !== "obrigatorias" && falta(cat) === 0 && !pedida) {
           return false;
         }
 
@@ -1235,8 +1273,9 @@ export function simularFormatura(
       // Uma menor pode caber no lugar; a lista já vem ordenada por prioridade.
       if (consome && chAula + d.horas.total > TETO_CH_SEMESTRE) continue;
       const grupoDaOpcao = cat === "opcoes" ? grupoOpcaoDe(cursoDesc, d.conjunto) : null;
-      if (cat === "opcoes" && (grupoDaOpcao === null || faltaNoGrupo(grupoDaOpcao) === 0)) continue;
-      if (cat !== "obrigatorias" && cat !== "trilhas" && cat !== "opcoes" && falta(cat) === 0) continue;
+      const pedida = desejadas.has(d.codigo);
+      if (cat === "opcoes" && (grupoDaOpcao === null || (faltaNoGrupo(grupoDaOpcao) === 0 && !pedida))) continue;
+      if (cat !== "obrigatorias" && cat !== "trilhas" && cat !== "opcoes" && falta(cat) === 0 && !pedida) continue;
 
       // ---- filtro realista para o semestre atual ---------------------------
       // Para o semestre IMEDIATO (passo 0), sugerir uma matéria que sabidamente
@@ -1327,7 +1366,7 @@ export function simularFormatura(
       // acima de 90h continuam contando; nas isoladas, contam apenas no total.
       const contribui = d.horas.total;
       if (cat === "trilhas") {
-        if (!faltaTerceiroEstrato()) continue;
+        if (!faltaTerceiroEstrato() && !pedida) continue;
 
         const conj = d.conjunto!;
         // Horas que as trilhas-alvo ainda não validadas vão obrigatoriamente
@@ -1356,13 +1395,14 @@ export function simularFormatura(
           // a 180h na 962, com o bloco de 270h fechando em 345h.
           const alvoAindaAberta = [...trilhasAlvo].some((c) => faltaNaTrilha(c) > 0);
           if (
+            !pedida &&
             horasNaTrilha >= chDaTrilha(conj) &&
             (alvoAindaAberta || falta("trilhas") <= reservadoParaValidar)
           ) {
             continue;
           }
           horasPorTrilha.set(conj, horasNaTrilha + d.horas.total);
-        } else if (falta("trilhas") <= reservadoParaValidar) {
+        } else if (!pedida && falta("trilhas") <= reservadoParaValidar) {
           // Optativa isolada não substitui uma trilha completa.
           continue;
         }
@@ -1675,8 +1715,19 @@ export function simularFormatura(
       faltante: Math.max(0, exigido[id] - cumprido[id]),
       planejado: planejado[id],
       atendido: cumprido[id] + planejado[id] >= exigido[id],
+      excedente: CATEGORIAS_COM_EXCEDENTE.includes(id)
+        ? Math.max(0, Math.min(planejado[id], cumprido[id] + planejado[id] - exigido[id]))
+        : 0,
     }))
     .filter((requisito) => requisito.exigido > 0);
+
+  // Excedente não é erro, só informação: o aluno vê quanto passa do mínimo.
+  for (const r of requisitos) {
+    if (r.excedente <= 0) continue;
+    avisos.push(
+      `${r.nome}: você vai cursar ${r.excedente}h a mais do que o necessário para fechar a carga do curso.`,
+    );
+  }
 
   const trilhasFechadas = [...horasPorTrilha.entries()]
     .filter(([conj, horas]) => horas >= (matriz.conjuntos[String(conj)]?.ch ?? 90))
