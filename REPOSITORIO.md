@@ -218,12 +218,17 @@ Ordem do trabalho:
 
 1. **Antes de tudo**, importar a oferta nova pelo pipeline acima e validar com 0
    erros. Sem ela o semestre que era de planejamento vira corrente sem turmas.
-2. Registrar a oferta em `src/domain/dadosCurso.ts`: um `import` do JSON e uma
-   chave em `ofertas`, por curso (Mecatrônica em `ofertasMecatronicaHistoricas.ts`).
-3. Empurrar as duas constantes de `semestres.ts` um período para a frente, e o
-   `semestrePadrao` de cada curso em `dadosCurso.ts` junto — ele é sempre o
-   semestre de planejamento, porque quem abre o Oásis está montando a grade do
-   período que vem.
+2. Registrar a oferta no chunk do curso: um `import` do JSON e uma chave no
+   objeto exportado de `src/domain/ofertas/<curso>.ts` (Mecatrônica em
+   `src/domain/ofertasMecatronicaHistoricas.ts`), e a mesma chave em
+   `SEMESTRES_COM_OFERTA`, em `src/domain/dadosCurso.ts`. As ofertas não entram
+   no bundle inicial: cada curso baixa as suas sob demanda, e até chegarem cada
+   semestre de `SEMESTRES_COM_OFERTA` aponta para uma oferta vazia. Por isso as
+   chaves precisam bater, senão a lista de períodos muda no meio do carregamento.
+3. Empurrar as duas constantes de `semestres.ts` um período para a frente. O
+   `semestrePadrao` de cada curso acompanha sozinho (`SEMESTRE_PLANEJAMENTO`) —
+   ele é sempre o semestre de planejamento, porque quem abre o Oásis está
+   montando a grade do período que vem.
 4. Trocar a chave `CHAVE_VIRADA` em `App.tsx` para o novo semestre. É ela que
    move, uma vez só, quem estava no semestre que era o padrão antes da virada —
    sem ela, quem já usava o site continuaria abrindo no período cuja matrícula

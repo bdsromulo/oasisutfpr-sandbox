@@ -55,7 +55,7 @@ export interface DadosCurso {
 }
 
 /** Semestres com oferta versionada em `data/`, iguais para todos os cursos. */
-const SEMESTRES_COM_OFERTA = ["2026-2", "2026-1", "2025-2"];
+export const SEMESTRES_COM_OFERTA = ["2026-2", "2026-1", "2025-2"];
 
 /**
  * Grupos de oferta: matrizes do mesmo curso leem a mesma lista de Turmas

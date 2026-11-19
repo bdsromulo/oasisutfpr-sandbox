@@ -935,12 +935,14 @@ function Aplicacao() {
 
   const dentroDaPlataforma = !!perfil || checkinConcluido;
   const comandos = useMemo<Comando[]>(() => {
-    // fecha as telas de material do projeto antes de navegar, senão a troca
-    // de aba acontece atrás delas e parece que nada mudou
+    // fecha as telas de material do projeto e o modal de Configurações antes
+    // de navegar (o menu abre por cima de tudo), senão a troca de aba acontece
+    // atrás deles e parece que nada mudou
     const irPara = (fn: () => void) => () => {
       setSobreAberta(false);
       setComoUsarAberta(false);
       setGiAberta(false);
+      setModalConfigAberto(false);
       fn();
     };
     const abrirCatalogo = (busca: string) =>

@@ -44,6 +44,17 @@ describe("ofertas de turma sob demanda", () => {
     expect(m.ofertasProntas(m.ENG_COMP_962)).toBe(true);
   });
 
+  it("cada chunk traz exatamente os semestres declarados em SEMESTRES_COM_OFERTA", async () => {
+    // Na virada de semestre, esquecer de declarar a chave nova faria a lista
+    // de períodos mudar quando o chunk chega (ver REPOSITORIO.md §4).
+    const m = await moduloNovo();
+    await m.carregarTodasOfertas();
+    for (const c of m.CURSOS) {
+      expect([...Object.keys(c.ofertas)].sort(), c.id).toEqual([...m.SEMESTRES_COM_OFERTA].sort());
+      expect(Object.values(c.ofertas).every((o) => o.disciplinas.length > 0), c.id).toBe(true);
+    }
+  });
+
   it("deixa os JSON de turmas fora do módulo inicial", () => {
     const fonte = readFileSync(new URL("../src/domain/dadosCurso.ts", import.meta.url), "utf8");
     expect(fonte).not.toMatch(/from "\.\.\/\.\.\/data\/.*turmas/);
